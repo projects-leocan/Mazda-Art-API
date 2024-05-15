@@ -1,17 +1,20 @@
 const router = require("express").Router();
-// Insert
+// Post
 const { addAdminController } = require('../controller/addAdminController')
 const { updateAdminController } = require("../controller/updateAdminController");
 const { deleteAdminController } = require("../controller/deleteAdminController");
 
 // Get
 const { getAdminController } = require('../controller/getAdminController');
+const { adminLoginController } = require("../controller/adminLoginController");
+const { validateAccessToken } = require("../validations/accessTokenValidation");
 
 module.exports = app => {
-    router.post("/addAdmin", addAdminController);
-    router.get("/getAllAdmin", getAdminController)
-    router.post("/updateAdmin", updateAdminController);
-    router.post("/deleteAdmin", deleteAdminController);
+    router.get("/adminLogin", adminLoginController);
+    router.post("/addAdmin", validateAccessToken, addAdminController);
+    router.get("/getAllAdmin", validateAccessToken, getAdminController)
+    router.post("/updateAdmin", validateAccessToken, updateAdminController);
+    router.post("/deleteAdmin", validateAccessToken, deleteAdminController);
 
 
     app.use('/api/v1', router)

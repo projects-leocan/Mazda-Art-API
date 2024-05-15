@@ -14,11 +14,9 @@ app.use(cors(corsOptions));
 
 // Parsing middleware
 // Parse application/x-www-form-urlencoded
-// app.use(bodyParser.urlencoded({ extended: false })); // Remove 
-app.use(express.urlencoded({ extended: true })); // New
+// app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
-// Parse application/json
-// app.use(bodyParser.json()); // Remove
 app.use(express.json());
 
 require("./src/routes/route")(app);
@@ -32,7 +30,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// require("./app/routes/route")(app);
 
 app.listen(port, () => {
   console.log(`hello Server is running on port ${port}.`);
