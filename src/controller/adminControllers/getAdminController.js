@@ -1,4 +1,4 @@
-const pool = require("../config/db")
+const pool = require("../../config/db")
 
 exports.getAdminController = async (req, res) => {
     const query = `SELECT * FROM admin`;

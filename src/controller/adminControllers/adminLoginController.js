@@ -1,7 +1,7 @@
-const pool = require("../config/db");
+const pool = require("../../config/db");
 const jwt = require('jsonwebtoken');
-const jwtKeys = require('../constants/jwtKeys');
-const { passwordHashing } = require("../constants/passwordHashing");
+const jwtKeys = require('../../constants/jwtKeys');
+const { passwordHashing } = require("../../constants/passwordHashing");
 const bcrypt = require("bcrypt")
 
 exports.adminLoginController = async (req, res) => {

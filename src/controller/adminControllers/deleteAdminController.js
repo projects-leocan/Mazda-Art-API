@@ -1,4 +1,4 @@
-const pool = require("../config/db");
+const pool = require("../../config/db");
 
 exports.deleteAdminController = async (req, res) => {
     const { admin_id } = req.body;
