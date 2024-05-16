@@ -7,11 +7,11 @@ const { deleteAdminController } = require("../controller/deleteAdminController")
 // Get
 const { getAdminController } = require('../controller/getAdminController');
 const { adminLoginController } = require("../controller/adminLoginController");
-const { validateAccessToken } = require("../validations/accessTokenValidation");
+const { validateAccessToken, adminLoginValidation, addAdminValidator } = require("../validations/accessTokenValidation");
 
 module.exports = app => {
-    router.get("/adminLogin", adminLoginController);
-    router.post("/addAdmin", validateAccessToken, addAdminController);
+    router.get("/adminLogin", adminLoginValidation,  adminLoginController);
+    router.post("/addAdmin", validateAccessToken, addAdminValidator, addAdminController);
     router.get("/getAllAdmin", validateAccessToken, getAdminController)
     router.post("/updateAdmin", validateAccessToken, updateAdminController);
     router.post("/deleteAdmin", validateAccessToken, deleteAdminController);
