@@ -12,10 +12,21 @@ const { addAdminValidator, adminLoginValidation, adminIdValidator } = require(".
 
 // User controllers
 const { viewUserProfileController } = require("../controller/userControllers/viewUserProfileController");
-const { getUserProfileValidation, searchUserValidation } = require("../validations/userValidations");
+const { getUserProfileValidation, searchUserValidation, updateUserValidation: updateValidation } = require("../validations/userValidations");
+const { updateUserController } = require("../controller/userControllers/updateUserController");
+const { searchUserController } = require("../controller/userControllers/searchUserController");
+const { addMODControllers } = require("../controller/mediumOfChoiceControllrs/addMODController");
+const { getAllMODControllers } = require("../controller/mediumOfChoiceControllrs/getAllMODControllers");
+const { addMODValidation, updateMODValidation } = require("../validations/MODValidations");
+const { updateMODController } = require("../controller/mediumOfChoiceControllrs/updateMODController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
+
+    /// Medium of choices APIs
+    router.post("/addMOD", validateAccessToken, addMODValidation, addMODControllers);
+    router.get("/getAllMOD", validateAccessToken, getAllMODControllers);
+    router.post("/updateMOD", validateAccessToken, updateMODValidation, updateMODController);
 
     /// admin APIs
     router.get("/adminLogin", adminLoginValidation, adminLoginController);
@@ -26,7 +37,8 @@ module.exports = app => {
 
     /// user APIs
     router.get("/getUsers", validateAccessToken, getUserProfileValidation, viewUserProfileController);
-    router.get("/searchUser", validateAccessToken, searchUserValidation, viewUserProfileController);
+    router.get("/searchUser", validateAccessToken, searchUserValidation, searchUserController);
+    router.post("/updateUser", validateAccessToken, updateValidation, updateUserController);
 
     app.use('/api/v1', router)
 }

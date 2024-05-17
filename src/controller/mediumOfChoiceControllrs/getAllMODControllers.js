@@ -1,41 +1,39 @@
 const pool = require("../../config/db");
 const { somethingWentWrong } = require("../../constants/messages");
 
-exports.searchUserController = async (req, res) => {
-    const search_text = req.query.search_text;
-
+exports.getAllMODControllers = async (req, res) => {
     try {
-        const query = `SELECT * FROM artist WHERE fname ILIKE '${search_text}%' or fname ILIKE '%${search_text}' or lname ILIKE '${search_text}%' or lname ILIKE '%${search_text}'`;
+        const query = `SELECT * FROM medium_of_choice ORDER BY id ASC `;
         // console.log(`query: ${query}`);
         pool.query(query, async (err, result) => {
             // console.log(`err: ${err}`);
             // console.log(`result: ${JSON.stringify(result)}`);
             if (err) {
-                res.status(500).send(
+                return res.status(500).send(
                     {
                         success: false,
-                        message: err,
+                        messages: err,
                         statusCode: 500
                     }
                 )
             } else {
-                // console.log(`response: ${JSON.stringify(result.rows)}`);
-                res.status(200).send(
+                return res.status(200).send(
                     {
                         success: true,
-                        message: 'Data fetch successfully',
+                        message: 'Medium of Choice Updated Successfully',
                         data: result.rows,
                         statusCode: 200
                     }
-                )
+                );
             }
         })
+
     } catch (error) {
-        res.status(500).send(
+        console.log(`error: ${error}`);
+        return res.status(500).send(
             {
-                success: true,
+                success: false,
                 message: somethingWentWrong,
-                data: result.rows,
                 statusCode: 500
             }
         )

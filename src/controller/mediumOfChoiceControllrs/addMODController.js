@@ -1,44 +1,43 @@
 const pool = require("../../config/db");
 const { somethingWentWrong } = require("../../constants/messages");
 
-exports.searchUserController = async (req, res) => {
-    const search_text = req.query.search_text;
+exports.addMODControllers = async (req, res) => {
+    const { mod_value, admin_id } = req.body;
 
     try {
-        const query = `SELECT * FROM artist WHERE fname ILIKE '${search_text}%' or fname ILIKE '%${search_text}' or lname ILIKE '${search_text}%' or lname ILIKE '%${search_text}'`;
+        const currentTimeInMilliseconds = new Date().toISOString().slice(0, 10);
+        const query = `INSERT INTO medium_of_choice (medium_of_choice, created_by, updated_by, created_at, updated_at) VALUES ('${mod_value}', ${admin_id}, ${admin_id}, '${currentTimeInMilliseconds}', '${currentTimeInMilliseconds}');`;
         // console.log(`query: ${query}`);
         pool.query(query, async (err, result) => {
             // console.log(`err: ${err}`);
             // console.log(`result: ${JSON.stringify(result)}`);
             if (err) {
-                res.status(500).send(
+                return res.status(500).send(
                     {
                         success: false,
-                        message: err,
+                        messages: err,
                         statusCode: 500
                     }
                 )
             } else {
-                // console.log(`response: ${JSON.stringify(result.rows)}`);
-                res.status(200).send(
+                return res.status(200).send(
                     {
                         success: true,
-                        message: 'Data fetch successfully',
-                        data: result.rows,
+                        message: 'Medium of Choice added Successfully',
                         statusCode: 200
                     }
-                )
+                );
             }
         })
+
     } catch (error) {
-        res.status(500).send(
+        console.log(`error: ${error}`);
+        return res.status(500).send(
             {
-                success: true,
+                success: false,
                 message: somethingWentWrong,
-                data: result.rows,
                 statusCode: 500
             }
         )
     }
-
 }

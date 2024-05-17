@@ -17,7 +17,7 @@ exports.addAdminController = async (req, res) => {
         )
     }
     if (timezone == undefined || timezone === "") {
-        timezone = "Asia/Kolkata";
+        timezone = "Asia/Manila";
     }
     const currentTime = moment().tz(timezone);
     const formattedTime = currentTime.format('YYYY-MM-DD HH:mm:ss');

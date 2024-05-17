@@ -9,14 +9,14 @@ exports.viewUserProfileController = async (req, res) => {
     if (page_no == undefined) {
         page_no = 1;
     }
-    let query = "";
-    if (isAll != undefined && isAll) {
-        query = `SELECT * FROM artist`;
+    let query;
+    if (isAll != undefined && isAll === true) {
+        query = `SELECT *, COUNT(*) OVER() AS totalArtist FROM artist`;
     } else {
         offset = (page_no - 1) * record_per_page;
-        query = `SELECT * FROM artist LIMIT ${record_per_page} OFFSET ${offset}`;
+        query = `SELECT *, COUNT(*) OVER() AS totalArtist FROM artist LIMIT ${record_per_page} OFFSET ${offset}`;
     }
-
+    console.log(`query: ${query}`);
     pool.query(query, async (err, result) => {
         if (err) {
             res.status(500).send(
@@ -31,9 +31,10 @@ exports.viewUserProfileController = async (req, res) => {
             res.status(200).send(
                 {
                     success: true,
+                    statusCode: 200,
                     message: 'Data fetch successfully',
+                    totalArtist: (result.rows.length > 0) ? result.rows[0].totalartist : 0,
                     data: result.rows,
-                    statusCode: 200
                 }
             )
         }
