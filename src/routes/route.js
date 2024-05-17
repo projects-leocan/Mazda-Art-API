@@ -39,7 +39,8 @@ module.exports = app => {
     /// user APIs
     router.get("/getUsers", validateAccessToken, getUserProfileValidation, allUsersController);
     router.get("/searchUser", validateAccessToken, searchUserValidation, searchUserController);
-    router.post("/updateUser", validateAccessToken, updateValidation, updateUserController);
+    // router.post("/updateUser", validateAccessToken, updateValidation, updateUserController);
+    router.post("/updateUser", validateAccessToken, updateUserController);
     router.get("/getUserDetails", validateAccessToken, getUserDetailValidation, getUserDetails);
 
     app.use('/api/v1', router)
