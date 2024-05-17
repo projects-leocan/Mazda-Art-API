@@ -127,3 +127,14 @@ exports.updateUserValidation = (req, res, next) => {
 
     next();
 }
+
+exports.getUserDetailValidation = (req, res, next) => {
+    const user_id = req.query.user_id;
+    if (user_id == undefined && user_id != "") {
+        return res.status(500).send({
+            success: false,
+            message: "user_id can not be empty.",
+        });
+    }
+    next();
+}

@@ -1,11 +1,12 @@
 const pool = require("../../config/db");
 const { somethingWentWrong } = require("../../constants/messages");
 
-exports.updateMODController = async (req, res) => {
-    const { mod_id, mod_value, admin_id } = req.body;
+exports.getUserDetails = async (req, res) => {
+    const user_id = req.query.user_id;
+
     try {
         const currentTimeInMilliseconds = new Date().toISOString().slice(0, 10);
-        const query = `UPDATE medium_of_choice SET medium_of_choice='${mod_value}', updated_by=${admin_id}, updated_at='${currentTimeInMilliseconds}' WHERE id = '${mod_id}';`;
+        const query = `SELECT * FROM artist WHERE artist_id = ${user_id}`;
         // console.log(`query: ${query}`);
         pool.query(query, async (err, result) => {
             // console.log(`err: ${err}`);

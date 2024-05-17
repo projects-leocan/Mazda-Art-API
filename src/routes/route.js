@@ -11,14 +11,15 @@ const { validateAccessToken } = require("../validations/accessTokenValidation");
 const { addAdminValidator, adminLoginValidation, adminIdValidator } = require("../validations/adminValidations");
 
 // User controllers
-const { viewUserProfileController } = require("../controller/userControllers/viewUserProfileController");
-const { getUserProfileValidation, searchUserValidation, updateUserValidation: updateValidation } = require("../validations/userValidations");
+const { getUserProfileValidation, searchUserValidation, updateUserValidation: updateValidation, getUserDetailValidation } = require("../validations/userValidations");
 const { updateUserController } = require("../controller/userControllers/updateUserController");
 const { searchUserController } = require("../controller/userControllers/searchUserController");
 const { addMODControllers } = require("../controller/mediumOfChoiceControllrs/addMODController");
 const { getAllMODControllers } = require("../controller/mediumOfChoiceControllrs/getAllMODControllers");
 const { addMODValidation, updateMODValidation } = require("../validations/MODValidations");
 const { updateMODController } = require("../controller/mediumOfChoiceControllrs/updateMODController");
+const { allUsersController } = require("../controller/userControllers/allUsersController");
+const { getUserDetails } = require("../controller/userControllers/getUserDetails");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -36,9 +37,10 @@ module.exports = app => {
     router.post("/deleteAdmin", validateAccessToken, adminIdValidator, deleteAdminController);
 
     /// user APIs
-    router.get("/getUsers", validateAccessToken, getUserProfileValidation, viewUserProfileController);
+    router.get("/getUsers", validateAccessToken, getUserProfileValidation, allUsersController);
     router.get("/searchUser", validateAccessToken, searchUserValidation, searchUserController);
     router.post("/updateUser", validateAccessToken, updateValidation, updateUserController);
+    router.get("/getUserDetails", validateAccessToken, getUserDetailValidation, getUserDetails);
 
     app.use('/api/v1', router)
 }

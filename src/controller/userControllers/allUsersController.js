@@ -1,9 +1,11 @@
-const pool = require("../../config/db")
+const pool = require("../../config/db");
+const { somethingWentWrong } = require("../../constants/messages");
 
-exports.viewUserProfileController = async (req, res) => {
+exports.allUsersController = async (req, res) => {
     let { record_per_page, page_no, isAll } = req.query;
 
-    if (record_per_page == undefined) {
+    try{
+        if (record_per_page == undefined) {
         record_per_page = 10;
     }
     if (page_no == undefined) {
@@ -38,5 +40,14 @@ exports.viewUserProfileController = async (req, res) => {
                 }
             )
         }
-    })
+    })} catch (error) {
+        console.log(`error: ${error}`);
+        return res.status(500).send(
+            {
+                success: false,
+                message: somethingWentWrong,
+                statusCode: 500
+            }
+        )
+    }
 }
