@@ -21,6 +21,14 @@ const { updateMODController } = require("../controller/mediumOfChoiceControllrs/
 const { allUsersController } = require("../controller/userControllers/allUsersController");
 const { getUserDetails } = require("../controller/userControllers/getUserDetails");
 
+//theme
+const { addThemeController } = require("../controller/theme/addThemeController");
+const { getAllThemeController } = require("../controller/theme/getAllThemeController");
+
+// Grant
+const { addGrantController } = require("../controller/grant/addGrantController");
+const { getAllGrantController } = require("../controller/grant/getAllGrantController");
+
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
 
@@ -39,9 +47,19 @@ module.exports = app => {
     /// user APIs
     router.get("/getUsers", validateAccessToken, getUserProfileValidation, allUsersController);
     router.get("/searchUser", validateAccessToken, searchUserValidation, searchUserController);
-    // router.post("/updateUser", validateAccessToken, updateValidation, updateUserController);
     router.post("/updateUser", validateAccessToken, updateUserController);
     router.get("/getUserDetails", validateAccessToken, getUserDetailValidation, getUserDetails);
+
+
+    /// grants
+    router.post("/addGrant", validateAccessToken, addGrantController);
+    router.get("/getAllGrant", validateAccessToken, getAllGrantController);
+    // router.post("/updateGrant", validateAccessToken, addThemeController);
+
+    /// theme
+    router.get("/getAllTheme", validateAccessToken, getAllGrantController);
+    router.post("/addTheme", validateAccessToken, addThemeController);
+    // router.post("/updateTheme", validateAccessToken);
 
     app.use('/api/v1', router)
 }

@@ -1,11 +1,14 @@
 const pool = require("../../config/db");
 const { somethingWentWrong } = require("../../constants/messages");
 const formidable = require("formidable");
-var util = require("util");
 var fs = require("fs");
 var path = require('path');
 const { fileUpload } = require("../../utils/fileUpload");
 const { userPortFoliaImagePath, userProfileImagePath } = require("../../constants/filePaths");
+var lodash = require("lodash");
+const sharp = require('sharp');
+const { Blob } = require('buffer');
+const multer = require('multer');
 // const { handleFileUploads } = require("../../utils/fileUpload");
 
 
@@ -14,12 +17,22 @@ exports.updateUserController = async (req, res) => {
     console.log(`req.body: ${JSON.stringify()}`)
     try {
         var form = new formidable.IncomingForm();
-        form.parse(req, function (err, fields, files) {
+        form.parse(req, async function (err, fields, files) {
             let { artist_id, fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio, profile_pic, MOC, is_profile_pic_updated, is_portfolio_updated } = fields;
 
             let query = `UPDATE artist set `;
+            // if(){}
             const portfolio_image = files['portfolio']
             const profile_image = files['profile_pic']
+
+            // const portfolio_image = await blobToImage(files['portfolio'])
+            // const profile_image = await blobToImage(files['profile_pic'])
+
+            console.log(`portfolio_image: ${portfolio_image}`)
+            console.log(`profile_image: ${profile_image}`)
+
+            console.log(`portfolio: ${portfolio}`)
+            console.log(`profile_pic: ${profile_pic}`)
 
             let profileImageUploadError, portfolioImageUploadError;
 
@@ -30,7 +43,7 @@ exports.updateUserController = async (req, res) => {
                 query += `, lname='${lname}'`;
             }
             if (dob != undefined) {
-                query += `, dob=${dob}`;
+                query += `, dob='${dob}'`;
             }
             if (gender != undefined) {
                 query += `, gender='${gender}'`;
@@ -63,18 +76,21 @@ exports.updateUserController = async (req, res) => {
 
             if (is_portfolio_updated != undefined) {
                 if (portfolio_image == null) {
-                    const getFilesQuery = `SELECT artist_portfolio FROM artist WHERE artist_id=${artist_id}`;
-                    pool.query(query, async (error, result) => {
+                    const getFilesQuery = `SELECT artist_portfolio FROM artist WHERE artist_id = ${artist_id}`;
+                    pool.query(getFilesQuery, async (error, result) => {
                         console.log(`sub-query result: ${JSON.stringify(result)}`);
                         console.log(`sub-query error: ${JSON.stringify(error)}`);
-                        if (result.rowCount[0].artist_portfolio != null) {
-                            fs.promises.unlink(result.rowCount[0].artist_portfolio);
-                            query += `, artist_portfolio='${"null"}'`
+                        if (!lodash.isEmpty(result.rows) && result.rows[0].artist_portfolio != null) {
+                            console.log(`result.rows[0].artist_portfolio: ${result.rows[0].artist_portfolio}`);
+                            fs.promises.unlink(userPortFoliaImagePath + result.rows[0].artist_portfolio);
+                            // query += `, artist_portfolio=null`
+                            const updateQuery = `UPDATE artist set artist_portfolio=null WHERE artist_id = ${artist_id}`;
+                            pool.query(updateQuery, async (error, result) => { });
                         }
                     });
                 } else {
                     const portfolioImagePath = portfolio_image[0].filepath;
-                    const filename = artist_id + "." + profile_image[0].originalFilename.split(".").pop();
+                    const filename = artist_id + "_" + Date.now()// + "." + profile_image[0].originalFilename.split(".").pop();
                     const portfolioFolderPath = userPortFoliaImagePath + filename;
                     try {
                         fileUpload(portfolioImagePath, portfolioFolderPath);
@@ -87,24 +103,23 @@ exports.updateUserController = async (req, res) => {
 
             if (is_profile_pic_updated != undefined) {
                 if (profile_image == null) {
-                    const getFilesQuery = `SELECT profile_pic FROM artist WHERE artist_id=${artist_id}`;
-                    pool.query(query, async (error, result) => {
-                        console.log(`sub-query result: ${JSON.stringify(result)}`);
-                        console.log(`sub-query error: ${JSON.stringify(error)}`);
-                        if (result.rows && result.rows[0].profile_pic != null) {
-                            fs.promises.unlink(result.rows[0].profile_pic);
-                            query += `, profile_pic='${"null"}'`;
+                    const getFilesQuery = `SELECT profile_pic FROM artist WHERE artist_id = ${artist_id}`;
+                    pool.query(getFilesQuery, async (error, result) => {
+                        if (!lodash.isEmpty(result.rows) && result.rows[0].profile_pic != null) {
+                            console.log(`result.rows[0].profile_pic: ${result.rows[0].profile_pic}`);
+                            fs.promises.unlink(userProfileImagePath + result.rows[0].profile_pic);
+                            query += `, profile_pic=null`;
+                            const updateQuery = `UPDATE artist set profile_pic=null WHERE artist_id = ${artist_id}`;
+                            pool.query(updateQuery, async (error, result) => { });
                         }
                     });
                 } else {
                     const profileImagePath = profile_image[0].filepath;
-                    const filename = artist_id + "." + profile_image[0].originalFilename.split(".").pop();
+                    const filename = artist_id + "_" + Date.now()// + "." + profile_image[0].originalFilename.split(".").pop();
                     const profileFolderPath = userProfileImagePath + filename;
-
                     try {
                         fileUpload(profileImagePath, profileFolderPath);
                         query += `, profile_pic='${filename}'`;
-
                     } catch (err) {
                         profileImageUploadError = err;
                     }
@@ -149,4 +164,21 @@ exports.updateUserController = async (req, res) => {
             }
         )
     }
+}
+
+const blobToImage = (blob) => {
+    console.log(`blobToImage2: ${JSON.stringify(blob)}`);
+
+    const newBlob = new Blob(blob, { type: blob.mimetype });
+
+    return new Promise(resolve => {
+        const url = URL.createObjectURL(newBlob)
+        let img = new sharp.Image()
+        img.onload = () => {
+            URL.revokeObjectURL(url)
+            resolve(img)
+        }
+        console.log(`blobToImage2: ${JSON.stringify(url)}`);
+        img.src = url
+    })
 }
