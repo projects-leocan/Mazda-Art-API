@@ -1,10 +1,11 @@
-const multer = require("multer");
 const pool = require("../../config/db");
 const { somethingWentWrong } = require("../../constants/messages");
 const formidable = require("formidable");
 var util = require("util");
 var fs = require("fs");
 var path = require('path');
+const { fileUpload } = require("../../utils/fileUpload");
+const { userPortFoliaImagePath, userProfileImagePath } = require("../../constants/filePaths");
 // const { handleFileUploads } = require("../../utils/fileUpload");
 
 
@@ -16,36 +17,12 @@ exports.updateUserController = async (req, res) => {
         form.parse(req, function (err, fields, files) {
             let { artist_id, fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio, profile_pic, MOC, is_profile_pic_updated, is_portfolio_updated } = fields;
 
+            let query = `UPDATE artist set `;
             const portfolio_image = files['portfolio']
             const profile_image = files['profile_pic']
 
-            let;
+            let profileImageUploadError, portfolioImageUploadError;
 
-            console.log(`portfolio_image: ${JSON.stringify(portfolio_image)}`)
-            console.log(`profile_image: ${JSON.stringify(profile_image)}`)
-
-            const newPath1 = portfolio_image[0].filepath;
-            const portfolio_image_path = "src/files/user_portfolio/" + artist_id + ".png";
-            // console.log(`portfolio_image_path: ${portfolio_image_path}`);
-            fs.rename(newPath1, portfolio_image_path, (err) => {
-                if (err) {
-                    console.log(`Error moving portfolio_image: ${err}`);
-                } else {
-                    console.log("portfolio_image uploaded success !!!!!!!");
-                }
-            });
-
-            const newPath2 = profile_image[0].filepath;
-            const profile_image_path = "src/files/user_profile/" + artist_id + ".png";
-            fs.rename(newPath2, profile_image_path, (err) => {
-                if (err) {
-                    console.log(`Error moving profile_image: ${err}`);
-                } else {
-                    console.log("profile_image uploaded success !!!!!!!");
-                }
-            });
-
-            let query = `UPDATE artist set `;
             if (fname != undefined) {
                 query += `fname='${fname}'`;
             }
@@ -82,15 +59,59 @@ exports.updateUserController = async (req, res) => {
             if (social_media_link != undefined) {
                 query += `, social_media_profile_link='${social_media_link}'`;
             }
-            if (portfolio != undefined) {
-                query += `, artist_portfolio='${portfolio}'`;
+
+
+            if (is_portfolio_updated != undefined) {
+                if (portfolio_image == null) {
+                    const getFilesQuery = `SELECT artist_portfolio FROM artist WHERE artist_id=${artist_id}`;
+                    pool.query(query, async (error, result) => {
+                        console.log(`sub-query result: ${JSON.stringify(result)}`);
+                        console.log(`sub-query error: ${JSON.stringify(error)}`);
+                        if (result.rowCount[0].artist_portfolio != null) {
+                            fs.promises.unlink(result.rowCount[0].artist_portfolio);
+                            query += `, artist_portfolio='${"null"}'`
+                        }
+                    });
+                } else {
+                    const portfolioImagePath = portfolio_image[0].filepath;
+                    const filename = artist_id + "." + profile_image[0].originalFilename.split(".").pop();
+                    const portfolioFolderPath = userPortFoliaImagePath + filename;
+                    try {
+                        fileUpload(portfolioImagePath, portfolioFolderPath);
+                        query += `, artist_portfolio='${filename}'`
+                    } catch (err) {
+                        portfolioImageUploadError = err;
+                    }
+                }
             }
-            if (profile_pic != undefined) {
-                query += `, profile_pic='${profile_pic}'`;
+
+            if (is_profile_pic_updated != undefined) {
+                if (profile_image == null) {
+                    const getFilesQuery = `SELECT profile_pic FROM artist WHERE artist_id=${artist_id}`;
+                    pool.query(query, async (error, result) => {
+                        console.log(`sub-query result: ${JSON.stringify(result)}`);
+                        console.log(`sub-query error: ${JSON.stringify(error)}`);
+                        if (result.rows && result.rows[0].profile_pic != null) {
+                            fs.promises.unlink(result.rows[0].profile_pic);
+                            query += `, profile_pic='${"null"}'`;
+                        }
+                    });
+                } else {
+                    const profileImagePath = profile_image[0].filepath;
+                    const filename = artist_id + "." + profile_image[0].originalFilename.split(".").pop();
+                    const profileFolderPath = userProfileImagePath + filename;
+
+                    try {
+                        fileUpload(profileImagePath, profileFolderPath);
+                        query += `, profile_pic='${filename}'`;
+
+                    } catch (err) {
+                        profileImageUploadError = err;
+                    }
+                }
             }
 
             query += ` WHERE artist_id=${artist_id}`;
-            query = "";
             console.log(`query: ${query}`);
             pool.query(query, async (err, result) => {
                 console.log(`err: ${err}`);
@@ -108,7 +129,9 @@ exports.updateUserController = async (req, res) => {
                         {
                             success: true,
                             message: 'User Details Updated Successfully',
-                            statusCode: 200
+                            statusCode: 200,
+                            profileImageUploadError: profileImageUploadError,
+                            portfolioImageUploadError: portfolioImageUploadError,
                         }
                     );
                 }

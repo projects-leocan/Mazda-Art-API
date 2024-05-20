@@ -36,12 +36,15 @@ const path = require('path');
 const fs = require('fs');
 
 // Custom function to handle file uploads and return the file paths
-exports.handleFileUploads = (req) => {
-    fs.rename(oldPath, newPath, (err) => {
+exports.fileUpload = (storagePath, filePath) => {
+    fs.rename(storagePath, filePath, (err) => {
+        console.log(`storagePath: ${storagePath}`);
+        console.log(`filePath: ${filePath}`);
         if (err) {
-            console.log(`Error moving portfolio_image: ${err}`);
+            console.log(`Error moving file: ${err}`);
+            return err;
         } else {
-            console.log("portfolio_image uploaded success !!!!!!!");
+            console.log("file uploaded success !!!!!!!");
         }
     });
 }
