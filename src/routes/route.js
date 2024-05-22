@@ -32,6 +32,11 @@ const { addGrantValidation, updateGrantValidation } = require("../validations/gr
 const { updateGrantController } = require("../controller/grant/updateGrantController");
 const { updateThemeController } = require("../controller/theme/updateThemeController");
 const { addThemeValidation, updateThemeValidation } = require("../validations/themeValidation");
+const { getAllJuryValidation, getJuryDetailValidation, addJuryValidation, updateJuryValidation } = require("../validations/juryValidation");
+const { getAllJuryController } = require("../controller/jury/getAllJuryController");
+const { getJuryDetailsController } = require("../controller/jury/getJuryDetailsController");
+const { addJuryController } = require("../controller/jury/addJuryController");
+const { updateJuryDetailsController } = require("../controller/jury/updateJuryController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -64,6 +69,12 @@ module.exports = app => {
     router.get("/getAllTheme", validateAccessToken, getAllGrantController);
     router.post("/addTheme", validateAccessToken, addThemeValidation, addThemeController);
     router.post("/updateTheme", validateAccessToken, updateThemeValidation, updateThemeController);
+
+    /// Jury
+    router.get("/getAllJury", validateAccessToken, getAllJuryValidation, getAllJuryController);
+    router.get("/getJuryDetail", validateAccessToken, getJuryDetailValidation, getJuryDetailsController);
+    router.post("/addJury", validateAccessToken, addJuryValidation, addJuryController);
+    router.post("/updateJury", validateAccessToken, updateJuryValidation, updateJuryDetailsController);
 
     app.use('/api/v1', router)
 }
