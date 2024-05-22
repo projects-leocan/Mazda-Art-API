@@ -24,7 +24,7 @@ exports.addAdminController = async (req, res) => {
     console.log(`formattedTime: ${formattedTime}`);
 
     const data = [admin_name, admin_email, hashedPassword, admin_contact, admin_address, formattedTime]
-    const query = `INSERT INTO admin (admin_name, admin_email, admin_password, admin_contact, admin_address, created_at) VALUES ($1, $2, $3, $4, $5, $6)`
+    const query = `INSERT INTO admin (admin_name, admin_email, admin_password, admin_contact, admin_address, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING admin_id`
     pool.query(query, data, async (err, result) => {
         console.log(`err: ${err}`);
         console.log(`result: ${JSON.stringify(result)}`);
@@ -38,13 +38,27 @@ exports.addAdminController = async (req, res) => {
                 }
             )
         } else {
-            res.status(200).send(
-                {
-                    success: true,
-                    message: 'Insert Successfully',
-                    statusCode: 200
+            const newQuery = `SELECT * FROM admin WHERE admin_id = ${result.rows[0].admin_id}`;
+            pool.query(newQuery, async (newErr, newResult) => {
+                if (newErr) {
+                    res.status(500).send(
+                        {
+                            success: false,
+                            messages: "Something went wrong",
+                            statusCode: 500,
+                        }
+                    )
+                } else {
+                    return res.status(200).send(
+                        {
+                            success: true,
+                            statusCode: 200,
+                            message: 'Insert Admin Successfully',
+                            data: newResult.rows[0],
+                        }
+                    );
                 }
-            );
+            })
         }
     })
 } 

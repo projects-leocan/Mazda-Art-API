@@ -73,7 +73,6 @@ exports.updateUserController = async (req, res) => {
                 query += `, social_media_profile_link='${social_media_link}'`;
             }
 
-
             if (is_portfolio_updated != undefined) {
                 if (portfolio_image == null) {
                     const getFilesQuery = `SELECT artist_portfolio FROM artist WHERE artist_id = ${artist_id}`;
@@ -140,15 +139,31 @@ exports.updateUserController = async (req, res) => {
                         }
                     )
                 } else {
-                    res.status(200).send(
-                        {
-                            success: true,
-                            message: 'User Details Updated Successfully',
-                            statusCode: 200,
-                            profileImageUploadError: profileImageUploadError,
-                            portfolioImageUploadError: portfolioImageUploadError,
+                    const newQuery = `SELECT * FROM artist WHERE id = ${artist_id}`;
+                    pool.query(newQuery, async (newErr, newResult) => {
+                        if (newErr) {
+                            res.status(500).send(
+                                {
+                                    success: false,
+                                    messages: "Something went wrong",
+                                    statusCode: 500,
+                                    profileImageUploadError: profileImageUploadError,
+                                    portfolioImageUploadError: portfolioImageUploadError,
+                                }
+                            )
+                        } else {
+                            return res.status(200).send(
+                                {
+                                    success: true,
+                                    statusCode: 200,
+                                    message: 'User Details Updated Successfully',
+                                    data: newResult.rows[0],
+                                    profileImageUploadError: profileImageUploadError,
+                                    portfolioImageUploadError: portfolioImageUploadError,
+                                }
+                            );
                         }
-                    );
+                    })
                 }
             })
         });

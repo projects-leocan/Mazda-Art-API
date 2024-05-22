@@ -19,14 +19,27 @@ exports.updateMODController = async (req, res) => {
                     }
                 )
             } else {
-                return res.status(200).send(
-                    {
-                        success: true,
-                        message: 'Medium of Choice get Successfully',
-                        data: result.rows,
-                        statusCode: 200
+                const newQuery = `SELECT * FROM medium_of_choice WHERE id = ${mod_id}`;
+                pool.query(newQuery, async (newErr, newResult) => {
+                    if (newErr) {
+                        res.status(500).send(
+                            {
+                                success: false,
+                                messages: "Something went wrong",
+                                statusCode: 500
+                            }
+                        )
+                    } else {
+                        return res.status(200).send(
+                            {
+                                success: true,
+                                message: 'MOD Added Successfully',
+                                data: newResult.rows[0],
+                                statusCode: 200
+                            }
+                        );
                     }
-                );
+                })
             }
         })
     } catch (error) {

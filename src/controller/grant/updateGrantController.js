@@ -1,12 +1,10 @@
 const pool = require("../../config/db");
-
+const { getUTCdate } = require("../../constants/getUTCdate");
 
 exports.updateGrantController = async (req, res) => {
     let { grant_id, admin_id, category_id, hight, width, theme_id, app_fees, submission_end_date, max_allow_submision, no_of_awards, no_of_nominations, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount } = req.body;
 
     const currentTime = new Date().toISOString().slice(0, 10);
-    console.log(`currentTime: ${JSON.stringify(currentTime)}`);
-    await pool.query('SET TIME ZONE \'UTC\'');
     let query = `UPDATE grants set `;
 
     query += `updated_at='${currentTime}'`;
@@ -72,10 +70,9 @@ exports.updateGrantController = async (req, res) => {
                     }
                 )
             } else {
+                // await pool.query(`SET TIME ZONE 'UTC'`);
                 const newQuery = `SELECT g.*, m.medium_of_choice, t.theme from public.grants as g, public.medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id AND g.grant_id = ${grant_id}`;
                 pool.query(newQuery, async (newErr, newResult) => {
-                    // console.log(`newErr: ${newErr}`);
-                    // console.log(`newResult: ${JSON.stringify(newResult)}`);
                     if (newErr) {
                         res.status(500).send(
                             {
@@ -85,12 +82,20 @@ exports.updateGrantController = async (req, res) => {
                             }
                         )
                     } else {
-                        console.log(`date before: ${newResult.rows[0].updated_at}`);
-                        res.status(200).send(
+
+                        const final_response = {
+                            ...newResult.rows[0],
+                            updated_at: getUTCdate(newResult.rows[0].updated_at),
+                            submission_end_date: getUTCdate(newResult.rows[0].submission_end_date),
+                            created_at: getUTCdate(newResult.rows[0].created_at),
+                            created_at: getUTCdate(newResult.rows[0].created_at),
+                        }
+
+                        return res.status(200).send(
                             {
                                 success: true,
                                 message: 'Insert theme Successfully',
-                                data: newResult.rows[0],
+                                data: final_response,
                                 statusCode: 200
                             }
                         );

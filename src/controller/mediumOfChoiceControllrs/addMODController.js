@@ -6,7 +6,7 @@ exports.addMODControllers = async (req, res) => {
 
     try {
         const currentTimeInMilliseconds = new Date().toISOString().slice(0, 10);
-        const query = `INSERT INTO medium_of_choice (medium_of_choice, created_by, updated_by, created_at, updated_at) VALUES ('${mod_value}', ${admin_id}, ${admin_id}, '${currentTimeInMilliseconds}', '${currentTimeInMilliseconds}');`;
+        const query = `INSERT INTO medium_of_choice (medium_of_choice, created_by, updated_by, created_at, updated_at) VALUES ('${mod_value}', ${admin_id}, ${admin_id}, '${currentTimeInMilliseconds}', '${currentTimeInMilliseconds}') RETURNING id`;
         // console.log(`query: ${query}`);
         pool.query(query, async (err, result) => {
             // console.log(`err: ${err}`);
@@ -20,13 +20,27 @@ exports.addMODControllers = async (req, res) => {
                     }
                 )
             } else {
-                return res.status(200).send(
-                    {
-                        success: true,
-                        message: 'Medium of Choice added Successfully',
-                        statusCode: 200
+                const newQuery = `SELECT * FROM medium_of_choice WHERE id = ${result.rows[0].id}`;
+                pool.query(newQuery, async (newErr, newResult) => {
+                    if (newErr) {
+                        res.status(500).send(
+                            {
+                                success: false,
+                                messages: "Something went wrong",
+                                statusCode: 500
+                            }
+                        )
+                    } else {
+                        return res.status(200).send(
+                            {
+                                success: true,
+                                message: 'MOD Added Successfully',
+                                data: newResult.rows[0],
+                                statusCode: 200
+                            }
+                        );
                     }
-                );
+                })
             }
         })
 
