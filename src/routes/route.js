@@ -30,6 +30,8 @@ const { addGrantController } = require("../controller/grant/addGrantController")
 const { getAllGrantController } = require("../controller/grant/getAllGrantController");
 const { addGrantValidation, updateGrantValidation } = require("../validations/grantValidations");
 const { updateGrantController } = require("../controller/grant/updateGrantController");
+const { updateThemeController } = require("../controller/theme/updateThemeController");
+const { addThemeValidation, updateThemeValidation } = require("../validations/themeValidation");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -60,8 +62,8 @@ module.exports = app => {
 
     /// theme
     router.get("/getAllTheme", validateAccessToken, getAllGrantController);
-    router.post("/addTheme", validateAccessToken, addThemeController);
-    // router.post("/updateTheme", validateAccessToken, updateGrantController);
+    router.post("/addTheme", validateAccessToken, addThemeValidation, addThemeController);
+    router.post("/updateTheme", validateAccessToken, updateThemeValidation, updateThemeController);
 
     app.use('/api/v1', router)
 }

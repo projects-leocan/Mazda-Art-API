@@ -41,13 +41,6 @@ exports.addThemeController = async (req, res) => {
                     );
                 }
             })
-            // res.status(200).send(
-            //     {
-            //         success: true,
-            //         message: 'Insert theme Successfully',
-            //         statusCode: 200
-            //     }
-            // );
         }
     })
 } 
