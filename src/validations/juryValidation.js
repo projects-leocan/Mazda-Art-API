@@ -1,7 +1,7 @@
 
 exports.addJuryValidation = (req, res, next) => {
     const { fullName, email, contact_no, password, address, designation, DOB, about, links } = req.body;
-    if(req.body == undefined || req.body === ""){
+    if (req.body == undefined || req.body === "") {
         return res.status(500).send({
             success: false,
             message: "Pass data in Body field.",
@@ -64,12 +64,30 @@ exports.addJuryValidation = (req, res, next) => {
     next();
 }
 exports.getAllJuryValidation = (req, res, next) => {
-    const { admin_id } = req.query;
+    const { record_per_page, page_no, isAll, admin_id } = req.query;
     if (admin_id == undefined || admin_id === "") {
         return res.status(500).send({
             success: false,
             message: "admin Id can not be Empty",
         })
+    }
+    if (record_per_page == undefined && page_no == undefined && isAll == undefined) {
+        return res.status(500).send({
+            success: false,
+            message: "record_per_page and page_no OR isAll can not be Empty",
+        });
+    }
+    if (isAll == undefined && page_no == undefined) {
+        return res.status(500).send({
+            success: false,
+            message: "page_no can not be Empty",
+        });
+    }
+    if (isAll == undefined && record_per_page == undefined) {
+        return res.status(500).send({
+            success: false,
+            message: "record_per_page can not be Empty",
+        });
     }
     next();
 }

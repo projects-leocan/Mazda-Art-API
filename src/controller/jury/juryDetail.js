@@ -8,8 +8,8 @@ exports.getJuryDetails = async (jury_id, message, res) => {
     // const newQuery = `SELECT * FROM jury WHERE id = ${jury_id}`; //1716444879455
     try {
         pool.query(newQuery, async (newErr, newResult) => {
-            console.log(`getJuryDetails newResult: ${JSON.stringify(newResult)}`);
-            console.log(`newErr: ${newErr}`);
+            // console.log(`getJuryDetails newResult: ${JSON.stringify(newResult)}`);
+            // console.log(`newErr: ${newErr}`);
             if (newErr) {
                 res.status(500).send(
                     {

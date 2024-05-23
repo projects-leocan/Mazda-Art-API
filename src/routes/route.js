@@ -28,7 +28,7 @@ const { getAllThemeController } = require("../controller/theme/getAllThemeContro
 // Grant
 const { addGrantController } = require("../controller/grant/addGrantController");
 const { getAllGrantController } = require("../controller/grant/getAllGrantController");
-const { addGrantValidation, updateGrantValidation } = require("../validations/grantValidations");
+const { addGrantValidation, updateGrantValidation, getAllGrantValidation } = require("../validations/grantValidations");
 const { updateGrantController } = require("../controller/grant/updateGrantController");
 const { updateThemeController } = require("../controller/theme/updateThemeController");
 const { addThemeValidation, updateThemeValidation } = require("../validations/themeValidation");
@@ -62,7 +62,7 @@ module.exports = app => {
 
     /// grants
     router.post("/addGrant", validateAccessToken, addGrantValidation, addGrantController);
-    router.get("/getAllGrant", validateAccessToken, getAllGrantController);
+    router.get("/getAllGrant", validateAccessToken, getAllGrantValidation, getAllGrantController);
     router.post("/updateGrant", validateAccessToken, updateGrantValidation, updateGrantController);
 
     /// theme

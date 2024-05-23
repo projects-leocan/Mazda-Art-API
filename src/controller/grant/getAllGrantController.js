@@ -3,7 +3,25 @@ const _ = require("lodash");
 const { getUTCdate } = require("../../constants/getUTCdate");
 
 exports.getAllGrantController = async (req, res) => {
-    const query = `SELECT g.*, m.medium_of_choice, t.theme from public.grants as g, public.medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id ORDER By g.grant_id`;
+    let { record_per_page, page_no, isAll } = req.query;
+
+    if (record_per_page == undefined) {
+        record_per_page = 10;
+    }
+    if (page_no == undefined) {
+        page_no = 1;
+    }
+
+    let query;
+
+    if (isAll != undefined) {
+        query = `SELECT g.*, m.medium_of_choice, t.theme from public.grants as g, public.medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id ORDER By g.grant_id`;
+    } else {
+        offset = (page_no - 1) * record_per_page;
+        query = `SELECT g.*, m.medium_of_choice, t.theme from public.grants as g, public.medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id ORDER By g.grant_id LIMIT ${record_per_page} OFFSET ${offset}`;
+    }
+    console.log(`query: ${query}`);
+
     try {
         await pool.query('SET TIME ZONE \'UTC\'');
         pool.query(query, async (err, result) => {

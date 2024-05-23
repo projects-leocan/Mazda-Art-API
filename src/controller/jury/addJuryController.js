@@ -9,13 +9,13 @@ exports.addJuryController = async (req, res) => {
 
     try {
         const currentTime = new Date().toISOString().slice(0, 10);
-        const id = new Date().getTime();
+        // const id = new Date().getTime();
 
         const hashedPassword = await passwordHashing(password);
 
         const query = `INSERT INTO jury(
-            id, full_name, email, contact_no, password, address, designation, dob, about, created_at, updated_at)
-            VALUES ('${id}', '${fullName}', '${email}', ${contact_no}, '${hashedPassword}', '${address}', '${designation}', '${DOB}', '${about}', '${currentTime}', '${currentTime}') RETURNING id`;
+            full_name, email, contact_no, password, address, designation, dob, about, created_at, updated_at)
+            VALUES ('${fullName}', '${email}', ${contact_no}, '${hashedPassword}', '${address}', '${designation}', '${DOB}', '${about}', '${currentTime}', '${currentTime}') RETURNING id`;
 
         pool.query(query, async (err, result) => {
             // console.log(`query: ${query}`);

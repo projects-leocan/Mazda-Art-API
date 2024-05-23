@@ -4,10 +4,24 @@ const { somethingWentWrong } = require("../../constants/messages");
 const { getUTCdate } = require("../../constants/getUTCdate");
 
 exports.getAllJuryController = async (req, res) => {
-    const { admin_id } = req.query;
+    let { admin_id, record_per_page, page_no, isAll } = req.query;
+
+    if (record_per_page == undefined) {
+        record_per_page = 10;
+    }
+    if (page_no == undefined) {
+        page_no = 1;
+    }
+
+    let query = "";
+    if (isAll != undefined) {
+        query = `SELECT jury.id, jury.*, array_agg(jury_links.link) AS links FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id GROUP BY jury.id`;
+    } else {
+        offset = (page_no - 1) * record_per_page;
+        query = `SELECT jury.id, jury.*, array_agg(jury_links.link) AS links FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id GROUP BY jury.id LIMIT ${record_per_page} OFFSET ${offset}`;
+    }
 
     try {
-        const query = `SELECT jury.id, jury.*, array_agg(jury_links.link) AS links FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id GROUP BY jury.id`;
         pool.query(query, async (err, result) => {
             // console.log(`error: ${err}`);
             // console.log(`result: ${JSON.stringify(result)}`);
