@@ -74,19 +74,19 @@ exports.getAllJuryValidation = (req, res, next) => {
     next();
 }
 exports.updateJuryValidation = (req, res, next) => {
-    const { jury_id, admin_id } = req.body;
+    const { jury_id } = req.body;
     if (jury_id == undefined || jury_id === "") {
         return res.status(500).send({
             success: false,
             message: "Jury id can not be Empty",
         })
     }
-    if (admin_id == undefined || admin_id === "") {
-        return res.status(500).send({
-            success: false,
-            message: "Admin id can not be Empty",
-        })
-    }
+    // if (admin_id == undefined || admin_id === "") {
+    //     return res.status(500).send({
+    //         success: false,
+    //         message: "Admin id can not be Empty",
+    //     })
+    // }
     next();
 }
 exports.getJuryDetailValidation = (req, res, next) => {

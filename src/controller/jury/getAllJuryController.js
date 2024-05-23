@@ -9,8 +9,8 @@ exports.getAllJuryController = async (req, res) => {
     try {
         const query = `SELECT jury.id, jury.*, array_agg(jury_links.link) AS links FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id GROUP BY jury.id`;
         pool.query(query, async (err, result) => {
-            console.log(`error: ${err}`);
-            console.log(`result: ${JSON.stringify(result)}`);
+            // console.log(`error: ${err}`);
+            // console.log(`result: ${JSON.stringify(result)}`);
             if (err) {
                 res.status(500).send(
                     {
