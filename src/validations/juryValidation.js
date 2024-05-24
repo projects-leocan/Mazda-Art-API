@@ -123,3 +123,30 @@ exports.getJuryDetailValidation = (req, res, next) => {
     // }
     next();
 }
+
+exports.juryLoginValidation = (req, res, next) => {
+    const { email, password } = req.query;
+    if (email == undefined || email === "") {
+        return res.status(500).send({
+            success: false,
+            message: "Email can not be Empty",
+        })
+    }
+    if (password == undefined || password === "") {
+        return res.status(500).send({
+            success: false,
+            message: "Password can not be Empty",
+        })
+    }
+    next();
+}
+exports.getJuryEmailValidation = (req, res, next) => {
+    const { jury_id } = req.query;
+    if (jury_id == undefined || jury_id === "") {
+        return res.status(500).send({
+            success: false,
+            message: "jury Id can not be Empty",
+        })
+    }
+    next();
+}

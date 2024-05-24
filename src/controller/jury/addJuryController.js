@@ -22,14 +22,24 @@ exports.addJuryController = async (req, res) => {
             // console.log(`result: ${JSON.stringify(result)}`);
             if (err) {
                 // console.log(`err: ${err}`);
-                res.status(500).send(
-                    {
-                        success: false,
-                        error: err,
-                        messages: "Something went wrong",
-                        statusCode: 500
-                    }
-                )
+                if (err.detail === `Key (email)=(${email}) already exists.`) {
+                    res.status(500).send(
+                        {
+                            success: false,
+                            messages: "Email Id already Exist, try different email or sign in.",
+                            statusCode: 500
+                        }
+                    )
+                } else {
+                    console.log(`err: ${err}`);
+                    res.status(500).send(
+                        {
+                            success: false,
+                            messages: somethingWentWrong,
+                            statusCode: 500
+                        }
+                    )
+                }
             } else {
                 if (!_.isEmpty(links)) {
                     // add links in link master table

@@ -9,7 +9,6 @@ var corsOptions = {
   origin: "http://localhost:3000"
 };
 
-
 app.use(cors(corsOptions));
 
 // Parsing middleware
@@ -29,7 +28,6 @@ app.use((err, req, res, next) => {
     message: err.message,
   });
 });
-
 
 app.listen(port, () => {
   console.log(`hello Server is running on port ${port}.`);
