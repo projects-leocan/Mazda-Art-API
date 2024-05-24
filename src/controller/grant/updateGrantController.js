@@ -2,7 +2,7 @@ const pool = require("../../config/db");
 const { getUTCdate } = require("../../constants/getUTCdate");
 
 exports.updateGrantController = async (req, res) => {
-    let { grant_id, admin_id, category_id, hight, width, theme_id, app_fees, submission_end_date, max_allow_submision, no_of_awards, no_of_nominations, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount } = req.body;
+    let { grant_id, admin_id, category_id, hight, width, theme_id, app_fees, submission_end_date, max_allow_submision, no_of_awards, no_of_nominations, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, is_flat_pyramid } = req.body;
 
     const currentTime = new Date().toISOString().slice(0, 10);
     let query = `UPDATE grants set `;
@@ -38,20 +38,27 @@ exports.updateGrantController = async (req, res) => {
     if (no_of_nominations != undefined) {
         query += `, no_of_nominations='${no_of_nominations}'`;
     }
-    if (rank_1_price != undefined) {
-        query += `, rank_1_price='${rank_1_price}'`;
-    }
-    if (rank_2_price != undefined) {
-        query += `, rank_2_price='${rank_2_price}'`;
-    }
-    if (rank_3_price != undefined) {
-        query += `, rank_3_price='${rank_3_price}'`;
+    if (is_flat_pyramid == 1) {
+        query += `, rank_1_price=0, rank_2_price=0, rank_3_price=0`;
+    } else {
+        if (rank_1_price != undefined) {
+            query += `, rank_1_price='${rank_1_price}'`;
+        }
+        if (rank_2_price != undefined) {
+            query += `, rank_2_price='${rank_2_price}'`;
+        }
+        if (rank_3_price != undefined) {
+            query += `, rank_3_price='${rank_3_price}'`;
+        }
     }
     if (nominee_price != undefined) {
         query += `, nominee_price='${nominee_price}'`;
     }
     if (grand_amount != undefined) {
         query += `, grand_amount='${grand_amount}'`;
+    }
+    if (is_flat_pyramid != undefined) {
+        query += `, is_flat_pyramid='${is_flat_pyramid}'`;
     }
 
     query += ` WHERE grant_id='${grant_id}'`;

@@ -37,11 +37,15 @@ exports.adminLoginController = async (req, res) => {
                         email: admin_email,
                         password: admin_password
                     }
-                    let token = jwt.sign({ user: tokenData }, jwtKeys.JWT_SECRET_KEY, { expiresIn: '36500d' }); // 36500 days = 10 Years
+                    if (result.rows[0].admin_password != undefined) {
+                        delete result.rows[0].admin_password;
+                    }
+                    let token = jwt.sign({ user: tokenData }, jwtKeys.JWT_SECRET_KEY, { expiresIn: '3650d' }); // 3650 days = 10 Years
                     res.status(200).send(
                         {
                             success: true,
                             token: token,
+                            data: result.rows[0],
                             message: 'Login Successfully',
                             statusCode: 200
                         }

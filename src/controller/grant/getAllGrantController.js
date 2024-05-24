@@ -20,10 +20,10 @@ exports.getAllGrantController = async (req, res) => {
         offset = (page_no - 1) * record_per_page;
         query = `SELECT g.*, m.medium_of_choice, t.theme from public.grants as g, public.medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id ORDER By g.grant_id LIMIT ${record_per_page} OFFSET ${offset}`;
     }
-    console.log(`query: ${query}`);
+    // console.log(`query: ${query}`);
 
     try {
-        await pool.query('SET TIME ZONE \'UTC\'');
+        // await pool.query('SET TIME ZONE \'UTC\'');
         pool.query(query, async (err, result) => {
             console.log(`err: ${err}`);
             // console.log(`result: ${JSON.stringify(result)}`);

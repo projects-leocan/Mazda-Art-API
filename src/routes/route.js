@@ -11,7 +11,7 @@ const { validateAccessToken } = require("../validations/accessTokenValidation");
 const { addAdminValidator, adminLoginValidation, adminIdValidator } = require("../validations/adminValidations");
 
 // User controllers
-const { getUserProfileValidation, searchUserValidation, updateUserValidation: updateValidation, getUserDetailValidation } = require("../validations/userValidations");
+const { getUserProfileValidation, searchUserValidation, getUserDetailValidation } = require("../validations/userValidations");
 const { updateUserController } = require("../controller/userControllers/updateUserController");
 const { searchUserController } = require("../controller/userControllers/searchUserController");
 const { addMODControllers } = require("../controller/mediumOfChoiceControllrs/addMODController");
@@ -38,6 +38,8 @@ const { getJuryDetailsController } = require("../controller/jury/getJuryDetailsC
 const { addJuryController } = require("../controller/jury/addJuryController");
 const { updateJuryDetailsController } = require("../controller/jury/updateJuryController");
 const { juryLoginController } = require("../controller/jury/juryLogin");
+const { assignGrantToJuryController } = require("../controller/grantMapping/assignGrantToJuryController");
+const { assignGrantToJuryValidator } = require("../validations/grantMappingValidations");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -57,9 +59,9 @@ module.exports = app => {
     /// user APIs
     router.get("/getUsers", validateAccessToken, getUserProfileValidation, allUsersController);
     router.get("/searchUser", validateAccessToken, searchUserValidation, searchUserController);
-    router.post("/updateUser", validateAccessToken, updateUserController);
+    router.post("/updateUser", validateAccessToken, updateUserController); // update user profile validation is added in controller
     router.get("/getUserDetails", validateAccessToken, getUserDetailValidation, getUserDetails);
-
+    router.post("/createUser", getUserDetailValidation, getUserDetails);
 
     /// grants
     router.post("/addGrant", validateAccessToken, addGrantValidation, addGrantController);
@@ -67,7 +69,7 @@ module.exports = app => {
     router.post("/updateGrant", validateAccessToken, updateGrantValidation, updateGrantController);
 
     /// theme
-    router.get("/getAllTheme", validateAccessToken, getAllGrantController);
+    router.get("/getAllTheme", validateAccessToken, getAllThemeController);
     router.post("/addTheme", validateAccessToken, addThemeValidation, addThemeController);
     router.post("/updateTheme", validateAccessToken, updateThemeValidation, updateThemeController);
 
@@ -77,6 +79,9 @@ module.exports = app => {
     router.post("/addJury", validateAccessToken, addJuryValidation, addJuryController);
     router.post("/updateJury", validateAccessToken, updateJuryValidation, updateJuryDetailsController);
     router.get("/juryLogin", juryLoginValidation, juryLoginController);
+
+    // grant assign
+    router.post("/assignGrantToJury", assignGrantToJuryValidator, assignGrantToJuryController);
 
 
     app.use('/api/v1', router)

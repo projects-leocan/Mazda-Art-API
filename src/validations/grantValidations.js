@@ -103,7 +103,7 @@ exports.addGrantValidation = (req, res, next) => {
 }
 
 exports.updateGrantValidation = (req, res, next) => {
-    const { grant_id, admin_id, category_id, hight, width, theme_id, app_fees, submission_end_date, max_allow_submision, no_of_awards, no_of_nominations, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount } = req.body;
+    const { grant_id, admin_id, category_id, hight, width, theme_id, app_fees, submission_end_date, max_allow_submision, no_of_awards, no_of_nominations, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, is_flat_pyramid } = req.body;
     if (_.isEmpty(req.body)) {
         return res.status(500).send({
             success: false,
@@ -114,6 +114,12 @@ exports.updateGrantValidation = (req, res, next) => {
         return res.status(500).send({
             success: false,
             message: "Invalid grant id can not be empty",
+        });
+    }
+    if (is_flat_pyramid === undefined) {
+        return res.status(500).send({
+            success: false,
+            message: "is_flat_pyramid can not be empty",
         });
     }
     next();

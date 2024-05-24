@@ -1,4 +1,6 @@
 const pool = require("../../config/db");
+const path = require("path");
+const { userPortFoliaImagePath, userProfileImagePath } = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
 
 exports.allUsersController = async (req, res) => {
@@ -13,11 +15,12 @@ exports.allUsersController = async (req, res) => {
         }
         let query;
         // console.log(`isAll: ${isAll}`)
-        if (isAll != undefined) {// && isAll === true
-            query = `SELECT *, COUNT(*) OVER() AS totalArtist FROM artist`;
+        if (isAll != undefined) {
+            query = `SELECT *, COUNT(*) OVER() AS totalArtist FROM artist Order by artist_id`;
+
         } else {
             offset = (page_no - 1) * record_per_page;
-            query = `SELECT *, COUNT(*) OVER() AS totalArtist FROM artist LIMIT ${record_per_page} OFFSET ${offset}`;
+            query = `SELECT *, COUNT(*) OVER() AS totalArtist FROM artist Order by artist_id LIMIT ${record_per_page} OFFSET ${offset}`;
         }
         // console.log(`query: ${query}`);
         pool.query(query, async (err, result) => {
@@ -31,13 +34,28 @@ exports.allUsersController = async (req, res) => {
                 )
             } else {
                 // console.log(`response: ${JSON.stringify(result.rows)}`);
+                //http://192.168.1.8:8080/src/files/user_portfolio/8_1716549179751.jpeg
+                // src/files/user_portfolio/8_1716549179751.jpeg
+
+                const updatedResult = result.rows?.map((res) => {
+                    // console.log(`__dirname: ${__dirname}`)
+                    // console.log(`__dirname: ${path.join(__dirname, userPortFoliaImagePath, res.artist_portfolio)}`)
+                    return {
+                        ...res,
+                        // profile_pic: (res.profile_pic === null) ? null : path.join(__dirname, userProfileImagePath, res.profile_pic),
+                        // artist_portfolio: (res.artist_portfolio == null) ? null : path.join(__dirname, userPortFoliaImagePath, res.artist_portfolio),
+                        profile_pic2: (res.profile_pic == null) ? null : `${req.protocol}://${req.get('host')}/${userPortFoliaImagePath}${res.profile_pic}`,
+                        artist_portfolio2: (res.artist_portfolio == null) ? null : `${req.protocol}://${req.get('host')}/${userProfileImagePath}${res.artist_portfolio}`,
+                    }
+                })
                 res.status(200).send(
                     {
                         success: true,
                         statusCode: 200,
                         message: 'Data fetch successfully',
                         totalArtist: (result.rows.length > 0) ? result.rows[0].totalartist : 0,
-                        data: result.rows,
+                        // dataNew: result.rows,
+                        data: updatedResult,
                     }
                 )
             }
