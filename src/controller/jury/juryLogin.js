@@ -1,5 +1,8 @@
 const pool = require("../../config/db");
 const bcrypt = require("bcrypt")
+const jwt = require('jsonwebtoken');
+const jwtKeys = require('../../constants/jwtKeys');
+const { createAccessToken } = require("../../constants/createAccessToken");
 
 exports.juryLoginController = async (req, res) => {
     const { email, password } = req.query;
@@ -31,9 +34,15 @@ exports.juryLoginController = async (req, res) => {
                 const isMatch = await bcrypt.compare(password, dbPassword);
                 if (isMatch) {
                     if (result.rows[index].password != undefined) delete result.rows[index].password;
+                    let tokenData = {
+                        email: email,
+                        password: password
+                    }
+                    let token = createAccessToken(tokenData);
                     res.status(200).send(
                         {
                             success: true,
+                            token: token,
                             message: 'Login Successfully',
                             statusCode: 200,
                             data: result.rows[index],

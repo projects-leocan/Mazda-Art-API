@@ -5,7 +5,7 @@ const { passwordHashing } = require("../../constants/passwordHashing");
 const { getJuryDetails } = require("./juryDetail");
 
 exports.updateJuryDetailsController = async (req, res) => {
-    const { jury_id, is_link_updated, fullName, email, contact_no, password, address, designation, DOB, about, links, isFirstTimeSignIn } = req.body;
+    const { jury_id, is_link_updated, full_name, email, contact_no, password, address, designation, DOB, about, links, isFirstTimeSignIn } = req.body;
 
     try {
         const currentTime = new Date().toISOString().slice(0, 10);
@@ -13,8 +13,8 @@ exports.updateJuryDetailsController = async (req, res) => {
         let query = `UPDATE jury SET `;
         query += `updated_at='${currentTime}'`;
 
-        if (fullName != undefined) {
-            query += `, full_name='${fullName}'`;
+        if (full_name != undefined) {
+            query += `, full_name='${full_name}'`;
         }
         if (email != undefined) {
             query += `, email='${email}'`;

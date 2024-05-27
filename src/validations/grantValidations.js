@@ -125,6 +125,23 @@ exports.updateGrantValidation = (req, res, next) => {
     next();
 }
 
+exports.getGrantDetailValidation = (req, res, next) => {
+    const { grant_id } = req.query;
+    // if (_.isEmpty(req.body)) {
+    //     return res.status(500).send({
+    //         success: false,
+    //         message: "Pass data in Params",
+    //     });
+    // }
+    if (grant_id === undefined || grant_id === "") {
+        return res.status(500).send({
+            success: false,
+            message: "Invalid grant id can not be empty",
+        });
+    }
+    next();
+}
+
 exports.getAllGrantValidation = (req, res, next) => {
     const { record_per_page, page_no, isAll } = req.query;
     if (record_per_page == undefined && page_no == undefined && isAll == undefined) {

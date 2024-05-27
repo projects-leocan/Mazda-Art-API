@@ -2,7 +2,8 @@ const pool = require("../../config/db");
 const jwt = require('jsonwebtoken');
 const jwtKeys = require('../../constants/jwtKeys');
 const { passwordHashing } = require("../../constants/passwordHashing");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
+const { createAccessToken } = require("../../constants/createAccessToken");
 
 exports.adminLoginController = async (req, res) => {
     const { admin_email, admin_password } = req.query;
@@ -40,7 +41,8 @@ exports.adminLoginController = async (req, res) => {
                     if (result.rows[0].admin_password != undefined) {
                         delete result.rows[0].admin_password;
                     }
-                    let token = jwt.sign({ user: tokenData }, jwtKeys.JWT_SECRET_KEY, { expiresIn: '3650d' }); // 3650 days = 10 Years
+                    // let token = jwt.sign({ user: tokenData }, jwtKeys.JWT_SECRET_KEY, { expiresIn: '3650d' }); // 3650 days = 10 Years
+                    let token = createAccessToken(tokenData);
                     res.status(200).send(
                         {
                             success: true,

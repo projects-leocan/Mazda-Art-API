@@ -12,66 +12,54 @@ exports.getAllGrantController = async (req, res) => {
         page_no = 1;
     }
 
-    let query;
+    // let query = `SELECT g.*, m.medium_of_choice, t.theme from public.grants as g, public.medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id ORDER By g.grant_id`;
+    // let query = `SELECT g.grant_id, g.submission_end_date, m.medium_of_choice, t.theme from public.grants as g, public.medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id ORDER By g.submission_end_date`;
 
-    if (isAll != undefined) {
-        query = `SELECT g.*, m.medium_of_choice, t.theme from public.grants as g, public.medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id ORDER By g.grant_id`;
-    } else {
+    let query = `SELECT grant_id, submission_end_date, application_fees from public.grants 
+	WHERE submission_end_date >= CURRENT_DATE ORDER By submission_end_date`;
+
+    if (isAll == undefined) {
         offset = (page_no - 1) * record_per_page;
-        query = `SELECT g.*, m.medium_of_choice, t.theme from public.grants as g, public.medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id ORDER By g.grant_id LIMIT ${record_per_page} OFFSET ${offset}`;
+        query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
-    // console.log(`query: ${query}`);
 
     try {
-        // await pool.query('SET TIME ZONE \'UTC\'');
         pool.query(query, async (err, result) => {
             console.log(`err: ${err}`);
             // console.log(`result: ${JSON.stringify(result)}`);
             if (err) {
-                res.status(500).send(
-                    {
-                        success: false,
-                        message: err,
-                        statusCode: 500
-                    }
-                )
+                res.status(500).send({
+                    success: false,
+                    message: err,
+                    statusCode: 500,
+                });
             } else {
-                // remove category_MOD and theme_id which contains id only
-                result.rows.forEach((e) => {
-                    delete e.category_MOD;
-                    delete e.theme_id;
-                })
-
                 const updatedResult = result.rows?.map((res) => {
                     return {
                         ...res,
                         updated_at: getUTCdate(res.updated_at),
                         submission_end_date: getUTCdate(res.submission_end_date),
-                        created_at: getUTCdate(res.created_at)
-                    }
-                })
+                        created_at: getUTCdate(res.created_at),
+                    };
+                });
 
                 // console.log("uopdated at", updatedResult)
 
-                res.status(200).send(
-                    {
-                        success: true,
-                        message: 'Grants fetched successfully',
-                        // data: result.rows,
-                        data: updatedResult,
-                        statusCode: 200
-                    }
-                )
+                res.status(200).send({
+                    success: true,
+                    message: "Grants fetched successfully",
+                    // data: result.rows,
+                    data: updatedResult,
+                    statusCode: 200,
+                });
             }
-        })
+        });
     } catch (error) {
         console.log(`error: ${error}`);
-        return res.status(500).send(
-            {
-                success: false,
-                message: somethingWentWrong,
-                statusCode: 500
-            }
-        )
+        return res.status(500).send({
+            success: false,
+            message: somethingWentWrong,
+            statusCode: 500,
+        });
     }
-}
+};
