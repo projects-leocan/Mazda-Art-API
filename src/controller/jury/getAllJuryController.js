@@ -13,12 +13,12 @@ exports.getAllJuryController = async (req, res) => {
         page_no = 1;
     }
 
-    let query = "";
-    if (isAll != undefined) {
-        query = `SELECT jury.id, jury.*, array_agg(jury_links.link) AS links FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id GROUP BY jury.id`;
-    } else {
+    let query = `SELECT jury.id, jury.full_name, jury.email ,jury.contact_no ,jury.designation, array_agg(jury_links.link) AS links, 
+	(SELECT COUNT(*) AS total_count FROM jury)
+	FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id GROUP BY jury.id`;
+    if (isAll == undefined) {
         offset = (page_no - 1) * record_per_page;
-        query = `SELECT jury.id, jury.*, array_agg(jury_links.link) AS links FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id GROUP BY jury.id LIMIT ${record_per_page} OFFSET ${offset}`;
+        query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
 
     try {
@@ -34,29 +34,18 @@ exports.getAllJuryController = async (req, res) => {
                     }
                 )
             } else {
-                const finalResponse = [];
-
-                /// remove data from map 
-                result.rows.forEach((e) => {
-                    delete e.password;
-                    delete e.created_at;
-                    delete e.created_at;
-                    if (Array.isArray(e.links) && e.links.length === 1 && e.links[0] === null) {
-                        delete e.links;
-                    }
-                    const response = {
-                        ...e,
-                        dob: getUTCdate(e.dob),
-                    }
-                    finalResponse.push(response);
+                const count = result.rows[0].total_count;
+                console.log(`result.rows.: ${JSON.stringify(result.rows)}`);
+                result.rows.map((e) => {
+                    if (e.total_count != undefined) delete e.total_count
                 })
-
                 return res.status(200).send(
                     {
                         success: true,
                         statusCode: 200,
+                        totalCount: count,
                         message: "Get all jury successfully",
-                        data: finalResponse,
+                        data: result.rows,
                     }
                 );
             }

@@ -8,7 +8,7 @@ const { deleteAdminController } = require("../controller/adminControllers/delete
 const { getAdminController } = require('../controller/adminControllers/getAdminController');
 const { adminLoginController } = require("../controller/adminControllers/adminLoginController");
 const { validateAccessToken } = require("../validations/accessTokenValidation");
-const { addAdminValidator, adminLoginValidation, adminIdValidator } = require("../validations/adminValidations");
+const { addAdminValidator, adminLoginValidation, adminIdValidator, getAllAdminValidator } = require("../validations/adminValidations");
 
 // User controllers
 const { getUserProfileValidation, searchUserValidation, getUserDetailValidation } = require("../validations/userValidations");
@@ -55,7 +55,7 @@ module.exports = app => {
     /// admin APIs
     router.get("/adminLogin", adminLoginValidation, adminLoginController);
     router.post("/addAdmin", validateAccessToken, addAdminValidator, addAdminController);
-    router.get("/getAllAdmin", validateAccessToken, getAdminController)
+    router.get("/getAllAdmin", validateAccessToken, getAllAdminValidator, getAdminController)
     router.post("/updateAdmin", validateAccessToken, adminIdValidator, updateAdminController);
     router.post("/deleteAdmin", validateAccessToken, adminIdValidator, deleteAdminController);
 
@@ -64,7 +64,7 @@ module.exports = app => {
     router.get("/searchUser", validateAccessToken, searchUserValidation, searchUserController);
     router.post("/updateUser", validateAccessToken, updateUserController); // update user profile validation is added in controller
     router.get("/getUserDetails", validateAccessToken, getUserDetailValidation, getUserDetails);
-    router.post("/createUser", getUserDetailValidation, getUserDetails, addUserController);
+    router.post("/createUser", validateAccessToken, getUserDetailValidation, addUserController);
 
     /// grants
     router.post("/addGrant", validateAccessToken, addGrantValidation, addGrantController);

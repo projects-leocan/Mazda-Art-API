@@ -12,10 +12,8 @@ exports.getAllGrantController = async (req, res) => {
         page_no = 1;
     }
 
-    // let query = `SELECT g.*, m.medium_of_choice, t.theme from public.grants as g, public.medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id ORDER By g.grant_id`;
-    // let query = `SELECT g.grant_id, g.submission_end_date, m.medium_of_choice, t.theme from public.grants as g, public.medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id ORDER By g.submission_end_date`;
-
-    let query = `SELECT grant_id, submission_end_date, application_fees from public.grants 
+    let query = `SELECT grant_id, submission_end_date, application_fees, (SELECT COUNT(*) AS total_count FROM public.grants WHERE submission_end_date >= CURRENT_DATE) 
+	from public.grants 
 	WHERE submission_end_date >= CURRENT_DATE ORDER By submission_end_date`;
 
     if (isAll == undefined) {
@@ -44,11 +42,14 @@ exports.getAllGrantController = async (req, res) => {
                 });
 
                 // console.log("uopdated at", updatedResult)
+                updatedResult.map((e) => {
+                    if (e.total_count != undefined) delete e.total_count
+                })
 
                 res.status(200).send({
                     success: true,
                     message: "Grants fetched successfully",
-                    // data: result.rows,
+                    total_count: result.rows[0].total_count,
                     data: updatedResult,
                     statusCode: 200,
                 });
