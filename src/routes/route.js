@@ -11,15 +11,15 @@ const { validateAccessToken } = require("../validations/accessTokenValidation");
 const { addAdminValidator, adminLoginValidation, adminIdValidator, getAllAdminValidator } = require("../validations/adminValidations");
 
 // User controllers
-const { getUserProfileValidation, searchUserValidation, getUserDetailValidation } = require("../validations/userValidations");
+const { getUserProfileValidation, searchUserValidation, getUserDetailValidation, getUserIdValidation, addUserValidation } = require("../validations/userValidations");
 const { updateUserController } = require("../controller/userControllers/updateUserController");
 const { searchUserController } = require("../controller/userControllers/searchUserController");
 const { addMODControllers } = require("../controller/mediumOfChoiceControllrs/addMODController");
 const { getAllMODControllers } = require("../controller/mediumOfChoiceControllrs/getAllMODControllers");
 const { addMODValidation, updateMODValidation } = require("../validations/MODValidations");
 const { updateMODController } = require("../controller/mediumOfChoiceControllrs/updateMODController");
-const { allUsersController } = require("../controller/userControllers/allUsersController");
-const { getUserDetails } = require("../controller/userControllers/getUserDetails");
+const { getAllUsersController } = require("../controller/userControllers/getAllUsersController");
+const { getUserDetailsController } = require("../controller/userControllers/getUserDetailsController");
 
 //theme
 const { addThemeController } = require("../controller/theme/addThemeController");
@@ -60,11 +60,11 @@ module.exports = app => {
     router.post("/deleteAdmin", validateAccessToken, adminIdValidator, deleteAdminController);
 
     /// user APIs
-    router.get("/getUsers", validateAccessToken, getUserProfileValidation, allUsersController);
+    router.get("/getAllUsers", validateAccessToken, getUserProfileValidation, getAllUsersController);
     router.get("/searchUser", validateAccessToken, searchUserValidation, searchUserController);
     router.post("/updateUser", validateAccessToken, updateUserController); // update user profile validation is added in controller
-    router.get("/getUserDetails", validateAccessToken, getUserDetailValidation, getUserDetails);
-    router.post("/createUser", validateAccessToken, getUserDetailValidation, addUserController);
+    router.get("/getUserDetails", validateAccessToken, getUserIdValidation, getUserDetailsController);
+    router.post("/createUser", validateAccessToken, addUserValidation, addUserController);
 
     /// grants
     router.post("/addGrant", validateAccessToken, addGrantValidation, addGrantController);
@@ -86,7 +86,7 @@ module.exports = app => {
     router.get("/juryLogin", juryLoginValidation, juryLoginController);
 
     // grant assign
-    router.post("/assignGrantToJury", assignGrantToJuryValidator, assignGrantToJuryController);
+    router.post("/assignGrantToJury", validateAccessToken, assignGrantToJuryValidator, assignGrantToJuryController);
 
 
     app.use('/api/v1', router)

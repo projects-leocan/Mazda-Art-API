@@ -30,6 +30,18 @@ exports.getJuryDetails = async (jury_id, message, res) => {
                         }
                     )
                 } else {
+                    const grantQuery = `SELECT ga.jury_id, g.* FROM public.grant_assign as ga,grants as g WHERE ga.grant_id = g.grant_id AND jury_id = ${jury_id}`
+                    const juryGrantsResult = await pool.query(grantQuery);
+                    const grants = [];
+
+                    if (juryGrantsResult.rowCount > 0) {
+                        juryGrantsResult.rows.map((e) => {
+                            e.submission_end_date = getUTCdate(e.submission_end_date)
+                            e.updated_at = getUTCdate(e.updated_at)
+                            grants.push(e);
+                        })
+                    }
+
                     /// remove data from map 
                     if (newResult.rows[0].password != undefined) delete newResult.rows[0].password;
                     if (newResult.rows[0].created_at != undefined) delete newResult.rows[0].created_at;
@@ -40,6 +52,7 @@ exports.getJuryDetails = async (jury_id, message, res) => {
                     const response = {
                         ...newResult.rows[0],
                         dob: getUTCdate(newResult.rows[0].dob),
+                        assignGrants: juryGrantsResult.rows,
                     }
                     return res.status(200).send(
                         {

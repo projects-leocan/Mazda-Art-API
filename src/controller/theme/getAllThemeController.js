@@ -5,8 +5,8 @@ exports.getAllThemeController = async (req, res) => {
 
     try {
         pool.query(query, async (err, result) => {
-            console.log(`err: ${err}`);
-            console.log(`result: ${JSON.stringify(result)}`);
+            // console.log(`err: ${err}`);
+            // console.log(`result: ${JSON.stringify(result)}`);
             if (err) {
                 res.status(500).send(
                     {

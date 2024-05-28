@@ -17,8 +17,8 @@ exports.deleteAdminController = async (req, res) => {
     } else {
         const query = `DELETE FROM admin WHERE admin_id = ${admin_id}`
         pool.query(query, async (err, result) => {
-            console.log(`err: ${err}`);
-            console.log(`result: ${JSON.stringify(result)}`);
+            // console.log(`err: ${err}`);
+            // console.log(`result: ${JSON.stringify(result)}`);
             if (err) {
                 res.status(500).send(
                     {

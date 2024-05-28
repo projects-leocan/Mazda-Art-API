@@ -1,9 +1,8 @@
 const pool = require("../../config/db");
-const path = require("path");
-const { userPortFoliaImagePath, userProfileImagePath } = require("../../constants/filePaths");
+const { userPortFoliaImagePath, userProfileImagePath, getFileURLPreFixPath } = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
 
-exports.allUsersController = async (req, res) => {
+exports.getAllUsersController = async (req, res) => {
     let { record_per_page, page_no, isAll } = req.query;
 
     try {
@@ -13,14 +12,11 @@ exports.allUsersController = async (req, res) => {
         if (page_no == undefined) {
             page_no = 1;
         }
-        let query;
-        // console.log(`isAll: ${isAll}`)
-        if (isAll != undefined) {
-            query = `SELECT *, COUNT(*) OVER() AS totalArtist FROM artist Order by artist_id`;
+        let query = `SELECT artist_id, fname, lname, dob, gender, email, COUNT(*) OVER() AS totalArtist FROM artist Order by artist_id`;
 
-        } else {
+        if (isAll == undefined) {
             offset = (page_no - 1) * record_per_page;
-            query = `SELECT *, COUNT(*) OVER() AS totalArtist FROM artist Order by artist_id LIMIT ${record_per_page} OFFSET ${offset}`;
+            query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
         }
         // console.log(`query: ${query}`);
         pool.query(query, async (err, result) => {
@@ -40,12 +36,12 @@ exports.allUsersController = async (req, res) => {
                 const updatedResult = result.rows?.map((res) => {
                     // console.log(`__dirname: ${__dirname}`)
                     // console.log(`__dirname: ${path.join(__dirname, userPortFoliaImagePath, res.artist_portfolio)}`)
+                    const prePath = getFileURLPreFixPath(req);
                     return {
                         ...res,
-                        // profile_pic: (res.profile_pic === null) ? null : path.join(__dirname, userProfileImagePath, res.profile_pic),
-                        // artist_portfolio: (res.artist_portfolio == null) ? null : path.join(__dirname, userPortFoliaImagePath, res.artist_portfolio),
-                        profile_pic2: (res.profile_pic == null) ? null : `${req.protocol}://${req.get('host')}/${userPortFoliaImagePath}${res.profile_pic}`,
-                        artist_portfolio2: (res.artist_portfolio == null) ? null : `${req.protocol}://${req.get('host')}/${userProfileImagePath}${res.artist_portfolio}`,
+                        // profile_pic2: (res.profile_pic == null) ? null : `${req.protocol}://${req.get('host')}/${userPortFoliaImagePath}${res.profile_pic}`,
+                        profile_pic2: (res.profile_pic == null) ? null : `${prePath}${userPortFoliaImagePath}${res.profile_pic}`,
+                        artist_portfolio2: (res.artist_portfolio == null) ? null : `${prePath}${userProfileImagePath}${res.artist_portfolio}`,
                     }
                 })
                 res.status(200).send(

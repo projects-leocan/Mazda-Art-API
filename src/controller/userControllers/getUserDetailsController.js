@@ -1,8 +1,8 @@
 const pool = require("../../config/db");
-const { userPortFoliaImagePath, userProfileImagePath } = require("../../constants/filePaths");
+const { userPortFoliaImagePath, userProfileImagePath, getFileURLPreFixPath } = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
 
-exports.getUserDetails = async (req, res) => {
+exports.getUserDetailsController = async (req, res) => {
     const user_id = req.query.user_id;
 
     try {
@@ -21,11 +21,12 @@ exports.getUserDetails = async (req, res) => {
                     }
                 )
             } else {
+                const prePath = getFileURLPreFixPath(req);
                 if (result.rows[0].artist_portfolio != null) {
-                    result.rows[0].artist_portfolio = `${req.protocol}://${req.get('host')}/${userPortFoliaImagePath}${result.rows[0].artist_portfolio}`;
+                    result.rows[0].artist_portfolio = `${prePath}${userPortFoliaImagePath}${result.rows[0].artist_portfolio}`;
                 }
                 if (result.rows[0].profile_pic != null) {
-                    result.rows[0].profile_pic = `${req.protocol}://${req.get('host')}/${userProfileImagePath}${result.rows[0].profile_pic}`;
+                    result.rows[0].profile_pic = `${prePath}${userProfileImagePath}${result.rows[0].profile_pic}`;
                 }
                 return res.status(200).send(
                     {

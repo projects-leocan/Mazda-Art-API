@@ -5,11 +5,11 @@ const { getUTCdate } = require("../../constants/getUTCdate");
 exports.getJuryByGrantIdController = async (req, res) => {
     let { grant_id } = req.query;
 
-    const query = `SELECT * FROM jury where id IN (SELECT jury_id FROM grant_assign WHERE grant_id = ${grant_id})`;
+    const query = `SELECT id, full_name, email, contact_no, address, designation, dob, about, created_at FROM jury where id IN (SELECT jury_id FROM grant_assign WHERE grant_id = ${grant_id})`;
     try {
         pool.query(query, async (err, result) => {
-            console.log(`err: ${err}`);
-            console.log(`result: ${JSON.stringify(result)}`);
+            // console.log(`err: ${err}`);
+            // console.log(`result: ${JSON.stringify(result)}`);
             if (err) {
                 res.status(500).send({
                     success: false,

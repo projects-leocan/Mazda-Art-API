@@ -1,23 +1,35 @@
 const pool = require("../../config/db");
-const bcrypt = require("bcrypt");
 const { getUTCdate } = require("../../constants/getUTCdate");
 const { somethingWentWrong } = require("../../constants/messages");
 const _ = require('lodash');
 
 exports.assignGrantToJuryController = async (req, res) => {
-    const { jury_id, grant_id, admin_id } = req.body;
+    const { jury_ids, grant_id, admin_id } = req.body;
     try {
-        // check if jury is already assign to grant 
-        const juryValidation = `SELECT * FROM grant_assign WHERE jury_id = ${jury_id} AND grant_id = ${grant_id}`;
-        const validationResult = await pool.query(juryValidation);
-        // console.log(`validationResult: ${JSON.stringify(validationResult.result)}`);
+        /// check if jury is already assign to grant 
+        // const juryValidation = `SELECT * FROM grant_assign WHERE jury_id = ${jury_ids} AND grant_id = ${grant_id}`;
+        // const validationResult = await pool.query(juryValidation);
+        console.log(`Assign Jury called !!!!`);
         // console.log(`validationResult: ${JSON.stringify(validationResult.rows)}`);
 
-        if (_.isEmpty(validationResult.rows)) {
+        // if (_.isEmpty(validationResult.rows)) {
+        if (true) {
             const currentTime = new Date().toISOString().slice(0, 10);
-            const data = [jury_id, grant_id, admin_id, currentTime];
 
-            const query = `INSERT INTO grant_assign( jury_id, grant_id, assign_by, cerated_at) VALUES (${jury_id}, ${grant_id}, ${admin_id}, '${currentTime}') RETURNING id;`;
+            // const query = `INSERT INTO grant_assign( jury_id, grant_id, assign_by, cerated_at) VALUES (${jury_id}, ${grant_id}, ${admin_id}, '${currentTime}') RETURNING id;`;
+            let query = `INSERT INTO grant_assign( jury_id, grant_id, assign_by, cerated_at) VALUES `;
+            jury_ids.map((e) => {
+                let lastElement = _.last(jury_ids);
+                console.log(`jury_id: ${e}`);
+                if (e === lastElement) {
+                    query += `(${e}, ${grant_id}, ${admin_id}, '${currentTime}')`;
+                } else {
+                    query += `(${e}, ${grant_id}, ${admin_id}, '${currentTime}'), `;
+                }
+            });
+            // query += `RETURNING id;`;
+            console.log(`query: ${query}`);
+
             pool.query(query, async (err, result) => {
 
                 console.log(`err: ${err}`);

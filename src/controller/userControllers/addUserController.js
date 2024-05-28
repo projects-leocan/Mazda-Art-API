@@ -1,14 +1,10 @@
 const pool = require("../../config/db")
 const { somethingWentWrong } = require("../../constants/messages");
 const formidable = require("formidable");
-var fs = require("fs");
-var path = require('path');
 const { fileUpload } = require("../../utils/fileUpload");
 const { userPortFoliaImagePath, userProfileImagePath } = require("../../constants/filePaths");
 var lodash = require("lodash");
-const sharp = require('sharp');
-const { Blob } = require('buffer');
-const multer = require('multer');
+const { getUserDetails } = require("./getUserDetail");
 
 exports.addUserController = async (req, res) => {
 
@@ -18,6 +14,7 @@ exports.addUserController = async (req, res) => {
         form.parse(req, async function (err, fields, files) {
             let { fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio, profile_pic, portfolio_file_ext, profile_pic_file_ext, } = fields;
 
+            console.log(`Object.keys(fields).length: ${Object.keys(fields).length}`);
             if (Object.keys(fields).length === 0) {
                 res.status(500).send(
                     {
@@ -94,36 +91,9 @@ exports.addUserController = async (req, res) => {
                         const updatedResult = await pool.query(updateImagesQuery);
                     }
 
-                    const newQuery = `SELECT * FROM artist WHERE artist_id = ${artist_id}`;
-                    pool.query(newQuery, async (newErr, newResult) => {
-                        if (newErr) {
-                            res.status(500).send(
-                                {
-                                    success: false,
-                                    messages: "Something went wrong",
-                                    statusCode: 500,
-                                    profileImageUploadError: profileImageUploadError,
-                                    portfolioImageUploadError: portfolioImageUploadError,
-                                }
-                            )
-                        } else {
-                            return res.status(200).send(
-                                {
-                                    success: true,
-                                    statusCode: 200,
-                                    message: 'User Details Updated Successfully',
-                                    data: newResult.rows[0],
-                                    profileImageUploadError: profileImageUploadError,
-                                    portfolioImageUploadError: portfolioImageUploadError,
-                                }
-                            );
-                        }
-                    })
+                    getUserDetails(artist_id, 'User Details Updated Successfully', res, req);
                 }
             })
-
-
-
 
             if (artist_id != undefined && artist_id === "") {
                 res.status(500).send(
@@ -146,8 +116,8 @@ exports.addUserController = async (req, res) => {
 
             console.log(`query: ${query}`);
             pool.query(query, async (err, result) => {
-                console.log(`err: ${err}`);
-                console.log(`result: ${JSON.stringify(result)}`);
+                // console.log(`err: ${err}`);
+                // console.log(`result: ${JSON.stringify(result)}`);
                 if (err) {
                     res.status(500).send(
                         {

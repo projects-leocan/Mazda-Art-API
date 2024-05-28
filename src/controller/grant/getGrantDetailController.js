@@ -5,10 +5,6 @@ const { getUTCdate } = require("../../constants/getUTCdate");
 exports.getGrantDetailsController = async (req, res) => {
     let { grant_id } = req.query;
 
-    // let query = `SELECT g.*, m.medium_of_choice, t.theme
-    // from grants as g, medium_of_choice as m, theme as t
-    // where g."category_MOD" = m.id AND g.theme_id = t.id AND grant_id = ${grant_id}`;
-
     let query = `SELECT g.*, 
         m.medium_of_choice, 
         t.theme, 
@@ -40,9 +36,9 @@ exports.getGrantDetailsController = async (req, res) => {
                 } else {
                     const updatedResult = {
                         ...result.rows[0],
-                        updated_at: getUTCdate(result.rows.updated_at),
-                        submission_end_date: getUTCdate(result.rows.submission_end_date),
-                        created_at: getUTCdate(result.rows.created_at),
+                        updated_at: getUTCdate(result.rows[0].updated_at),
+                        submission_end_date: getUTCdate(result.rows[0].submission_end_date),
+                        created_at: getUTCdate(result.rows[0].created_at),
                         juryList: await getJuryDetails(result.rows[0].jury_ids),
                     };
 
@@ -68,14 +64,14 @@ exports.getGrantDetailsController = async (req, res) => {
 };
 
 const getJuryDetails = async (juryIds) => {
-    console.log(`juryData: ${JSON.stringify(juryIds)}`);
+    // console.log(`juryData: ${JSON.stringify(juryIds)}`);
 
     if (!_.isEmpty(juryIds)) {
         const juryData = await Promise.all(juryIds.map(async (e) => {
-            const result = await pool.query(`SELECT * FROM jury WHERE id = ${e}`);
+            const result = await pool.query(`SELECT id, full_name, email, contact_no, address, designation, dob, about, created_at FROM jury WHERE id = ${e}`);
             return result.rows[0]
         }))
-        console.log(`juryData: ${JSON.stringify(juryData)}`);
+        // console.log(`juryData: ${JSON.stringify(juryData)}`);
         return juryData;
     } else {
         return [];

@@ -18,6 +18,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
 
+app.use("/src/files", express.static('src/files'))
+
 require("./src/routes/route")(app);
 // Handling Errors
 app.use((err, req, res, next) => {

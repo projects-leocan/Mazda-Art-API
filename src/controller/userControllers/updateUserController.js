@@ -9,6 +9,7 @@ var lodash = require("lodash");
 const sharp = require('sharp');
 const { Blob } = require('buffer');
 const multer = require('multer');
+const { getUserDetails } = require("./getUserDetail");
 
 
 exports.updateUserController = async (req, res) => {
@@ -133,8 +134,8 @@ exports.updateUserController = async (req, res) => {
             query += ` WHERE artist_id=${artist_id}`;
             console.log(`query: ${query}`);
             pool.query(query, async (err, result) => {
-                console.log(`err: ${err}`);
-                console.log(`result: ${JSON.stringify(result)}`);
+                // console.log(`err: ${err}`);
+                // console.log(`result: ${JSON.stringify(result)}`);
                 if (err) {
                     res.status(500).send(
                         {
@@ -144,7 +145,8 @@ exports.updateUserController = async (req, res) => {
                         }
                     )
                 } else {
-                    const newQuery = `SELECT * FROM artist WHERE artist_id = ${artist_id}`;
+                    getUserDetails(artist_id, 'User Details Updated Successfully', res, req);
+                    /*const newQuery = `SELECT * FROM artist WHERE artist_id = ${artist_id}`;
                     pool.query(newQuery, async (newErr, newResult) => {
                         if (newErr) {
                             res.status(500).send(
@@ -168,7 +170,7 @@ exports.updateUserController = async (req, res) => {
                                 }
                             );
                         }
-                    })
+                    })*/
                 }
             })
         });
