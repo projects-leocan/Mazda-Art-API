@@ -10,15 +10,15 @@ exports.getGrantDetailsController = async (req, res) => {
     // where g."category_MOD" = m.id AND g.theme_id = t.id AND grant_id = ${grant_id}`;
 
     let query = `SELECT g.*, 
-    m.medium_of_choice, 
-    t.theme, 
-    COALESCE(ARRAY_AGG(ga.jury_id) FILTER (WHERE ga.jury_id IS NOT NULL), '{}') AS jury_ids
-FROM public.grants AS g
-JOIN public.medium_of_choice AS m ON g."category_MOD" = m.id
-JOIN public.theme AS t ON g.theme_id = t.id
-LEFT JOIN public.grant_assign AS ga ON g.grant_id = ga.grant_id
-WHERE g.grant_id = ${grant_id}
-GROUP BY g.grant_id, g.submission_end_date, m.medium_of_choice, t.theme;`;
+        m.medium_of_choice, 
+        t.theme, 
+        COALESCE(ARRAY_AGG(ga.jury_id) FILTER (WHERE ga.jury_id IS NOT NULL), '{}') AS jury_ids
+    FROM public.grants AS g
+    JOIN public.medium_of_choice AS m ON g."category_MOD" = m.id
+    JOIN public.theme AS t ON g.theme_id = t.id
+    LEFT JOIN public.grant_assign AS ga ON g.grant_id = ga.grant_id
+    WHERE g.grant_id = ${grant_id}
+    GROUP BY g.grant_id, g.submission_end_date, m.medium_of_choice, t.theme;`;
 
     try {
         pool.query(query, async (err, result) => {
@@ -38,39 +38,20 @@ GROUP BY g.grant_id, g.submission_end_date, m.medium_of_choice, t.theme;`;
                         statusCode: 200,
                     });
                 } else {
-                    // let juryData = [];
-                    let juryData;
-                    // console.log(`result1: ${JSON.stringify(result.rows[0].jury_ids)}`)
-
-                    if (!_.isEmpty(result.rows[0].jury_ids)) {
-                        console.log("inside loop !!!!!!!!!!");
-                        // result.rows[0].jury_ids.forEach(async (e) => {
-                        //     const juryListQuery = `SELECT * FROM jury WHERE id = ${e}`;
-                        //     const juryListResult = await pool.query(juryListQuery);
-                        //     juryData.push(juryListResult.rows[0]);
-                        //     console.log(`juryData1 ${JSON.stringify(juryData)}`);
-                        // })
-
-                        juryData = (await pool.query(`SELECT * FROM jury WHERE id = 1716452983279`)).rows[0]
-
-
-                    } else {
-                        console.log("outside loop !!!!!!!!!!");
-                    }
                     const updatedResult = {
-                        ...result.rows,
+                        ...result.rows[0],
                         updated_at: getUTCdate(result.rows.updated_at),
                         submission_end_date: getUTCdate(result.rows.submission_end_date),
                         created_at: getUTCdate(result.rows.created_at),
-                        juryList: juryData,
+                        juryList: await getJuryDetails(result.rows[0].jury_ids),
                     };
 
-                    console.log(`juryData2: ${JSON.stringify(juryData)}`);
+                    // console.log(`updatedResult: ${JSON.stringify(updatedResult)}`);
+                    delete updatedResult.jury_ids;
                     res.status(200).send({
                         success: true,
                         message: "Grants fetched successfully",
-                        juryList: juryData,
-                        data: updatedResult[0],
+                        data: updatedResult,
                         statusCode: 200,
                     });
                 }
@@ -85,3 +66,18 @@ GROUP BY g.grant_id, g.submission_end_date, m.medium_of_choice, t.theme;`;
         });
     }
 };
+
+const getJuryDetails = async (juryIds) => {
+    console.log(`juryData: ${JSON.stringify(juryIds)}`);
+
+    if (!_.isEmpty(juryIds)) {
+        const juryData = await Promise.all(juryIds.map(async (e) => {
+            const result = await pool.query(`SELECT * FROM jury WHERE id = ${e}`);
+            return result.rows[0]
+        }))
+        console.log(`juryData: ${JSON.stringify(juryData)}`);
+        return juryData;
+    } else {
+        return [];
+    }
+}
