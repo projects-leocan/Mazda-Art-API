@@ -64,7 +64,8 @@ module.exports = app => {
     router.get("/searchUser", validateAccessToken, searchUserValidation, searchUserController);
     router.post("/updateUser", validateAccessToken, updateUserController); // update user profile validation is added in controller
     router.get("/getUserDetails", validateAccessToken, getUserIdValidation, getUserDetailsController);
-    router.post("/createUser", validateAccessToken, addUserValidation, addUserController);
+    // router.post("/createUser", validateAccessToken, addUserValidation, addUserController);
+    router.post("/createUser", validateAccessToken, addUserController);
 
     /// grants
     router.post("/addGrant", validateAccessToken, addGrantValidation, addGrantController);

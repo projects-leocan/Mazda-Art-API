@@ -6,9 +6,6 @@ var path = require('path');
 const { fileUpload } = require("../../utils/fileUpload");
 const { userPortFoliaImagePath, userProfileImagePath } = require("../../constants/filePaths");
 var lodash = require("lodash");
-const sharp = require('sharp');
-const { Blob } = require('buffer');
-const multer = require('multer');
 const { getUserDetails } = require("./getUserDetail");
 
 
@@ -18,7 +15,7 @@ exports.updateUserController = async (req, res) => {
     try {
         var form = new formidable.IncomingForm();
         form.parse(req, async function (err, fields, files) {
-            let { artist_id, fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio_file_ext, profile_pic_file_ext, is_profile_pic_updated, is_portfolio_updated } = fields;
+            let { artist_id, fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio_file_ext, profile_pic_file_ext, is_profile_pic_updated, is_portfolio_updated, is_moc_update, mocs } = fields;
 
             console.log(`fields data: ${JSON.stringify(fields)}`)
 
@@ -108,6 +105,21 @@ exports.updateUserController = async (req, res) => {
                 }
             }
 
+            console.log('mocInsertQuery: ', JSON.stringify(mocs));
+            if (is_moc_update != undefined) {
+                let mocInsertQuery = `INSERT INTO public.artist_moc(artist_id, moc_id) VALUES `;
+                mocs.map((e) => {
+                    let lastElement = lodash.last(mocs);
+                    if (e === lastElement) {
+                        mocInsertQuery += `(${e}, ${artist_id})`;
+                    } else {
+                        mocInsertQuery += `(${e}, ${artist_id}), `;
+                    }
+                });
+                console.log('mocInsertQuery: ', mocInsertQuery);
+                const mocInsertResult = await pool.query(mocInsertQuery);
+                console.log('mocInsertResult: ', JSON.stringify(mocInsertResult));
+            }
             if (is_profile_pic_updated != undefined) {
                 const getFilesQuery = `SELECT profile_pic FROM artist WHERE artist_id = ${artist_id}`;
                 const getProfileResponse = await pool.query(getFilesQuery);
@@ -146,31 +158,6 @@ exports.updateUserController = async (req, res) => {
                     )
                 } else {
                     getUserDetails(artist_id, 'User Details Updated Successfully', res, req);
-                    /*const newQuery = `SELECT * FROM artist WHERE artist_id = ${artist_id}`;
-                    pool.query(newQuery, async (newErr, newResult) => {
-                        if (newErr) {
-                            res.status(500).send(
-                                {
-                                    success: false,
-                                    messages: "Something went wrong",
-                                    statusCode: 500,
-                                    profileImageUploadError: profileImageUploadError,
-                                    portfolioImageUploadError: portfolioImageUploadError,
-                                }
-                            )
-                        } else {
-                            return res.status(200).send(
-                                {
-                                    success: true,
-                                    statusCode: 200,
-                                    message: 'User Details Updated Successfully',
-                                    data: newResult.rows[0],
-                                    profileImageUploadError: profileImageUploadError,
-                                    portfolioImageUploadError: portfolioImageUploadError,
-                                }
-                            );
-                        }
-                    })*/
                 }
             })
         });

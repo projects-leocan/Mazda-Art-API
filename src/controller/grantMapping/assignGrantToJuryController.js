@@ -5,74 +5,51 @@ const _ = require('lodash');
 
 exports.assignGrantToJuryController = async (req, res) => {
     const { jury_ids, grant_id, admin_id } = req.body;
+    console.log("assignGrantToJuryController called !!!!!!!!!!");
+
     try {
-        /// check if jury is already assign to grant 
-        // const juryValidation = `SELECT * FROM grant_assign WHERE jury_id = ${jury_ids} AND grant_id = ${grant_id}`;
-        // const validationResult = await pool.query(juryValidation);
-        console.log(`Assign Jury called !!!!`);
-        // console.log(`validationResult: ${JSON.stringify(validationResult.rows)}`);
+        let query = `INSERT INTO grant_assign( jury_id, grant_id, assign_by) `;
+        jury_ids.map((e) => {
+            let lastElement = _.last(jury_ids);
+            console.log(`jury_id: ${e}`);
+            query += `SELECT ${e}, ${grant_id}, ${admin_id}
+            WHERE NOT EXISTS (
+                SELECT 1 FROM grant_assign WHERE jury_id = ${e} AND grant_id = ${grant_id}
+            )`;
 
-        // if (_.isEmpty(validationResult.rows)) {
-        if (true) {
-            const currentTime = new Date().toISOString().slice(0, 10);
+            if (e != lastElement) {
+                query += `UNION ALL `;
+            }
+        });
+        // console.log(`query: ${query}`);
+        pool.query(query, async (err, result) => {
 
-            // const query = `INSERT INTO grant_assign( jury_id, grant_id, assign_by, cerated_at) VALUES (${jury_id}, ${grant_id}, ${admin_id}, '${currentTime}') RETURNING id;`;
-            let query = `INSERT INTO grant_assign( jury_id, grant_id, assign_by, cerated_at) VALUES `;
-            jury_ids.map((e) => {
-                let lastElement = _.last(jury_ids);
-                console.log(`jury_id: ${e}`);
-                if (e === lastElement) {
-                    query += `(${e}, ${grant_id}, ${admin_id}, '${currentTime}')`;
-                } else {
-                    query += `(${e}, ${grant_id}, ${admin_id}, '${currentTime}'), `;
-                }
-            });
-            // query += `RETURNING id;`;
-            console.log(`query: ${query}`);
-
-            pool.query(query, async (err, result) => {
-
-                console.log(`err: ${err}`);
-                console.log(`result: ${JSON.stringify(result)}`);
-                if (err) {
-                    res.status(500).send(
-                        {
-                            success: false,
-                            message: err,
-                            statusCode: 500
-                        }
-                    )
-                } else {
-                    const getNewData = `SELECT * FROM public.grant_assign WHERE id = ${result.rows[0].id}`
-                    const newResponse = await pool.query(getNewData);
-
-                    const finalResponse = {
-                        ...newResponse.rows[0],
-                        cerated_at: getUTCdate(newResponse.rows[0].cerated_at)
+            // console.log(`err: ${err}`);
+            // console.log(`result: ${JSON.stringify(result)}`);
+            if (err) {
+                res.status(500).send(
+                    {
+                        success: false,
+                        message: err,
+                        statusCode: 500
                     }
+                )
+            } else {
+                const juryData = await Promise.all(jury_ids.map(async (e) => {
+                    const result = await pool.query(`SELECT id, full_name, email, contact_no, address, designation, dob, about, created_at FROM jury WHERE id = ${e}`);
+                    return result.rows[0]
+                }))
 
-                    res.status(200).send(
-                        {
-                            success: true,
-                            message: 'Grant assigned to jury successfully.',
-                            data: finalResponse,
-                            statusCode: 200
-                        }
-                    )
-                }
-            })
-        } else {
-
-            res.status(200).send(
-                {
-                    success: true,
-                    message: 'Grant already assigned to this jury.',
-                    statusCode: 200
-                }
-            )
-        }
-
-
+                res.status(200).send(
+                    {
+                        success: true,
+                        message: 'Grant assigned to Jurys successfully.',
+                        data: juryData,
+                        statusCode: 200
+                    }
+                )
+            }
+        })
     } catch (error) {
         console.log(`error: ${error}`);
         return res.status(500).send(
