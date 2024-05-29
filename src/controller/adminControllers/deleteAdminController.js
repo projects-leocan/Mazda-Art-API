@@ -7,11 +7,11 @@ exports.deleteAdminController = async (req, res) => {
     const isMainAdmin = await pool.query(`SELECT is_main_admin FROM admin WHERE admin_id = ${admin_id}`);
     // console.log(`isMainAdmin.rows[0].is_main_admin: ${isMainAdmin.rows[0].is_main_admin}`);
     if (isMainAdmin.rows[0].is_main_admin === 1) {
-        res.status(500).send(
+        res.status(200).send(
             {
                 success: false,
                 messages: "Main Admin can not be Deleted.",
-                statusCode: 500
+                statusCode: 200
             }
         )
     } else {

@@ -43,6 +43,9 @@ const { assignGrantToJuryValidator } = require("../validations/grantMappingValid
 const { getGrantDetailsController } = require("../controller/grant/getGrantDetailController");
 const { getJuryByGrantIdController } = require("../controller/grant/getJuryByGrantIdController");
 const { addUserController } = require("../controller/userControllers/addUserController");
+const { submitGrantValidation, getSubmitGrantDetailValidation } = require("../validations/submitGrantValidations");
+const { submitGrantController } = require("../controller/artSubmission/submitGrantController");
+const { getSubmitGrantDetailController } = require("../controller/artSubmission/getSubmitGrantDetailController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -88,6 +91,11 @@ module.exports = app => {
 
     // grant assign
     router.post("/assignGrantToJury", validateAccessToken, assignGrantToJuryValidator, assignGrantToJuryController);
+
+    // submit grant for artist
+    // router.post("/submitGrant", validateAccessToken, submitGrantValidation, submitGrantController);
+    router.post("/submitGrant", validateAccessToken, submitGrantController);
+    router.get("/getSubmitGrantDetail", validateAccessToken, getSubmitGrantDetailValidation, getSubmitGrantDetailController);
 
 
     app.use('/api/v1', router)

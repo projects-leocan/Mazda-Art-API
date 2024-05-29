@@ -19,11 +19,11 @@ exports.getAdminController = async (req, res) => {
 
     pool.query(query, async (err, result) => {
         if (err) {
-            res.status(500).send(
+            res.status(301).send(
                 {
                     success: false,
                     message: err,
-                    statusCode: 500
+                    statusCode: 301
                 }
             )
         } else {

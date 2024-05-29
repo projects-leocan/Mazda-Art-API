@@ -35,7 +35,7 @@ exports.getAllJuryController = async (req, res) => {
                 )
             } else {
                 const count = result.rows[0].total_count;
-                console.log(`result.rows.: ${JSON.stringify(result.rows)}`);
+                // console.log(`result.rows.: ${JSON.stringify(result.rows)}`);
                 result.rows.map((e) => {
                     if (e.total_count != undefined) delete e.total_count
                 })
