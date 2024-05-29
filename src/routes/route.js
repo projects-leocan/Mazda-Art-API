@@ -46,6 +46,7 @@ const { addUserController } = require("../controller/userControllers/addUserCont
 const { submitGrantValidation, getSubmitGrantDetailValidation } = require("../validations/submitGrantValidations");
 const { submitGrantController } = require("../controller/artSubmission/submitGrantController");
 const { getSubmitGrantDetailController } = require("../controller/artSubmission/getSubmitGrantDetailController");
+const { updateSubmitedGrantController } = require("../controller/artSubmission/updateSubmitedGrantController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -96,6 +97,7 @@ module.exports = app => {
     // router.post("/submitGrant", validateAccessToken, submitGrantValidation, submitGrantController);
     router.post("/submitGrant", validateAccessToken, submitGrantController);
     router.get("/getSubmitGrantDetail", validateAccessToken, getSubmitGrantDetailValidation, getSubmitGrantDetailController);
+    router.post("/updateSubmitGrantDetail", validateAccessToken, updateSubmitedGrantController);
 
 
     app.use('/api/v1', router)

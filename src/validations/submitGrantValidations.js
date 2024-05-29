@@ -58,7 +58,7 @@ exports.submitGrantValidation = (req, res, next) => {
 }
 
 exports.getSubmitGrantDetailValidation = (req, res, next) => {
-    const { grant_submitted_id, } = req.query;
+    const { grant_submitted_id, } = req.body;
     if (grant_submitted_id == undefined || grant_submitted_id === "") {
         return res.status(500).send({
             success: false,
