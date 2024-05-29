@@ -22,7 +22,7 @@ exports.addGrantController = async (req, res) => {
 
     try {
         const data = await pool.query(query);
-        const newQuery = `SELECT g.*, m.medium_of_choice, t.theme from public.grants as g, public.medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id AND g.grant_id = ${data.rows[0].grant_id}`;
+        const newQuery = `SELECT g.*, m.medium_of_choice, t.theme from grants as g, medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id AND g.grant_id = ${data.rows[0].grant_id}`;
         pool.query(newQuery, async (newErr, newResult) => {
             if (newErr) {
                 res.status(500).send(

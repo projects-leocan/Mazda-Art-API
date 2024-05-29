@@ -19,8 +19,6 @@ exports.getUserDetails = async (user_id, message, res, req) => {
         GROUP BY artist.artist_id`;
 
         pool.query(query, async (err, result) => {
-            // console.log(`err: ${err}`);
-            // console.log(`result: ${JSON.stringify(result)}`);
             if (err) {
                 return res.status(500).send({
                     success: false,
@@ -42,12 +40,12 @@ exports.getUserDetails = async (user_id, message, res, req) => {
                     if (result.rows[0].profile_pic != null) {
                         result.rows[0].profile_pic = `${prePath}${userProfileImagePath}${result.rows[0].profile_pic}`;
                     }
-                    console.log("mocs: ", result.rows[0].artist_moc);
+                    // console.log("mocs: ", result.rows[0].artist_moc);
                     let mocData;
                     if (!lodash.isEmpty(result.rows[0].artist_moc) && result.rows[0].artist_moc != [null]) {
                         mocData = await Promise.all(result.rows[0].artist_moc.map(async (e) => {
-                            const mocResult = await pool.query(`SELECT id, medium_of_choice FROM public.medium_of_choice where id = ${e}`);
-                            console.log("mocResult: ", JSON.stringify(mocResult));
+                            const mocResult = await pool.query(`SELECT id, medium_of_choice FROM medium_of_choice where id = ${e}`);
+                            // console.log("mocResult: ", JSON.stringify(mocResult));
                             return mocResult.rows[0]
                         }))
                     }

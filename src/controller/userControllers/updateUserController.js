@@ -107,18 +107,24 @@ exports.updateUserController = async (req, res) => {
 
             console.log('mocInsertQuery: ', JSON.stringify(mocs));
             if (is_moc_update != undefined) {
-                let mocInsertQuery = `INSERT INTO public.artist_moc(artist_id, moc_id) VALUES `;
-                mocs.map((e) => {
-                    let lastElement = lodash.last(mocs);
-                    if (e === lastElement) {
-                        mocInsertQuery += `(${e}, ${artist_id})`;
-                    } else {
-                        mocInsertQuery += `(${e}, ${artist_id}), `;
-                    }
-                });
-                console.log('mocInsertQuery: ', mocInsertQuery);
-                const mocInsertResult = await pool.query(mocInsertQuery);
-                console.log('mocInsertResult: ', JSON.stringify(mocInsertResult));
+                let deleteQuery = `DELETE FROM artist_moc WHERE artist_id = ${artist_id}`
+                const deleteResult = await pool.query(deleteQuery);
+                console.log('deleteResult: ', JSON.stringify(deleteResult));
+
+                if (!lodash.isEmpty(mocs)) {
+                    let mocInsertQuery = `INSERT INTO artist_moc(artist_id, moc_id) VALUES `;
+                    mocs.map((e) => {
+                        let lastElement = lodash.last(mocs);
+                        if (e === lastElement) {
+                            mocInsertQuery += `(${artist_id}, ${e})`;
+                        } else {
+                            mocInsertQuery += `(${artist_id}, ${e}), `;
+                        }
+                    });
+                    // console.log('mocInsertQuery: ', mocInsertQuery);
+                    const mocInsertResult = await pool.query(mocInsertQuery);
+                    console.log('mocInsertResult: ', JSON.stringify(mocInsertResult));
+                }
             }
             if (is_profile_pic_updated != undefined) {
                 const getFilesQuery = `SELECT profile_pic FROM artist WHERE artist_id = ${artist_id}`;

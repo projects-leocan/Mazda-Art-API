@@ -23,7 +23,7 @@ exports.addUserController = async (req, res) => {
             let profileImageUploadError = "", portfolioImageUploadError = "";
 
             // const data = [fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, currentTime, currentTime];
-            let query = `INSERT INTO public.artist(fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_profile_link, artist_portfolio, profile_pic, created_at, updated_at) VALUES ('${fname}', '${lname}', '${dob}', '${gender}', '${email}', '${mobile_number}', '${address1}', '${address2}', '${city}', '${state}', ${pincode}, '${social_media_link}', 'null', 'null', '${currentTime}', '${currentTime}') RETURNING artist_id`;
+            let query = `INSERT INTO artist(fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_profile_link, artist_portfolio, profile_pic, created_at, updated_at) VALUES ('${fname}', '${lname}', '${dob}', '${gender}', '${email}', '${mobile_number}', '${address1}', '${address2}', '${city}', '${state}', ${pincode}, '${social_media_link}', 'null', 'null', '${currentTime}', '${currentTime}') RETURNING artist_id`;
             pool.query(query, async (newErr, newResult) => {
                 console.log('query: ', query);
                 console.log(`newErr: ${JSON.stringify(newErr)}`);

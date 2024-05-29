@@ -30,7 +30,7 @@ exports.getJuryDetails = async (jury_id, message, res) => {
                         }
                     )
                 } else {
-                    const grantQuery = `SELECT ga.jury_id, g.* FROM public.grant_assign as ga,grants as g WHERE ga.grant_id = g.grant_id AND jury_id = ${jury_id}`
+                    const grantQuery = `SELECT ga.jury_id, g.* FROM grant_assign as ga,grants as g WHERE ga.grant_id = g.grant_id AND jury_id = ${jury_id}`
                     const juryGrantsResult = await pool.query(grantQuery);
                     const grants = [];
 

@@ -9,10 +9,10 @@ exports.getGrantDetailsController = async (req, res) => {
         m.medium_of_choice, 
         t.theme, 
         COALESCE(ARRAY_AGG(ga.jury_id) FILTER (WHERE ga.jury_id IS NOT NULL), '{}') AS jury_ids
-    FROM public.grants AS g
-    JOIN public.medium_of_choice AS m ON g."category_MOD" = m.id
-    JOIN public.theme AS t ON g.theme_id = t.id
-    LEFT JOIN public.grant_assign AS ga ON g.grant_id = ga.grant_id
+    FROM grants AS g
+    JOIN medium_of_choice AS m ON g."category_MOD" = m.id
+    JOIN theme AS t ON g.theme_id = t.id
+    LEFT JOIN grant_assign AS ga ON g.grant_id = ga.grant_id
     WHERE g.grant_id = ${grant_id}
     GROUP BY g.grant_id, g.submission_end_date, m.medium_of_choice, t.theme;`;
 
