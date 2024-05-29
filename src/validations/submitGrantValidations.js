@@ -67,3 +67,14 @@ exports.getSubmitGrantDetailValidation = (req, res, next) => {
     }
     next();
 }
+
+exports.getAllGrantSubmissionValidator = (req, res, next) => {
+    const { jury_id, admin_id } = req.query;
+    if (jury_id == undefined || jury_id === "" || admin_id == undefined || admin_id === "") {
+        return res.status(500).send({
+            success: false,
+            message: "jury_id OR admin_id can not be Empty",
+        })
+    }
+    next();
+}

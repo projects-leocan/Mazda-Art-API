@@ -9,10 +9,10 @@ exports.updateAdminController = async (req, res) => {
     let query = `UPDATE admin set updated_at=CURRENT_TIMESTAMP`;
 
     if (admin_name != undefined && admin_name != "") {
-        query += `, admin_name=${admin_name}`;
+        query += `, admin_name='${admin_name}'`;
     }
     if (admin_email != undefined && admin_email != "") {
-        query += `, admin_email=${admin_email}`;
+        query += `, admin_email='${admin_email}'`;
     }
     if (admin_contact != undefined && admin_contact != "") {
         query += `, admin_contact=${admin_contact}`;

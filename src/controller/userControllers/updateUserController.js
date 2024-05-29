@@ -15,7 +15,7 @@ exports.updateUserController = async (req, res) => {
     try {
         var form = new formidable.IncomingForm();
         form.parse(req, async function (err, fields, files) {
-            let { artist_id, fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio_file_ext, profile_pic_file_ext, is_profile_pic_updated, is_portfolio_updated, is_moc_update, mocs } = fields;
+            let { artist_id, password, fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio_file_ext, profile_pic_file_ext, is_profile_pic_updated, is_portfolio_updated, is_moc_update, mocs } = fields;
 
             console.log(`fields data: ${JSON.stringify(fields)}`)
 
@@ -53,6 +53,10 @@ exports.updateUserController = async (req, res) => {
             }
             if (dob != undefined) {
                 query += `, dob='${dob}'`;
+            }
+            if (password != undefined) {
+                const hashedPassword = await passwordHashing(password);
+                query += `, password='${hashedPassword}'`;
             }
             if (gender != undefined) {
                 query += `, gender='${gender}'`;

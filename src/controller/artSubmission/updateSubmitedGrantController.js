@@ -48,8 +48,8 @@ exports.updateSubmitedGrantController = async (req, res) => {
                     statusCode: 500,
                 });
             } else if (submitGrantValidationResult.rows[0].submission_end_date <= date) {
-                console.log(`date: ${JSON.stringify(date)}`);
-                console.log(`con: ${submitGrantValidationResult.rows[0].submission_end_date >= date}`);
+                // console.log(`date: ${JSON.stringify(date)}`);
+                // console.log(`con: ${submitGrantValidationResult.rows[0].submission_end_date >= date}`);
                 res.status(500).send({
                     success: false,
                     message: "Grant Submission date is passed.",
@@ -114,10 +114,10 @@ exports.updateSubmitedGrantController = async (req, res) => {
                             }
 
                             query += ` WHERE id = ${grant_submitted_id}`;
-                            console.log('query: ', query);
+                            // console.log('query: ', query);
                             pool.query(query, async (err, result) => {
-                                console.log(`insert error: ${err}`);
-                                console.log(`insert result: ${result}`);
+                                // console.log(`insert error: ${err}`);
+                                // console.log(`insert result: ${result}`);
                                 if (err) {
                                     // console.log(`insert error: ${err}`);
                                     res.status(500).send({

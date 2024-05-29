@@ -43,10 +43,15 @@ const { assignGrantToJuryValidator } = require("../validations/grantMappingValid
 const { getGrantDetailsController } = require("../controller/grant/getGrantDetailController");
 const { getJuryByGrantIdController } = require("../controller/grant/getJuryByGrantIdController");
 const { addUserController } = require("../controller/userControllers/addUserController");
-const { submitGrantValidation, getSubmitGrantDetailValidation } = require("../validations/submitGrantValidations");
+const { submitGrantValidation, getSubmitGrantDetailValidation, getAllGrantSubmissionValidator } = require("../validations/submitGrantValidations");
 const { submitGrantController } = require("../controller/artSubmission/submitGrantController");
 const { getSubmitGrantDetailController } = require("../controller/artSubmission/getSubmitGrantDetailController");
 const { updateSubmitedGrantController } = require("../controller/artSubmission/updateSubmitedGrantController");
+const { getAllGrantSubmissionController } = require("../controller/artSubmission/getAllGrantSubmissionController");
+const { addTransactionController } = require("../controller/transactions/addTransactionController");
+const { addTransactionValidation, updateTransactionValidation, getAllTransactionValidation } = require("../validations/transactionValidations");
+const { updateTransactionController } = require("../controller/transactions/updateTransactionController");
+const { getAllTransactionsController } = require("../controller/transactions/getAllTransactionsController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -98,6 +103,15 @@ module.exports = app => {
     router.post("/submitGrant", validateAccessToken, submitGrantController);
     router.get("/getSubmitGrantDetail", validateAccessToken, getSubmitGrantDetailValidation, getSubmitGrantDetailController);
     router.post("/updateSubmitGrantDetail", validateAccessToken, updateSubmitedGrantController);
+    router.post("/getAllGrantSubmission", validateAccessToken, getAllGrantSubmissionValidator, getAllGrantSubmissionController);
+
+
+    // transaction grant for artist
+    router.post("/addTransaction", validateAccessToken, addTransactionValidation, addTransactionController);
+    router.get("/getTransaction", validateAccessToken, submitGrantController);
+    router.post("/updateTransaction", validateAccessToken, updateTransactionValidation, updateTransactionController);
+    router.get("/getAllTransactions", validateAccessToken, getAllTransactionValidation, getAllTransactionsController);
+    // router.get("/getAllTransactions", validateAccessToken, getAllTransactionsController);
 
 
     app.use('/api/v1', router)
