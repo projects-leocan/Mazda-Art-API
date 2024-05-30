@@ -6,15 +6,14 @@ var path = require('path');
 const { fileUpload } = require("../../utils/fileUpload");
 const { userPortFoliaImagePath, userProfileImagePath } = require("../../constants/filePaths");
 var lodash = require("lodash");
-const { getUserDetails } = require("./getArtistDetail");
+const { getArtistDetails } = require("./getArtistDetail");
 const { passwordHashing } = require("../../constants/passwordHashing");
 
 
 exports.updateArtistController = async (req, res) => {
-
     try {
         var form = new formidable.IncomingForm();
-        console.log('form data: ', form);
+        // console.log('form data: ', form);
         form.parse(req, async function (err, fields, files) {
             const { artist_id, password, fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio_file_ext, profile_pic_file_ext, is_profile_pic_updated, is_portfolio_updated, is_moc_update, mocs } = fields;
 
@@ -173,7 +172,7 @@ exports.updateArtistController = async (req, res) => {
                         }
                     )
                 } else {
-                    getUserDetails(artist_id, 'User Details Updated Successfully', res, req);
+                    getArtistDetails(artist_id, 'User Details Updated Successfully', res, req);
                 }
             })
         });

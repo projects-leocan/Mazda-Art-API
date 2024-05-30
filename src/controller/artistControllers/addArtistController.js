@@ -4,7 +4,7 @@ const formidable = require("formidable");
 const { fileUpload } = require("../../utils/fileUpload");
 const { userPortFoliaImagePath, userProfileImagePath } = require("../../constants/filePaths");
 var lodash = require("lodash");
-const { getUserDetails } = require("./getArtistDetail");
+const { getArtistDetails } = require("./getArtistDetail");
 
 exports.addArtistController = async (req, res) => {
 
@@ -90,7 +90,7 @@ exports.addArtistController = async (req, res) => {
                         const updatedResult = await pool.query(updateImagesQuery);
                     }
 
-                    getUserDetails(artist_id, 'User Details Updated Successfully', res, req);
+                    getArtistDetails(artist_id, 'User Details Updated Successfully', res, req);
                 }
             })
         });

@@ -53,6 +53,7 @@ const { addTransactionValidation, updateTransactionValidation, getAllTransaction
 const { updateTransactionController } = require("../controller/transactions/updateTransactionController");
 const { getAllTransactionsController } = require("../controller/transactions/getAllTransactionsController");
 const { getTransactionController } = require("../controller/transactions/getTransactionDetailsController");
+const { testController } = require("./test");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -113,6 +114,9 @@ module.exports = app => {
     router.post("/updateTransaction", validateAccessToken, updateTransactionValidation, updateTransactionController);
     router.get("/getAllTransactions", validateAccessToken, getAllTransactionValidation, getAllTransactionsController);
     // router.get("/getAllTransactions", validateAccessToken, getAllTransactionsController);
+
+
+    router.get("/test", testController);
 
 
     app.use('/api/v1', router)

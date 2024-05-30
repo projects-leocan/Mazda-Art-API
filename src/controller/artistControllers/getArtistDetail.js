@@ -8,6 +8,7 @@ const {
 const { somethingWentWrong } = require("../../constants/messages");
 
 exports.getArtistDetails = async (user_id, message, res, req) => {
+    // console.log("props artist", req)
     try {
         // const query = `SELECT * FROM artist WHERE artist_id = ${user_id}`;
         const query = `SELECT 

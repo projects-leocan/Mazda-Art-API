@@ -1,12 +1,12 @@
 const pool = require("../../config/db");
 const { userPortFoliaImagePath, userProfileImagePath, getFileURLPreFixPath } = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
-const { getUserDetails } = require("./getArtistDetail");
+const { getArtistDetails } = require("./getArtistDetail");
 
 exports.getArtistDetailsController = async (req, res) => {
     const user_id = req.query.user_id;
 
-    getUserDetails(user_id, 'User details get Successfully', res, req);
+    getArtistDetails(user_id, 'User details get Successfully', res, req);
 
     /*try {
         const currentTimeInMilliseconds = new Date().toISOString().slice(0, 10);
