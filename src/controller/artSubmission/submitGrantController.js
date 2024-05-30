@@ -68,7 +68,7 @@ exports.submitGrantController = async (req, res) => {
 
                     if (grantAlreadySubmittedResult.rowCount === 0) {
                         // transaction details
-                        const transactionId = transactionResult.rows[0].trasaction_id;
+                        const transactionId = transactionResult.rows[0].id;
 
                         // file upload for grant
                         const artFile = files["art_file"];
@@ -76,7 +76,7 @@ exports.submitGrantController = async (req, res) => {
                         if (artFile != undefined) {
                             const artImagePath = artFile[0].filepath;
                             const filename =
-                                artist_id + "_" + Date.now() + `.${art_file_extension}`;
+                                artist_id + "_" + grant_id + "_" + Date.now() + `.${art_file_extension}`;
                             const artFolderPath = artistGrantSubmissionFilesPath + filename;
                             try {
                                 fileUpload(artImagePath, artFolderPath);

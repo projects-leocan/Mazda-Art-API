@@ -3,7 +3,7 @@ const _ = require("lodash");
 const { somethingWentWrong } = require("../../constants/messages");
 const { getTransactionDetails } = require("./getTransactionDetails");
 
-exports.updateTransactionController = async (req, res) => {
+exports.getTransactionController = async (req, res) => {
     const { transaction_id, } = req.query;
 
     try {

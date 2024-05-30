@@ -58,7 +58,7 @@ exports.submitGrantValidation = (req, res, next) => {
 }
 
 exports.getSubmitGrantDetailValidation = (req, res, next) => {
-    const { grant_submitted_id, } = req.body;
+    const { grant_submitted_id, } = req.query;
     if (grant_submitted_id == undefined || grant_submitted_id === "") {
         return res.status(500).send({
             success: false,
@@ -69,12 +69,30 @@ exports.getSubmitGrantDetailValidation = (req, res, next) => {
 }
 
 exports.getAllGrantSubmissionValidator = (req, res, next) => {
-    const { jury_id, admin_id } = req.query;
-    if (jury_id == undefined || jury_id === "" || admin_id == undefined || admin_id === "") {
+    const { jury_id, admin_id, record_per_page, page_no, isAll, } = req.query;
+    if ((jury_id === undefined) && (admin_id === undefined)) {
         return res.status(500).send({
             success: false,
             message: "jury_id OR admin_id can not be Empty",
         })
+    }
+    if (record_per_page == undefined && page_no == undefined && isAll == undefined) {
+        return res.status(500).send({
+            success: false,
+            message: "record_per_page and page_no OR isAll can not be Empty",
+        });
+    }
+    if (isAll == undefined && page_no == undefined) {
+        return res.status(500).send({
+            success: false,
+            message: "page_no can not be Empty",
+        });
+    }
+    if (isAll == undefined && record_per_page == undefined) {
+        return res.status(500).send({
+            success: false,
+            message: "record_per_page can not be Empty",
+        });
     }
     next();
 }

@@ -13,7 +13,10 @@ exports.getAllTransactionsController = async (req, res) => {
         if (page_no == undefined) {
             page_no = 1;
         }
-        let query = `SELECT * FROM trasaction_detail`;
+        // let query = `SELECT * FROM trasaction_detail`;
+        let query = `SELECT (SELECT COUNT(*) FROM trasaction_detail) AS total_count, td.*, a.fname, a.lname, a.dob, a.gender
+        FROM trasaction_detail as td
+        JOIN artist a ON td.artist_id = a.artist_id order by id`;
         if (isAll == undefined) {
             offset = (page_no - 1) * record_per_page;
             query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
@@ -29,11 +32,17 @@ exports.getAllTransactionsController = async (req, res) => {
                     }
                 )
             } else {
+                const count = result.rows[0].total_count;
+
+                result.rows.map((e) => {
+                    delete e.total_count
+                });
                 res.status(200).send(
                     {
                         success: true,
                         message: "Transactions fetched successfully.",
                         statusCode: 200,
+                        transactions_count: count,
                         data: result.rows,
                     }
                 )

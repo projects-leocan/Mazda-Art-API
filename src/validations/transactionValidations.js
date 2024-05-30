@@ -58,7 +58,7 @@ exports.updateTransactionValidation = (req, res, next) => {
 
 exports.getAllTransactionValidation = (req, res, next) => {
     const { admin_id, jury_id, record_per_page, page_no, isAll } = req.query;
-    if (admin_id == undefined || admin_id === "" || jury_id == undefined || jury_id === "") {
+    if ((admin_id == undefined) && (jury_id == undefined)) {
         return res.status(500).send({
             success: false,
             message: "admin_id OR jury_id can not be Empty",
@@ -82,6 +82,17 @@ exports.getAllTransactionValidation = (req, res, next) => {
             success: false,
             message: "record_per_page can not be Empty",
         });
+    }
+    next();
+}
+
+exports.getTransactionDetailValidation = (req, res, next) => {
+    const { transaction_id } = req.query;
+    if (transaction_id == undefined) {
+        return res.status(500).send({
+            success: false,
+            message: "transaction_id can not be Empty",
+        })
     }
     next();
 }

@@ -1,7 +1,7 @@
 const formidable = require("formidable");
 const _ = require("lodash")
 
-exports.getUserProfileValidation = (req, res, next) => {
+exports.getArtistProfileValidation = (req, res, next) => {
     const { record_per_page, page_no, isAll } = req.query;
     if (record_per_page == undefined && page_no == undefined && isAll == undefined) {
         return res.status(500).send({
@@ -24,7 +24,7 @@ exports.getUserProfileValidation = (req, res, next) => {
     next();
 }
 
-exports.searchUserValidation = (req, res, next) => {
+exports.searchArtistValidation = (req, res, next) => {
     const search_text = req.query.search_text;
     if (search_text == undefined && search_text != "") {
         return res.status(500).send({
@@ -35,7 +35,7 @@ exports.searchUserValidation = (req, res, next) => {
     next();
 }
 
-exports.getUserIdValidation = (req, res, next) => {
+exports.getArtistIdValidation = (req, res, next) => {
     const user_id = req.query.user_id;
     if (user_id == undefined && user_id != "") {
         return res.status(500).send({
@@ -46,7 +46,7 @@ exports.getUserIdValidation = (req, res, next) => {
     next();
 }
 
-exports.updateUserValidation = (req, res, next) => {
+exports.updateArtistValidation = (req, res, next) => {
     const { artist_id, fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio, profile_pic, MOC } = req.body;
     if (Object.entries(req.body).length === 0) {
         return res.status(500).send({
@@ -142,7 +142,7 @@ exports.updateUserValidation = (req, res, next) => {
     next();
 }
 
-exports.getUserDetailValidation = (req, res, next) => {
+exports.getArtistDetailValidation = (req, res, next) => {
 
     const { fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio, profile_pic, MOC } = req.body;
     if (Object.entries(req.body).length === 0) {
@@ -232,7 +232,7 @@ exports.getUserDetailValidation = (req, res, next) => {
     next();
 }
 
-exports.addUserValidation = (req, res, next) => {
+exports.addArtistValidation = (req, res, next) => {
 
     var form = new formidable.IncomingForm();
     form.parse(req, async function (err, fields, files) {

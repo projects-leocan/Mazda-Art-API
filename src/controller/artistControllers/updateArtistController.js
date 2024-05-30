@@ -6,18 +6,20 @@ var path = require('path');
 const { fileUpload } = require("../../utils/fileUpload");
 const { userPortFoliaImagePath, userProfileImagePath } = require("../../constants/filePaths");
 var lodash = require("lodash");
-const { getUserDetails } = require("./getUserDetail");
+const { getUserDetails } = require("./getArtistDetail");
+const { passwordHashing } = require("../../constants/passwordHashing");
 
 
-exports.updateUserController = async (req, res) => {
+exports.updateArtistController = async (req, res) => {
 
-    console.log(`req.body: ${JSON.stringify()}`)
     try {
         var form = new formidable.IncomingForm();
+        console.log('form data: ', form);
         form.parse(req, async function (err, fields, files) {
-            let { artist_id, password, fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio_file_ext, profile_pic_file_ext, is_profile_pic_updated, is_portfolio_updated, is_moc_update, mocs } = fields;
+            const { artist_id, password, fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio_file_ext, profile_pic_file_ext, is_profile_pic_updated, is_portfolio_updated, is_moc_update, mocs } = fields;
 
-            console.log(`fields data: ${JSON.stringify(fields)}`)
+            for (let key in fields) { if (Array.isArray(fields[key]) && fields[key].length === 1) { fields[key] = fields[key][0]; } }
+            // console.log('fields data: ', fields);
 
             let query = `UPDATE artist set `;
             if (Object.keys(fields).length === 0) {
@@ -45,48 +47,52 @@ exports.updateUserController = async (req, res) => {
 
             const currentTime = new Date().toISOString().slice(0, 10);
             query += `updated_at='${currentTime}'`;
-            if (fname != undefined) {
+            if (fname !== undefined) {
                 query += `, fname='${fname}'`;
             }
-            if (lname != undefined) {
+            if (lname !== undefined) {
                 query += `, lname='${lname}'`;
             }
-            if (dob != undefined) {
+            if (dob !== undefined) {
                 query += `, dob='${dob}'`;
             }
-            if (password != undefined) {
-                const hashedPassword = await passwordHashing(password);
+            if (password !== undefined) {
+                const hashedPassword = await passwordHashing(`${password}`);
                 query += `, password='${hashedPassword}'`;
             }
-            if (gender != undefined) {
+            if (gender !== undefined) {
                 query += `, gender='${gender}'`;
             }
-            if (email != undefined) {
+            if (email !== undefined) {
                 query += `, email='${email}'`;
             }
-            if (mobile_number != undefined) {
+            if (mobile_number !== undefined) {
                 query += `, mobile_number=${mobile_number}`;
             }
-            if (address1 != undefined) {
+            if (address1 !== undefined) {
                 query += `, address1='${address1}'`;
             }
-            if (address2 != undefined) {
+            if (address2 !== undefined) {
                 query += `, address2='${address2}'`;
             }
-            if (city != undefined) {
+            if (city !== undefined) {
                 query += `, city='${city}'`;
             }
-            if (state != undefined) {
-                state += `, state='${state}'`;
+            if (state !== undefined) {
+                query += `, state='${state}'`;
             }
-            if (pincode != undefined) {
+            if (pincode !== undefined) {
                 query += `, pincode='${pincode}'`;
             }
-            if (social_media_link != undefined) {
+            if (social_media_link !== undefined) {
                 query += `, social_media_profile_link='${social_media_link}'`;
             }
 
-            if (is_portfolio_updated != undefined) {
+            console.log(`query: ${query}`);
+            // console.log('request: ', req);
+
+            if (is_portfolio_updated !== undefined) {
+                console.log('is_portfolio_updated', is_portfolio_updated);
                 const getFilesQuery = `SELECT artist_portfolio FROM artist WHERE artist_id = ${artist_id}`;
                 const getFileResponse = await pool.query(getFilesQuery);
                 if (!lodash.isEmpty(getFileResponse.rows)) {
@@ -110,7 +116,7 @@ exports.updateUserController = async (req, res) => {
             }
 
             console.log('mocInsertQuery: ', JSON.stringify(mocs));
-            if (is_moc_update != undefined) {
+            if (is_moc_update !== undefined) {
                 let deleteQuery = `DELETE FROM artist_moc WHERE artist_id = ${artist_id}`
                 const deleteResult = await pool.query(deleteQuery);
                 console.log('deleteResult: ', JSON.stringify(deleteResult));
@@ -130,7 +136,7 @@ exports.updateUserController = async (req, res) => {
                     console.log('mocInsertResult: ', JSON.stringify(mocInsertResult));
                 }
             }
-            if (is_profile_pic_updated != undefined) {
+            if (is_profile_pic_updated !== undefined) {
                 const getFilesQuery = `SELECT profile_pic FROM artist WHERE artist_id = ${artist_id}`;
                 const getProfileResponse = await pool.query(getFilesQuery);
                 if (!lodash.isEmpty(getProfileResponse.rows)) {

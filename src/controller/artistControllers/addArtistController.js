@@ -4,9 +4,9 @@ const formidable = require("formidable");
 const { fileUpload } = require("../../utils/fileUpload");
 const { userPortFoliaImagePath, userProfileImagePath } = require("../../constants/filePaths");
 var lodash = require("lodash");
-const { getUserDetails } = require("./getUserDetail");
+const { getUserDetails } = require("./getArtistDetail");
 
-exports.addUserController = async (req, res) => {
+exports.addArtistController = async (req, res) => {
 
     console.log(`req.body: ${JSON.stringify()}`)
     try {

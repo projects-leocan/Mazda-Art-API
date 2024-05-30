@@ -2,7 +2,7 @@ const pool = require("../../config/db");
 const { userPortFoliaImagePath, userProfileImagePath, getFileURLPreFixPath } = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
 
-exports.getAllUsersController = async (req, res) => {
+exports.getAllArtistController = async (req, res) => {
     let { record_per_page, page_no, isAll } = req.query;
 
     try {

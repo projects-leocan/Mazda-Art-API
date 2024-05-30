@@ -7,7 +7,7 @@ const {
 } = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
 
-exports.getUserDetails = async (user_id, message, res, req) => {
+exports.getArtistDetails = async (user_id, message, res, req) => {
     try {
         // const query = `SELECT * FROM artist WHERE artist_id = ${user_id}`;
         const query = `SELECT 

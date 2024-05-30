@@ -10,16 +10,16 @@ const { adminLoginController } = require("../controller/adminControllers/adminLo
 const { validateAccessToken } = require("../validations/accessTokenValidation");
 const { addAdminValidator, adminLoginValidation, adminIdValidator, getAllAdminValidator } = require("../validations/adminValidations");
 
-// User controllers
-const { getUserProfileValidation, searchUserValidation, getUserDetailValidation, getUserIdValidation, addUserValidation } = require("../validations/userValidations");
-const { updateUserController } = require("../controller/userControllers/updateUserController");
-const { searchUserController } = require("../controller/userControllers/searchUserController");
+// Artist controllers
+const { getArtistProfileValidation, searchArtistValidation, getArtistDetailValidation, getArtistIdValidation, addArtistValidation } = require("../validations/artistValidations");
+const { updateArtistController } = require("../controller/artistControllers/updateArtistController");
+const { searchArtistController } = require("../controller/artistControllers/searchArtistController");
 const { addMODControllers } = require("../controller/mediumOfChoiceControllrs/addMODController");
 const { getAllMODControllers } = require("../controller/mediumOfChoiceControllrs/getAllMODControllers");
 const { addMODValidation, updateMODValidation } = require("../validations/MODValidations");
 const { updateMODController } = require("../controller/mediumOfChoiceControllrs/updateMODController");
-const { getAllUsersController } = require("../controller/userControllers/getAllUsersController");
-const { getUserDetailsController } = require("../controller/userControllers/getUserDetailsController");
+const { getAllArtistController } = require("../controller/artistControllers/getAllArtistController");
+const { getArtistDetailsController } = require("../controller/artistControllers/getArtistDetailsController");
 
 //theme
 const { addThemeController } = require("../controller/theme/addThemeController");
@@ -42,16 +42,17 @@ const { assignGrantToJuryController } = require("../controller/grantMapping/assi
 const { assignGrantToJuryValidator } = require("../validations/grantMappingValidations");
 const { getGrantDetailsController } = require("../controller/grant/getGrantDetailController");
 const { getJuryByGrantIdController } = require("../controller/grant/getJuryByGrantIdController");
-const { addUserController } = require("../controller/userControllers/addUserController");
+const { addArtistController } = require("../controller/artistControllers/addArtistController");
 const { submitGrantValidation, getSubmitGrantDetailValidation, getAllGrantSubmissionValidator } = require("../validations/submitGrantValidations");
 const { submitGrantController } = require("../controller/artSubmission/submitGrantController");
 const { getSubmitGrantDetailController } = require("../controller/artSubmission/getSubmitGrantDetailController");
 const { updateSubmitedGrantController } = require("../controller/artSubmission/updateSubmitedGrantController");
 const { getAllGrantSubmissionController } = require("../controller/artSubmission/getAllGrantSubmissionController");
 const { addTransactionController } = require("../controller/transactions/addTransactionController");
-const { addTransactionValidation, updateTransactionValidation, getAllTransactionValidation } = require("../validations/transactionValidations");
+const { addTransactionValidation, updateTransactionValidation, getAllTransactionValidation, getTransactionDetailValidation } = require("../validations/transactionValidations");
 const { updateTransactionController } = require("../controller/transactions/updateTransactionController");
 const { getAllTransactionsController } = require("../controller/transactions/getAllTransactionsController");
+const { getTransactionController } = require("../controller/transactions/getTransactionDetailsController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -69,12 +70,12 @@ module.exports = app => {
     router.post("/deleteAdmin", validateAccessToken, adminIdValidator, deleteAdminController);
 
     /// user APIs
-    router.get("/getAllUsers", validateAccessToken, getUserProfileValidation, getAllUsersController);
-    router.get("/searchUser", validateAccessToken, searchUserValidation, searchUserController);
-    router.post("/updateUser", validateAccessToken, updateUserController); // update user profile validation is added in controller
-    router.get("/getUserDetails", validateAccessToken, getUserIdValidation, getUserDetailsController);
-    // router.post("/createUser", validateAccessToken, addUserValidation, addUserController);
-    router.post("/createUser", validateAccessToken, addUserController);
+    router.get("/getAllUsers", validateAccessToken, getArtistProfileValidation, getAllArtistController);
+    router.get("/searchUser", validateAccessToken, searchArtistValidation, searchArtistController);
+    router.post("/updateUser", validateAccessToken, updateArtistController); // update user profile validation is added in controller
+    router.get("/getUserDetails", validateAccessToken, getArtistIdValidation, getArtistDetailsController);
+    // router.post("/createUser", validateAccessToken, addArtistValidation, addUserController);
+    router.post("/createUser", validateAccessToken, addArtistController);
 
     /// grants
     router.post("/addGrant", validateAccessToken, addGrantValidation, addGrantController);
@@ -103,12 +104,12 @@ module.exports = app => {
     router.post("/submitGrant", validateAccessToken, submitGrantController);
     router.get("/getSubmitGrantDetail", validateAccessToken, getSubmitGrantDetailValidation, getSubmitGrantDetailController);
     router.post("/updateSubmitGrantDetail", validateAccessToken, updateSubmitedGrantController);
-    router.post("/getAllGrantSubmission", validateAccessToken, getAllGrantSubmissionValidator, getAllGrantSubmissionController);
+    router.get("/getArtWorkSubmission", validateAccessToken, getAllGrantSubmissionValidator, getAllGrantSubmissionController);
 
 
     // transaction grant for artist
     router.post("/addTransaction", validateAccessToken, addTransactionValidation, addTransactionController);
-    router.get("/getTransaction", validateAccessToken, submitGrantController);
+    router.get("/getTransactionDetail", validateAccessToken, getTransactionDetailValidation, getTransactionController);
     router.post("/updateTransaction", validateAccessToken, updateTransactionValidation, updateTransactionController);
     router.get("/getAllTransactions", validateAccessToken, getAllTransactionValidation, getAllTransactionsController);
     // router.get("/getAllTransactions", validateAccessToken, getAllTransactionsController);

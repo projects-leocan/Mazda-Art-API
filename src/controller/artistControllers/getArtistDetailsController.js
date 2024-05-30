@@ -1,9 +1,9 @@
 const pool = require("../../config/db");
 const { userPortFoliaImagePath, userProfileImagePath, getFileURLPreFixPath } = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
-const { getUserDetails } = require("./getUserDetail");
+const { getUserDetails } = require("./getArtistDetail");
 
-exports.getUserDetailsController = async (req, res) => {
+exports.getArtistDetailsController = async (req, res) => {
     const user_id = req.query.user_id;
 
     getUserDetails(user_id, 'User details get Successfully', res, req);
@@ -17,7 +17,7 @@ exports.getUserDetailsController = async (req, res) => {
       FROM artist
       LEFT JOIN artist_moc ON artist.artist_id = artist_moc.artist_id
     WHERE artist.artist_id = ${user_id}
-	GROUP BY artist.artist_id`;
+    GROUP BY artist.artist_id`;
         // console.log(`query: ${query}`);
         pool.query(query, async (err, result) => {
             // console.log(`err: ${err}`);
