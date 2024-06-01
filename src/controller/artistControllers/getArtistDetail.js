@@ -7,7 +7,7 @@ const {
 } = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
 
-exports.getArtistDetails = async (user_id, message, res, req) => {
+exports.getArtistDetails = async (artist_id, message, res, req) => {
     // console.log("props artist", req)
     try {
         // const query = `SELECT * FROM artist WHERE artist_id = ${user_id}`;
@@ -16,7 +16,7 @@ exports.getArtistDetails = async (user_id, message, res, req) => {
             ARRAY_AGG(artist_moc.moc_id) AS artist_moc
         FROM artist
         LEFT JOIN artist_moc ON artist.artist_id = artist_moc.artist_id
-        WHERE artist.artist_id = ${user_id}
+        WHERE artist.artist_id = ${artist_id}
         GROUP BY artist.artist_id`;
 
         pool.query(query, async (err, result) => {
@@ -46,14 +46,26 @@ exports.getArtistDetails = async (user_id, message, res, req) => {
                     if (!lodash.isEmpty(result.rows[0].artist_moc) && result.rows[0].artist_moc != [null]) {
                         mocData = await Promise.all(result.rows[0].artist_moc.map(async (e) => {
                             const mocResult = await pool.query(`SELECT id, medium_of_choice FROM medium_of_choice where id = ${e}`);
-                            // console.log("mocResult: ", JSON.stringify(mocResult));
                             return mocResult.rows[0]
                         }))
                     }
+                    // grant data
+                    const submitted_grant_data = await pool.query(`SELECT * FROM submission_details WHERE artist_id=${artist_id}`)
+                    console.log('submitted_grant_data: ', JSON.stringify(submitted_grant_data));
+                    if (!lodash.isEmpty(submitted_grant_data.rows)) {
+                        const prePath = getFileURLPreFixPath(req);
+                        submitted_grant_data.rows.map((e) => {
+                            delete e.transaction_id,
+                                delete e.jury_id,
+                                e.art_file = `${prePath}${userProfileImagePath}${e.art_file}`
+                        })
+                    }
+
                     delete result.rows[0].artist_moc;
                     const finalResult = {
                         ...result.rows[0],
-                        mocs: mocData ?? []
+                        mocs: mocData ?? [],
+                        grants: submitted_grant_data.rows,
                     }
                     return res.status(200).send({
                         success: true,

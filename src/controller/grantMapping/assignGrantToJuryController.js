@@ -4,6 +4,7 @@ const { somethingWentWrong } = require("../../constants/messages");
 const _ = require('lodash');
 const fs = require('fs');
 var nodemailer = require('nodemailer');
+const { sendEmail } = require("../../constants/sendEmail");
 
 
 exports.assignGrantToJuryController = async (req, res) => {
@@ -43,8 +44,12 @@ exports.assignGrantToJuryController = async (req, res) => {
                     return result.rows[0]
                 }))
 
+                const emailIds = jurys.map((e) => {
+                    return e.email
+                });
+                sendEmail('Grant assign in you','This is testing mail...', emailIds);
                 // nodemailer
-                var transporter = nodemailer.createTransport({
+                /*var transporter = nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
                         host: 'smtp.gmail.com',
@@ -55,9 +60,7 @@ exports.assignGrantToJuryController = async (req, res) => {
                         pass: password,
                     }
                 });
-                const emailIds = jurys.map((e) => {
-                    return e.email
-                });
+                
                 console.log(`emailIds: ${emailIds}`);
                 var mailOptions = {
                     from: email,
@@ -72,7 +75,7 @@ exports.assignGrantToJuryController = async (req, res) => {
                     } else {
                         console.log('Email sent: ' + info.response);
                     }
-                });
+                });*/
                 res.status(200).send(
                     {
                         success: true,

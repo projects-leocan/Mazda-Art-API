@@ -4,12 +4,13 @@ const lodash = require('lodash');
 const { somethingWentWrong } = require("../../constants/messages");
 const { getFileURLPreFixPath, artistGrantSubmissionFilesPath } = require("../../constants/filePaths");
 const { getGrantSubmittedDetails } = require("../artSubmission/getSubmitGrantDetail");
+const { sendEmail } = require("../../constants/sendEmail");
 
 exports.updateGrantStatusController = async (req, res) => {
     const { jury_id, status, comment, submission_id, grant_id } = req.body;
     const checkJuryAssignQuery = `SELECT * FROM public.grant_assign WHERE grant_id=${grant_id} AND jury_id=${jury_id}`;
     const checkJuryAssignResult = await pool.query(checkJuryAssignQuery);
-    console.log(`checkJuryAssignResult: ${JSON.stringify(checkJuryAssignResult)}`);
+    // console.log(`checkJuryAssignResult: ${JSON.stringify(checkJuryAssignResult)}`);
 
     if (lodash.isEmpty(checkJuryAssignResult.rows)) {
         return res.status(500).send({
@@ -23,7 +24,7 @@ exports.updateGrantStatusController = async (req, res) => {
             query += `, comment='${comment}'`;
         }
         query += ` WHERE id = ${submission_id}`;
-        console.log(`query: ${query}`);
+        // console.log(`query: ${query}`);
 
         pool.query(query, async (err, result) => {
             console.log(`err: ${err}`);
@@ -35,7 +36,13 @@ exports.updateGrantStatusController = async (req, res) => {
                     statusCode: 500,
                 });
             } else {
-                // await getGrantSubmittedDetails(submission_id, "Grant status updated.", res, req)
+                if (status === '3') {
+                    // decline mail
+                    sendEmail('Grant request decline', `Your grant request has been decline.`, emailIds);
+                } else if (status === '4') {
+                    //accept mail
+                    sendEmail('Grant request accepted', `Your grant request has been accepted.`, emailIds);
+                }
                 const detailQuery = `SELECT * FROM submission_details WHERE id = ${submission_id}`;
                 pool.query(detailQuery, (err, result) => {
                     // console.log(`err: ${err}`);
@@ -76,5 +83,4 @@ exports.updateGrantStatusController = async (req, res) => {
             statusCode: 500,
         });
     }
-
 }
