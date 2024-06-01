@@ -142,6 +142,23 @@ exports.getGrantDetailValidation = (req, res, next) => {
     next();
 }
 
+exports.getGrantAllSubmissionsValidation = (req, res, next) => {
+    const { grant_id, jury_id } = req.query;
+    if (grant_id === undefined || grant_id === "") {
+        return res.status(500).send({
+            success: false,
+            message: "grant_id can not be empty",
+        });
+    }
+    if (jury_id === undefined || jury_id === "") {
+        return res.status(500).send({
+            success: false,
+            message: "jury_id can not be empty",
+        });
+    }
+    next();
+}
+
 exports.getAllGrantValidation = (req, res, next) => {
     const { record_per_page, page_no, isAll } = req.query;
     if (record_per_page == undefined && page_no == undefined && isAll == undefined) {

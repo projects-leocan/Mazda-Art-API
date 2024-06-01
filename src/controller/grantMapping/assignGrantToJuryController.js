@@ -1,23 +1,23 @@
 const pool = require("../../config/db");
-const { getUTCdate } = require("../../constants/getUTCdate");
 const { email, password } = require("../../constants/mailData");
 const { somethingWentWrong } = require("../../constants/messages");
 const _ = require('lodash');
+const fs = require('fs');
 var nodemailer = require('nodemailer');
-var Mailgun = require('mailgun').Mailgun;
+
 
 exports.assignGrantToJuryController = async (req, res) => {
-    const { jury_ids, grant_id, admin_id } = req.body;
-    console.log("assignGrantToJuryController called !!!!!!!!!!");
+    const { jurys, grant_id, admin_id, } = req.body;
+    // console.log("assignGrantToJuryController called !!!!!!!!!!");
 
     try {
         let query = `INSERT INTO grant_assign( jury_id, grant_id, assign_by) `;
-        jury_ids.map((e) => {
-            let lastElement = _.last(jury_ids);
-            console.log(`jury_id: ${e}`);
-            query += `SELECT ${e}, ${grant_id}, ${admin_id}
+        jurys.map((e) => {
+            let lastElement = _.last(jurys);
+            console.log(`jury_id: ${e.id}`);
+            query += `SELECT ${e.id}, ${grant_id}, ${admin_id}
             WHERE NOT EXISTS (
-                SELECT 1 FROM grant_assign WHERE jury_id = ${e} AND grant_id = ${grant_id}
+                SELECT 1 FROM grant_assign WHERE jury_id = ${e.id} AND grant_id = ${grant_id}
             )`;
 
             if (e != lastElement) {
@@ -38,41 +38,13 @@ exports.assignGrantToJuryController = async (req, res) => {
                     }
                 )
             } else {
-                const juryData = await Promise.all(jury_ids.map(async (e) => {
-                    const result = await pool.query(`SELECT id, full_name, email, contact_no, address, designation, dob, about, created_at FROM jury WHERE id = ${e}`);
+                const juryData = await Promise.all(jurys.map(async (e) => {
+                    const result = await pool.query(`SELECT id, full_name, email, contact_no, address, designation, dob, about, created_at FROM jury WHERE id = ${e.id}`);
                     return result.rows[0]
                 }))
 
-                const sendmail = require('sendmail')({
-                    logger: {
-                        debug: console.log,
-                        info: console.info,
-                        warn: console.warn,
-                        error: console.error
-                    },
-                    silent: false,
-                    dkim: { // Default: False
-                        privateKey: fs.readFileSync('./dkim-private.pem', 'utf8'),
-                        keySelector: 'mydomainkey'
-                    },
-                    devPort: 1025, // Default: False
-                    devHost: 'localhost', // Default: localhost
-                    smtpPort: 2525, // Default: 25
-                    smtpHost: 'localhost' // Default: -1 - extra smtp host after resolveMX
-                })
-                /* Mailgun
-                var mg = new Mailgun('Mazda-Art-API-KEY');
-                const mail = mg.sendText(email, ['archiejames70@gmail.com'],
-                    'This is the subject',
-                    'This is the text',
-                    function (err) {
-                        if (err) console.log('Oh noes: ' + err);
-                        else console.log('Success');
-                    });
-                console.log('mail: ', mail)*/
-
-                /* nodemailer
-                 var transporter = nodemailer.createTransport({
+                // nodemailer
+                var transporter = nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
                         host: 'smtp.gmail.com',
@@ -80,12 +52,16 @@ exports.assignGrantToJuryController = async (req, res) => {
                         secure: false,
                         requireTLS: true,
                         user: email,
-                        pass: password
+                        pass: password,
                     }
                 });
+                const emailIds = jurys.map((e) => {
+                    return e.email
+                });
+                console.log(`emailIds: ${emailIds}`);
                 var mailOptions = {
                     from: email,
-                    to: 'archiejames70@gmail.com',
+                    to: emailIds,
                     subject: 'Grant assign in you',
                     text: 'This is testing mail...'
                 };
@@ -96,11 +72,11 @@ exports.assignGrantToJuryController = async (req, res) => {
                     } else {
                         console.log('Email sent: ' + info.response);
                     }
-                });*/
+                });
                 res.status(200).send(
                     {
                         success: true,
-                        message: 'Grant assigned to Jurys successfully.',
+                        message: 'Grant assigned to Juries successfully.',
                         data: juryData,
                         statusCode: 200
                     }

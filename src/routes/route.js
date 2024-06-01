@@ -28,11 +28,11 @@ const { getAllThemeController } = require("../controller/theme/getAllThemeContro
 // Grant
 const { addGrantController } = require("../controller/grant/addGrantController");
 const { getAllGrantController } = require("../controller/grant/getAllGrantController");
-const { addGrantValidation, updateGrantValidation, getAllGrantValidation, getGrantDetailValidation } = require("../validations/grantValidations");
+const { addGrantValidation, updateGrantValidation, getAllGrantValidation, getGrantDetailValidation, getGrantAllSubmissionsValidation } = require("../validations/grantValidations");
 const { updateGrantController } = require("../controller/grant/updateGrantController");
 const { updateThemeController } = require("../controller/theme/updateThemeController");
 const { addThemeValidation, updateThemeValidation } = require("../validations/themeValidation");
-const { getAllJuryValidation, getJuryDetailValidation, addJuryValidation, updateJuryValidation, juryLoginValidation } = require("../validations/juryValidation");
+const { getAllJuryValidation, getJuryDetailValidation, addJuryValidation, updateJuryValidation, juryLoginValidation, getJuryGrantsValidation } = require("../validations/juryValidation");
 const { getAllJuryController } = require("../controller/jury/getAllJuryController");
 const { getJuryDetailsController } = require("../controller/jury/getJuryDetailsController");
 const { addJuryController } = require("../controller/jury/addJuryController");
@@ -54,6 +54,8 @@ const { updateTransactionController } = require("../controller/transactions/upda
 const { getAllTransactionsController } = require("../controller/transactions/getAllTransactionsController");
 const { getTransactionController } = require("../controller/transactions/getTransactionDetailsController");
 const { testController } = require("./test");
+const { getGrantsForJuryController } = require("../controller/jury/getGrantsForJuryController");
+const { getGrantAllSubmissionsController } = require("../controller/grantMapping/getGrantAllSubmissionsController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -84,6 +86,7 @@ module.exports = app => {
     router.post("/updateGrant", validateAccessToken, updateGrantValidation, updateGrantController);
     router.get("/getGrantDetails", validateAccessToken, getGrantDetailValidation, getGrantDetailsController);
     router.get("/getJuryByGrantId", validateAccessToken, getGrantDetailValidation, getJuryByGrantIdController);
+    router.get("/getGrantAllSubmissions", validateAccessToken, getGrantAllSubmissionsValidation, getGrantAllSubmissionsController);
 
     /// theme
     router.get("/getAllTheme", validateAccessToken, getAllThemeController);
@@ -96,6 +99,7 @@ module.exports = app => {
     router.post("/addJury", validateAccessToken, addJuryValidation, addJuryController);
     router.post("/updateJury", validateAccessToken, updateJuryValidation, updateJuryDetailsController);
     router.get("/juryLogin", juryLoginValidation, juryLoginController);
+    router.get("/getJuryGrants", validateAccessToken, getJuryGrantsValidation, getGrantsForJuryController);
 
     // grant assign
     router.post("/assignGrantToJury", validateAccessToken, assignGrantToJuryValidator, assignGrantToJuryController);
