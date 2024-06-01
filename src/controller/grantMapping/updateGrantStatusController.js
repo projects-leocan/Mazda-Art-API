@@ -7,8 +7,8 @@ const { getGrantSubmittedDetails } = require("../artSubmission/getSubmitGrantDet
 const { sendEmail } = require("../../constants/sendEmail");
 
 exports.updateGrantStatusController = async (req, res) => {
-    const { jury_id, status, comment, submission_id, grant_id } = req.body;
-    const checkJuryAssignQuery = `SELECT * FROM public.grant_assign WHERE grant_id=${grant_id} AND jury_id=${jury_id}`;
+    const { jury_id, status, comment, submission_id, grant_id, starts, artist_email } = req.body;
+    const checkJuryAssignQuery = `SELECT * FROM grant_assign WHERE grant_id=${grant_id} AND jury_id=${jury_id}`;
     const checkJuryAssignResult = await pool.query(checkJuryAssignQuery);
     // console.log(`checkJuryAssignResult: ${JSON.stringify(checkJuryAssignResult)}`);
 
@@ -19,12 +19,11 @@ exports.updateGrantStatusController = async (req, res) => {
             statusCode: 500,
         });
     } else {
-        let query = `UPDATE public.submission_details SET status=${status}, jury_id=${jury_id}, assign_date=CURRENT_TIMESTAMP`;
+        let query = `UPDATE submission_details SET status=${status}, jury_id=${jury_id}, star_assigned=${starts}, assign_date=CURRENT_TIMESTAMP`;
         if (comment != undefined && comment !== "") {
             query += `, comment='${comment}'`;
         }
         query += ` WHERE id = ${submission_id}`;
-        // console.log(`query: ${query}`);
 
         pool.query(query, async (err, result) => {
             console.log(`err: ${err}`);
@@ -38,10 +37,10 @@ exports.updateGrantStatusController = async (req, res) => {
             } else {
                 if (status === '3') {
                     // decline mail
-                    sendEmail('Grant request decline', `Your grant request has been decline.`, emailIds);
+                    sendEmail('Grant request decline', `Your grant request has been decline.`, artist_email);
                 } else if (status === '4') {
                     //accept mail
-                    sendEmail('Grant request accepted', `Your grant request has been accepted.`, emailIds);
+                    sendEmail('Grant request accepted', `Your grant request has been accepted.`, artist_email);
                 }
                 const detailQuery = `SELECT * FROM submission_details WHERE id = ${submission_id}`;
                 pool.query(detailQuery, (err, result) => {

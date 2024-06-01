@@ -8,7 +8,7 @@ exports.updateTransactionController = async (req, res) => {
     const { id, payment_status, payment_success_date } = req.body;
 
     try {
-        let query = `UPDATE public.trasaction_detail SET updated_at=CURRENT_TIMESTAMP`;
+        let query = `UPDATE trasaction_detail SET updated_at=CURRENT_TIMESTAMP`;
         if (payment_status != undefined) {
             query += `, trasaction_status='${payment_status}'`;
         }

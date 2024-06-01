@@ -1,5 +1,5 @@
 var nodemailer = require('nodemailer');
-const { email, password } = require("../../constants/mailData");
+const { email, password } = require('./mailData');
 
 exports.sendEmail = (subject, text, emailIds) => {
     var transporter = nodemailer.createTransport({

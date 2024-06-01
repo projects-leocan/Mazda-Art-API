@@ -23,7 +23,7 @@ exports.assignGrantToJuryValidator = (req, res, next) => {
 }
 
 exports.updateGrantStatusValidator = (req, res, next) => {
-    const { grant_id,jury_id, status, comment, submission_id } = req.body;
+    const { grant_id, jury_id, status, comment, submission_id, starts, artist_email } = req.body;
     if (status == undefined || status === "") {
         return res.status(500).send({
             success: false,
@@ -46,6 +46,18 @@ exports.updateGrantStatusValidator = (req, res, next) => {
         return res.status(500).send({
             success: false,
             message: "submission_id can not be Empty",
+        });
+    }
+    if (starts == undefined || starts === "") {
+        return res.status(500).send({
+            success: false,
+            message: "starts can not be Empty",
+        });
+    }
+    if (artist_email == undefined || artist_email === "") {
+        return res.status(500).send({
+            success: false,
+            message: "artist_email can not be Empty",
         });
     }
     next();

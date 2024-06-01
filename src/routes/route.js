@@ -8,7 +8,7 @@ const { deleteAdminController } = require("../controller/adminControllers/delete
 const { getAdminController } = require('../controller/adminControllers/getAdminController');
 const { adminLoginController } = require("../controller/adminControllers/adminLoginController");
 const { validateAccessToken } = require("../validations/accessTokenValidation");
-const { addAdminValidator, adminLoginValidation, adminIdValidator, getAllAdminValidator } = require("../validations/adminValidations");
+const { addAdminValidator, adminLoginValidation, adminIdValidator, getAllAdminValidator, addCommentOnArtistProfileValidator } = require("../validations/adminValidations");
 
 // Artist controllers
 const { getArtistProfileValidation, searchArtistValidation, getArtistDetailValidation, getArtistIdValidation, addArtistValidation } = require("../validations/artistValidations");
@@ -57,6 +57,7 @@ const { testController } = require("./test");
 const { getGrantsForJuryController } = require("../controller/jury/getGrantsForJuryController");
 const { getGrantAllSubmissionsController } = require("../controller/grantMapping/getGrantAllSubmissionsController");
 const { updateGrantStatusController } = require("../controller/grantMapping/updateGrantStatusController");
+const { addCommentOnArtistProfileController } = require("../controller/adminControllers/addCommentOnArtistProfile");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -72,6 +73,7 @@ module.exports = app => {
     router.get("/getAllAdmin", validateAccessToken, getAllAdminValidator, getAdminController)
     router.post("/updateAdmin", validateAccessToken, adminIdValidator, updateAdminController);
     router.post("/deleteAdmin", validateAccessToken, adminIdValidator, deleteAdminController);
+    router.post("/addCommentOnArtistProfile", validateAccessToken, addCommentOnArtistProfileValidator, addCommentOnArtistProfileController);
 
     /// user APIs
     router.get("/getAllUsers", validateAccessToken, getArtistProfileValidation, getAllArtistController);

@@ -87,7 +87,7 @@ exports.submitGrantController = async (req, res) => {
                             } catch (err) {
                                 artImageUploadError = err;
                             }
-                            const query = `INSERT INTO public.submission_details(
+                            const query = `INSERT INTO submission_details(
                 artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description, status)
                 VALUES (${artist_id}, '${transactionId}', ${grant_id}, '${filename}', '${art_title}', ${art_height}, ${art_width}, '${art_description}', 'SUBMITTED') RETURNING id`;
                             pool.query(query, async (err, result) => {

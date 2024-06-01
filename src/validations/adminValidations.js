@@ -71,6 +71,30 @@ exports.adminIdValidator = (req, res, next) => {
     next();
 }
 
+exports.addCommentOnArtistProfileValidator = (req, res, next) => {
+    const { admin_id, artist_id, comment } = req.body;
+
+    if (admin_id === undefined || admin_id === "") {
+        return res.status(500).send({
+            success: false,
+            message: "admin_id can not be empty",
+        });
+    }
+    if (artist_id === undefined || artist_id === "") {
+        return res.status(500).send({
+            success: false,
+            message: "artist_id id can not be empty",
+        });
+    }
+    if (comment === undefined || comment === "") {
+        return res.status(500).send({
+            success: false,
+            message: "comment can not be empty",
+        });
+    }
+    next();
+}
+
 exports.getAllAdminValidator = (req, res, next) => {
     const { record_per_page, page_no, isAll } = req.query;
     if (record_per_page == undefined && page_no == undefined && isAll == undefined) {
