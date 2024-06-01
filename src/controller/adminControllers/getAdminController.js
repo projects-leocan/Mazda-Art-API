@@ -10,7 +10,7 @@ exports.getAdminController = async (req, res) => {
         page_no = 1;
     }
 
-    let query = `SELECT *, (SELECT COUNT(*) AS total_count FROM admin) FROM admin`;
+    let query = `SELECT *, (SELECT COUNT(*) AS total_count FROM admin) FROM admin ORDER BY is_main_admin DESC, admin_id`;
 
     if (isAll == undefined) {
         offset = (page_no - 1) * record_per_page;

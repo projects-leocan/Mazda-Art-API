@@ -34,15 +34,19 @@ exports.submitGrantController = async (req, res) => {
             const submitGrantValidationResult = await pool.query(submitGrantValidationQuery);
             const date = new Date();
 
+            submitGrantValidationResult.rows[0].submission_end_date = getUTCdate(submitGrantValidationResult.rows[0].submission_end_date);
+            // console.log(`date: ${JSON.stringify(date)}`);
+            // console.log(`submission_end_date: ${JSON.stringify(submitGrantValidationResult.rows[0].submission_end_date)}`);
+            // console.log(`con: ${submitGrantValidationResult.rows[0].submission_end_date < date}`);
+
             if (submitGrantValidationResult.rowCount === 0 || lodash.isEmpty(submitGrantValidationResult.rows)) {
                 res.status(500).send({
                     success: false,
                     message: "Grant not Found.",
                     statusCode: 500,
                 });
-            } else if (submitGrantValidationResult.rows[0].submission_end_date <= date) {
-                console.log(`date: ${JSON.stringify(date)}`);
-                console.log(`con: ${submitGrantValidationResult.rows[0].submission_end_date >= date}`);
+            } else if (submitGrantValidationResult.rows[0].submission_end_date < date) {
+                console.log(`con: ${submitGrantValidationResult.rows[0].submission_end_date < date}`);
                 res.status(500).send({
                     success: false,
                     message: "Grant Submission date is passed.",
@@ -84,8 +88,8 @@ exports.submitGrantController = async (req, res) => {
                                 artImageUploadError = err;
                             }
                             const query = `INSERT INTO public.submission_details(
-                artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description)
-                VALUES (${artist_id}, '${transactionId}', ${grant_id}, '${filename}', '${art_title}', ${art_height}, ${art_width}, '${art_description}') RETURNING id`;
+                artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description, status)
+                VALUES (${artist_id}, '${transactionId}', ${grant_id}, '${filename}', '${art_title}', ${art_height}, ${art_width}, '${art_description}', 'SUBMITTED') RETURNING id`;
                             pool.query(query, async (err, result) => {
                                 console.log(`insert error: ${err}`);
                                 if (err) {

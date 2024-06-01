@@ -18,7 +18,7 @@ exports.getGrantAllSubmissionsController = async (req, res) => {
                 message: "Grant is not assign to you.",
             });
         } else {
-            const query = `SELECT * FROM public.submission_details WHERE grant_id = ${grant_id}`;
+            const query = `SELECT * FROM public.submission_details WHERE grant_id = ${grant_id} ORDER BY id DESC`;
             pool.query(query, async (err, result) => {
                 // console.log(`err: ${err}`);
                 // console.log(`result: ${JSON.stringify(result)}`);

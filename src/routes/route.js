@@ -39,7 +39,7 @@ const { addJuryController } = require("../controller/jury/addJuryController");
 const { updateJuryDetailsController } = require("../controller/jury/updateJuryController");
 const { juryLoginController } = require("../controller/jury/juryLogin");
 const { assignGrantToJuryController } = require("../controller/grantMapping/assignGrantToJuryController");
-const { assignGrantToJuryValidator } = require("../validations/grantMappingValidations");
+const { assignGrantToJuryValidator, updateGrantStatusValidator } = require("../validations/grantMappingValidations");
 const { getGrantDetailsController } = require("../controller/grant/getGrantDetailController");
 const { getJuryByGrantIdController } = require("../controller/grant/getJuryByGrantIdController");
 const { addArtistController } = require("../controller/artistControllers/addArtistController");
@@ -56,6 +56,7 @@ const { getTransactionController } = require("../controller/transactions/getTran
 const { testController } = require("./test");
 const { getGrantsForJuryController } = require("../controller/jury/getGrantsForJuryController");
 const { getGrantAllSubmissionsController } = require("../controller/grantMapping/getGrantAllSubmissionsController");
+const { updateGrantStatusController } = require("../controller/grantMapping/updateGrantStatusController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -101,8 +102,9 @@ module.exports = app => {
     router.get("/juryLogin", juryLoginValidation, juryLoginController);
     router.get("/getJuryGrants", validateAccessToken, getJuryGrantsValidation, getGrantsForJuryController);
 
-    // grant assign
+    // grant-jury mapping (grant assign to jury assign)
     router.post("/assignGrantToJury", validateAccessToken, assignGrantToJuryValidator, assignGrantToJuryController);
+    router.post("/updateGrantSubmissionStatus", validateAccessToken, updateGrantStatusValidator, updateGrantStatusController);
 
     // submit grant for artist
     // router.post("/submitGrant", validateAccessToken, submitGrantValidation, submitGrantController);
