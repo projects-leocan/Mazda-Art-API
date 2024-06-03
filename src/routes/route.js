@@ -58,6 +58,8 @@ const { getGrantsForJuryController } = require("../controller/jury/getGrantsForJ
 const { getGrantAllSubmissionsController } = require("../controller/grantMapping/getGrantAllSubmissionsController");
 const { updateGrantStatusController } = require("../controller/grantMapping/updateGrantStatusController");
 const { addCommentOnArtistProfileController } = require("../controller/adminControllers/addCommentOnArtistProfile");
+const { adminIdValidation } = require("../validations/statsValidations");
+const { getTransactionStatsController } = require("../controller/statisticsControllers/getTransactionStatsController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -123,6 +125,10 @@ module.exports = app => {
     router.get("/getAllTransactions", validateAccessToken, getAllTransactionValidation, getAllTransactionsController);
     // router.get("/getAllTransactions", validateAccessToken, getAllTransactionsController);
 
+
+    // stats
+    router.get("/getTransactionStatistics", validateAccessToken, adminIdValidation, getTransactionStatsController);
+    router.get("/getSubmitArtStatistics", validateAccessToken, adminIdValidation, getTransactionStatsController);
 
     router.get("/test", testController);
 
