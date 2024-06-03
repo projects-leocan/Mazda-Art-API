@@ -62,6 +62,7 @@ const { adminIdValidation } = require("../validations/statsValidations");
 const { getTransactionStatsController } = require("../controller/statisticsControllers/getTransactionStatsController");
 const { getSubmitArtStatisticsController } = require("../controller/statisticsControllers/getSubmitArtStatisticsController");
 const { getJuryStatisticsController } = require("../controller/statisticsControllers/getJuryStatisticsController");
+const { addEnquiryController } = require("../controller/enquiryControllers/updateTransactionController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -132,6 +133,11 @@ module.exports = app => {
     router.get("/getTransactionStatistics", validateAccessToken, adminIdValidation, getTransactionStatsController);
     router.get("/getSubmitArtStatistics", validateAccessToken, adminIdValidation, getSubmitArtStatisticsController);
     router.get("/getJuryStatistics", validateAccessToken, adminIdValidation, getJuryStatisticsController);
+
+
+    // enquiry
+    router.get("/getAllEnquiry", validateAccessToken, adminIdValidation, addEnquiryController);
+    router.get("/addEnquiry", validateAccessToken, adminIdValidation);
 
     router.get("/test", testController);
 

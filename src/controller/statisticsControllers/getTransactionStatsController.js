@@ -112,8 +112,8 @@ exports.getTransactionStatsController = async (req, res) => {
         return res.status(200).send(
             {
                 success: true,
-                message: "Here is stats",
-                statusCode: 500,
+                message: "Transactions fetch Successfully",
+                statusCode: 200,
                 data: convertedData,
             }
         )
