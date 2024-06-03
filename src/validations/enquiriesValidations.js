@@ -27,26 +27,8 @@ exports.addEnquiryValidation = (req, res, next) => {
     next();
 }
 
-exports.updateTransactionValidation = (req, res, next) => {
-    const { id } = req.body;
-    if (id == undefined || id === "") {
-        return res.status(500).send({
-            success: false,
-            message: "id can not be Empty",
-        })
-    }
-    next();
-}
-
-exports.getAllTransactionValidation = (req, res, next) => {
-    const { admin_id, jury_id, record_per_page, page_no, isAll } = req.query;
-    if ((admin_id == undefined) && (jury_id == undefined)) {
-        return res.status(500).send({
-            success: false,
-            message: "admin_id OR jury_id can not be Empty",
-        })
-    }
-
+exports.getAllEnquiryValidation = (req, res, next) => {
+    const { admin_id, record_per_page, page_no, isAll } = req.query;
     if (record_per_page == undefined && page_no == undefined && isAll == undefined) {
         return res.status(500).send({
             success: false,
@@ -59,22 +41,17 @@ exports.getAllTransactionValidation = (req, res, next) => {
             message: "page_no can not be Empty",
         });
     }
+    if (admin_id == undefined && admin_id == undefined) {
+        return res.status(500).send({
+            success: false,
+            message: "admin_id can not be Empty",
+        });
+    }
     if (isAll == undefined && record_per_page == undefined) {
         return res.status(500).send({
             success: false,
             message: "record_per_page can not be Empty",
         });
-    }
-    next();
-}
-
-exports.getTransactionDetailValidation = (req, res, next) => {
-    const { transaction_id } = req.query;
-    if (transaction_id == undefined) {
-        return res.status(500).send({
-            success: false,
-            message: "transaction_id can not be Empty",
-        })
     }
     next();
 }

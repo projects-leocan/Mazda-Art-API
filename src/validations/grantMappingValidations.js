@@ -4,7 +4,7 @@ exports.assignGrantToJuryValidator = (req, res, next) => {
     if (jurys == undefined || _.isEmpty(jurys)) {
         return res.status(500).send({
             success: false,
-            message: "jury_id can not be Empty",
+            message: "jurys can not be Empty",
         });
     }
     if (grant_id == undefined || grant_id === "") {

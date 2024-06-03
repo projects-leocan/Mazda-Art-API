@@ -62,7 +62,9 @@ const { adminIdValidation } = require("../validations/statsValidations");
 const { getTransactionStatsController } = require("../controller/statisticsControllers/getTransactionStatsController");
 const { getSubmitArtStatisticsController } = require("../controller/statisticsControllers/getSubmitArtStatisticsController");
 const { getJuryStatisticsController } = require("../controller/statisticsControllers/getJuryStatisticsController");
-const { addEnquiryController } = require("../controller/enquiryControllers/updateTransactionController");
+const { addEnquiryController } = require("../controller/enquiryControllers/addEnquiryController");
+const { addEnquiryValidation, getAllEnquiryValidation,  } = require("../validations/enquiriesValidations");
+const { getAllUnresolvedEnquiryController, getAllEnquiryController } = require("../controller/enquiryControllers/getAllEnquiryController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -136,8 +138,8 @@ module.exports = app => {
 
 
     // enquiry
-    router.get("/getAllEnquiry", validateAccessToken, adminIdValidation, addEnquiryController);
-    router.get("/addEnquiry", validateAccessToken, adminIdValidation);
+    router.get("/getAllUnresolvedEnquiry", validateAccessToken, getAllEnquiryValidation, getAllEnquiryController);
+    router.post("/addEnquiry", validateAccessToken, addEnquiryValidation, addEnquiryController);
 
     router.get("/test", testController);
 
