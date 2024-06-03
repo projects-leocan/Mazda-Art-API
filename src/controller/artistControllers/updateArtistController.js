@@ -15,7 +15,7 @@ exports.updateArtistController = async (req, res) => {
         var form = new formidable.IncomingForm();
         // console.log('form data: ', form);
         form.parse(req, async function (err, fields, files) {
-            const { artist_id, password, fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio_file_ext, profile_pic_file_ext, is_profile_pic_updated, is_portfolio_updated, is_moc_update, mocs } = fields;
+            const { artist_id, password, fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, portfolio_file_ext, profile_pic_file_ext, is_profile_pic_updated, is_portfolio_updated, is_moc_update, mocs, is_kyc_verified } = fields;
 
             for (let key in fields) { if (Array.isArray(fields[key]) && fields[key].length === 1) { fields[key] = fields[key][0]; } }
             // console.log('fields data: ', fields);
@@ -85,6 +85,9 @@ exports.updateArtistController = async (req, res) => {
             }
             if (social_media_link !== undefined) {
                 query += `, social_media_profile_link='${social_media_link}'`;
+            }
+            if (is_kyc_verified !== undefined) {
+                query += `, is_kyc_verified=${is_kyc_verified}`;
             }
 
             console.log(`query: ${query}`);

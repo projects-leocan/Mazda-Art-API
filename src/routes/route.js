@@ -39,7 +39,7 @@ const { addJuryController } = require("../controller/jury/addJuryController");
 const { updateJuryDetailsController } = require("../controller/jury/updateJuryController");
 const { juryLoginController } = require("../controller/jury/juryLogin");
 const { assignGrantToJuryController } = require("../controller/grantMapping/assignGrantToJuryController");
-const { assignGrantToJuryValidator, updateGrantStatusValidator } = require("../validations/grantMappingValidations");
+const { assignGrantToJuryValidator, updateGrantStatusValidator, getGrantJuryMappingValidation } = require("../validations/grantMappingValidations");
 const { getGrantDetailsController } = require("../controller/grant/getGrantDetailController");
 const { getJuryByGrantIdController } = require("../controller/grant/getJuryByGrantIdController");
 const { addArtistController } = require("../controller/artistControllers/addArtistController");
@@ -65,6 +65,7 @@ const { getJuryStatisticsController } = require("../controller/statisticsControl
 const { addEnquiryController } = require("../controller/enquiryControllers/addEnquiryController");
 const { addEnquiryValidation, getAllEnquiryValidation,  } = require("../validations/enquiriesValidations");
 const { getAllUnresolvedEnquiryController, getAllEnquiryController } = require("../controller/enquiryControllers/getAllEnquiryController");
+const { getGrantJuryMappingController } = require("../controller/grantMapping/getGrantJuryMappingController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -114,6 +115,8 @@ module.exports = app => {
     // grant-jury mapping (grant assign to jury assign)
     router.post("/assignGrantToJury", validateAccessToken, assignGrantToJuryValidator, assignGrantToJuryController);
     router.post("/updateGrantSubmissionStatus", validateAccessToken, updateGrantStatusValidator, updateGrantStatusController);
+    router.get("/getGrantJuryMapping", validateAccessToken, getGrantJuryMappingValidation, getGrantJuryMappingController);
+
 
     // submit grant for artist
     // router.post("/submitGrant", validateAccessToken, submitGrantValidation, submitGrantController);
