@@ -143,17 +143,17 @@ exports.getGrantDetailValidation = (req, res, next) => {
 }
 
 exports.getGrantAllSubmissionsValidation = (req, res, next) => {
-    const { grant_id, jury_id } = req.query;
+    const { grant_id, jury_id, admin_id } = req.query;
+    if ((jury_id === undefined) && (admin_id === undefined)) {
+        return res.status(500).send({
+            success: false,
+            message: "grant_id OR admin_id can not be empty",
+        });
+    }
     if (grant_id === undefined || grant_id === "") {
         return res.status(500).send({
             success: false,
             message: "grant_id can not be empty",
-        });
-    }
-    if (jury_id === undefined || jury_id === "") {
-        return res.status(500).send({
-            success: false,
-            message: "jury_id can not be empty",
         });
     }
     next();

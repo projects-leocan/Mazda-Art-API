@@ -1,4 +1,3 @@
-const { default: axios } = require("axios");
 const { somethingWentWrong } = require("../constants/messages");
 // const FingerprintJS = require('@fingerprintjs/fingerprintjs-pro')
 
