@@ -49,7 +49,7 @@ const { getSubmitGrantDetailController } = require("../controller/artSubmission/
 const { updateSubmitedGrantController } = require("../controller/artSubmission/updateSubmitedGrantController");
 const { getAllGrantSubmissionController } = require("../controller/artSubmission/getAllGrantSubmissionController");
 const { addTransactionController } = require("../controller/transactions/addTransactionController");
-const { addTransactionValidation, updateTransactionValidation, getAllTransactionValidation, getTransactionDetailValidation } = require("../validations/transactionValidations");
+const { addTransactionValidation, updateTransactionValidation, getAllTransactionValidation, getTransactionDetailValidation, getArtistProfileCommentsValidation } = require("../validations/transactionValidations");
 const { updateTransactionController } = require("../controller/transactions/updateTransactionController");
 const { getAllTransactionsController } = require("../controller/transactions/getAllTransactionsController");
 const { getTransactionController } = require("../controller/transactions/getTransactionDetailsController");
@@ -66,6 +66,8 @@ const { addEnquiryController } = require("../controller/enquiryControllers/addEn
 const { addEnquiryValidation, getAllEnquiryValidation,  } = require("../validations/enquiriesValidations");
 const { getAllUnresolvedEnquiryController, getAllEnquiryController } = require("../controller/enquiryControllers/getAllEnquiryController");
 const { getGrantJuryMappingController } = require("../controller/grantMapping/getGrantJuryMappingController");
+const { getJuryGrantsArtSubmissionsController } = require("../controller/jury/getJuryGrantsArtSubmissionsController");
+const { getArtistProfileCommentsController } = require("../controller/artistControllers/getArtistProfileCommentsController");
 
 module.exports = app => {
     // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -111,6 +113,7 @@ module.exports = app => {
     router.post("/updateJury", validateAccessToken, updateJuryValidation, updateJuryDetailsController);
     router.get("/juryLogin", juryLoginValidation, juryLoginController);
     router.get("/getJuryGrants", validateAccessToken, getJuryGrantsValidation, getGrantsForJuryController);
+    router.get("/getJuryGrantsArtSubmissions", validateAccessToken, getJuryGrantsValidation, getJuryGrantsArtSubmissionsController);
 
     // grant-jury mapping (grant assign to jury assign)
     router.post("/assignGrantToJury", validateAccessToken, assignGrantToJuryValidator, assignGrantToJuryController);
@@ -125,12 +128,12 @@ module.exports = app => {
     router.post("/updateSubmitGrantDetail", validateAccessToken, updateSubmitedGrantController);
     router.get("/getArtWorkSubmission", validateAccessToken, getAllGrantSubmissionValidator, getAllGrantSubmissionController);
 
-
     // transaction grant for artist
     router.post("/addTransaction", validateAccessToken, addTransactionValidation, addTransactionController);
     router.get("/getTransactionDetail", validateAccessToken, getTransactionDetailValidation, getTransactionController);
     router.post("/updateTransaction", validateAccessToken, updateTransactionValidation, updateTransactionController);
     router.get("/getAllTransactions", validateAccessToken, getAllTransactionValidation, getAllTransactionsController);
+    router.get('/getArtistProfileComments', validateAccessToken, getArtistProfileCommentsValidation, getArtistProfileCommentsController)
     // router.get("/getAllTransactions", validateAccessToken, getAllTransactionsController);
 
 

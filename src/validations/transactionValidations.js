@@ -96,3 +96,38 @@ exports.getTransactionDetailValidation = (req, res, next) => {
     }
     next();
 }
+
+exports.getArtistProfileCommentsValidation = (req, res, next) => {
+    const { admin_id, artist_id, record_per_page, page_no, isAll } = req.query;
+    if (admin_id == undefined || admin_id === "") {
+        return res.status(500).send({
+            success: false,
+            message: "admin_id can not be Empty",
+        })
+    }
+    if (artist_id == undefined || artist_id === "") {
+        return res.status(500).send({
+            success: false,
+            message: "artist_id can not be Empty",
+        })
+    }
+    if (record_per_page == undefined && page_no == undefined && isAll == undefined) {
+        return res.status(500).send({
+            success: false,
+            message: "record_per_page and page_no OR isAll can not be Empty",
+        });
+    }
+    if (isAll == undefined && page_no == undefined) {
+        return res.status(500).send({
+            success: false,
+            message: "page_no can not be Empty",
+        });
+    }
+    if (isAll == undefined && record_per_page == undefined) {
+        return res.status(500).send({
+            success: false,
+            message: "record_per_page can not be Empty",
+        });
+    }
+    next();
+}

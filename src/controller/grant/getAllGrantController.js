@@ -12,9 +12,9 @@ exports.getAllGrantController = async (req, res) => {
         page_no = 1;
     }
 
-    let query = `SELECT grant_id, submission_end_date, application_fees, (SELECT COUNT(*) AS total_count FROM grants WHERE submission_end_date >= CURRENT_DATE) 
+    let query = `SELECT grant_id, submission_end_date, application_fees, (SELECT COUNT(*) AS total_count FROM grants) 
 	from grants 
-	WHERE submission_end_date >= CURRENT_DATE ORDER By submission_end_date`;
+	ORDER By submission_end_date`;
 
     if (isAll == undefined) {
         offset = (page_no - 1) * record_per_page;
