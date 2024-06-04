@@ -100,7 +100,8 @@ const getMocData = async (list) => {
     }))
 }
 const getArtistComments = async (artist_id) => {
-    const comments_data = await pool.query(`SELECT * FROM artist_comments WHERE artist_id=${artist_id} LIMIT 10 OFFSET 0`)
+    // const comments_data = await pool.query(`SELECT * FROM artist_comments WHERE artist_id=${artist_id} LIMIT 10 OFFSET 0`)
+    const comments_data = await pool.query(`SELECT ac.*, a.admin_name FROM artist_comments as ac JOIN admin a ON a.admin_id = ac.admin_id WHERE artist_id = ${artist_id} LIMIT 10 OFFSET 0`)
     // console.log('comments_data: ', JSON.stringify(comments_data));
     if (!lodash.isEmpty(comments_data.rows)) {
         comments_data.rows.map((e) => {

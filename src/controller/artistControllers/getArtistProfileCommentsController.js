@@ -11,7 +11,8 @@ exports.getArtistProfileCommentsController = async (req, res) => {
             page_no = 1;
         }
         // let query = `SELECT * FROM trasaction_detail`;
-        let query = `SELECT * FROM artist_comments WHERE artist_id = ${artist_id}`;
+        // let query = `SELECT * FROM artist_comments WHERE artist_id = ${artist_id}`;
+        let query = `SELECT ac.*, a.admin_name FROM artist_comments as ac JOIN admin a ON a.admin_id = ac.admin_id WHERE artist_id = ${artist_id}`;
         if (isAll == undefined) {
             offset = (page_no - 1) * record_per_page;
             query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
