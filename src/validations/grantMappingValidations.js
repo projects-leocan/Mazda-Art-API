@@ -24,7 +24,7 @@ exports.assignGrantToJuryValidator = (req, res, next) => {
 
 exports.getGrantJuryMappingValidation = (req, res, next) => {
     const { record_per_page, page_no, isAll, admin_id } = req.query;
-    if (admin_id == undefined || admin_id === "") {
+    if (admin_id === undefined || admin_id === "") {
         return res.status(500).send({
             success: false,
             message: "admin_id can not be Empty",

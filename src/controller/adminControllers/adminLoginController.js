@@ -49,6 +49,7 @@ exports.adminLoginController = async (req, res) => {
                             token: token,
                             data: result.rows[0],
                             message: 'Login Successfully',
+                            loginType: "Admin",
                             statusCode: 200
                         }
                     );

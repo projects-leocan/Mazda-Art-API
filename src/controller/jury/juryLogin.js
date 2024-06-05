@@ -45,6 +45,7 @@ exports.juryLoginController = async (req, res) => {
                             token: token,
                             message: 'Login Successfully',
                             statusCode: 200,
+                            loginType: "Jury",
                             data: result.rows[index],
                         }
                     );

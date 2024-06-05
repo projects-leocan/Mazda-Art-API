@@ -146,6 +146,7 @@ module.exports = app => {
     // enquiry
     router.get("/getAllUnresolvedEnquiry", validateAccessToken, getAllEnquiryValidation, getAllEnquiryController);
     router.post("/addEnquiry", validateAccessToken, addEnquiryValidation, addEnquiryController);
+    router.post("/resolveEnquiry", validateAccessToken, addEnquiryValidation, addEnquiryController);
 
     router.get("/test", testController);
 
