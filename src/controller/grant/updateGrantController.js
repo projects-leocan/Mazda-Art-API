@@ -2,122 +2,133 @@ const pool = require("../../config/db");
 const { getUTCdate } = require("../../constants/getUTCdate");
 
 exports.updateGrantController = async (req, res) => {
-    let { grant_id, admin_id, category_id, hight, width, theme_id, app_fees, submission_end_date, max_allow_submision, no_of_awards, no_of_nominations, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, is_flat_pyramid } = req.body;
+  let {
+    grant_id,
+    admin_id,
+    category_id,
+    hight,
+    width,
+    theme_id,
+    app_fees,
+    submission_end_date,
+    max_allow_submision,
+    no_of_awards,
+    no_of_nominations,
+    rank_1_price,
+    rank_2_price,
+    rank_3_price,
+    nominee_price,
+    grand_amount,
+    is_flat_pyramid,
+  } = req.body;
 
-    const currentTime = new Date().toISOString().slice(0, 10);
-    let query = `UPDATE grants set `;
+  const currentTime = new Date().toISOString().slice(0, 10);
+  let query = `UPDATE grants set `;
 
-    query += `updated_at='${currentTime}'`;
-    if (admin_id != undefined) {
-        query += `, updated_by='${admin_id}'`;
+  query += `updated_at='${currentTime}'`;
+  if (admin_id != undefined) {
+    query += `, updated_by='${admin_id}'`;
+  }
+  if (hight != undefined) {
+    query += `, hight='${hight}'`;
+  }
+  if (category_id != undefined) {
+    query += `, "category_MOD"='${category_id}'`;
+  }
+  if (width != undefined) {
+    query += `, width='${width}'`;
+  }
+  if (theme_id != undefined) {
+    query += `, theme_id='${theme_id}'`;
+  }
+  if (app_fees != undefined) {
+    query += `, application_fees='${app_fees}'`;
+  }
+  if (submission_end_date != undefined) {
+    query += `, submission_end_date='${submission_end_date}'`;
+  }
+  if (max_allow_submision != undefined) {
+    query += `, max_allow_submision='${max_allow_submision}'`;
+  }
+  if (no_of_awards != undefined) {
+    query += `, no_of_awards='${no_of_awards}'`;
+  }
+  if (no_of_nominations != undefined) {
+    query += `, no_of_nominations='${no_of_nominations}'`;
+  }
+  if (is_flat_pyramid == 1) {
+    query += `, rank_1_price=0, rank_2_price=0, rank_3_price=0`;
+  } else {
+    if (rank_1_price != undefined) {
+      query += `, rank_1_price='${rank_1_price}'`;
     }
-    if (hight != undefined) {
-        query += `, hight='${hight}'`;
+    if (rank_2_price != undefined) {
+      query += `, rank_2_price='${rank_2_price}'`;
     }
-    if (category_id != undefined) {
-        query += `, "category_MOD"='${category_id}'`;
+    if (rank_3_price != undefined) {
+      query += `, rank_3_price='${rank_3_price}'`;
     }
-    if (width != undefined) {
-        query += `, width='${width}'`;
-    }
-    if (theme_id != undefined) {
-        query += `, theme_id='${theme_id}'`;
-    }
-    if (app_fees != undefined) {
-        query += `, application_fees='${app_fees}'`;
-    }
-    if (submission_end_date != undefined) {
-        query += `, submission_end_date='${submission_end_date}'`;
-    }
-    if (max_allow_submision != undefined) {
-        query += `, max_allow_submision='${max_allow_submision}'`;
-    }
-    if (no_of_awards != undefined) {
-        query += `, no_of_awards='${no_of_awards}'`;
-    }
-    if (no_of_nominations != undefined) {
-        query += `, no_of_nominations='${no_of_nominations}'`;
-    }
-    if (is_flat_pyramid == 1) {
-        query += `, rank_1_price=0, rank_2_price=0, rank_3_price=0`;
-    } else {
-        if (rank_1_price != undefined) {
-            query += `, rank_1_price='${rank_1_price}'`;
-        }
-        if (rank_2_price != undefined) {
-            query += `, rank_2_price='${rank_2_price}'`;
-        }
-        if (rank_3_price != undefined) {
-            query += `, rank_3_price='${rank_3_price}'`;
-        }
-    }
-    if (nominee_price != undefined) {
-        query += `, nominee_price='${nominee_price}'`;
-    }
-    if (grand_amount != undefined) {
-        query += `, grand_amount='${grand_amount}'`;
-    }
-    if (is_flat_pyramid != undefined) {
-        query += `, is_flat_pyramid='${is_flat_pyramid}'`;
-    }
+  }
+  if (nominee_price != undefined) {
+    query += `, nominee_price='${nominee_price}'`;
+  }
+  if (grand_amount != undefined) {
+    query += `, grand_amount='${grand_amount}'`;
+  }
+  if (is_flat_pyramid != undefined) {
+    query += `, is_flat_pyramid='${is_flat_pyramid}'`;
+  }
 
-    query += ` WHERE grant_id='${grant_id}'`;
-    console.log(`query: ${query}`);
-    try {
-        pool.query(query, async (err, result) => {
-            // console.log(`err: ${err}`);
-            // console.log(`result: ${JSON.stringify(result)}`);
-            if (err) {
-                console.log(`err: ${err}`);
-                res.status(500).send(
-                    {
-                        success: false,
-                        messages: "Something went wrong",
-                        statusCode: 500
-                    }
-                )
-            } else {
-                // await pool.query(`SET TIME ZONE 'UTC'`);
-                const newQuery = `SELECT g.*, m.medium_of_choice, t.theme from grants as g, medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id AND g.grant_id = ${grant_id}`;
-                pool.query(newQuery, async (newErr, newResult) => {
-                    if (newErr) {
-                        res.status(500).send(
-                            {
-                                success: false,
-                                messages: "Something went wrong",
-                                statusCode: 500
-                            }
-                        )
-                    } else {
+  query += ` WHERE grant_id='${grant_id}'`;
+  console.log(`query: ${query}`);
+  try {
+    pool.query(query, async (err, result) => {
+      // console.log(`err: ${err}`);
+      // console.log(`result: ${JSON.stringify(result)}`);
+      if (err) {
+        console.log(`err: ${err}`);
+        res.status(500).send({
+          success: false,
+          messages: "Something went wrong",
+          statusCode: 500,
+        });
+      } else {
+        // await pool.query(`SET TIME ZONE 'UTC'`);
+        const newQuery = `SELECT g.*, m.medium_of_choice, t.theme from grants as g, medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id AND g.grant_id = ${grant_id}`;
+        pool.query(newQuery, async (newErr, newResult) => {
+          if (newErr) {
+            res.status(500).send({
+              success: false,
+              messages: "Something went wrong",
+              statusCode: 500,
+            });
+          } else {
+            const final_response = {
+              ...newResult.rows[0],
+              updated_at: getUTCdate(newResult.rows[0].updated_at),
+              submission_end_date: getUTCdate(
+                newResult.rows[0].submission_end_date
+              ),
+              created_at: getUTCdate(newResult.rows[0].created_at),
+              created_at: getUTCdate(newResult.rows[0].created_at),
+            };
 
-                        const final_response = {
-                            ...newResult.rows[0],
-                            updated_at: getUTCdate(newResult.rows[0].updated_at),
-                            submission_end_date: getUTCdate(newResult.rows[0].submission_end_date),
-                            created_at: getUTCdate(newResult.rows[0].created_at),
-                            created_at: getUTCdate(newResult.rows[0].created_at),
-                        }
-
-                        return res.status(200).send(
-                            {
-                                success: true,
-                                message: 'Insert theme Successfully',
-                                data: final_response,
-                                statusCode: 200
-                            }
-                        );
-                    }
-                })
-            }
-        })
-    } catch (error) {
-        console.log(`error: ${error}`);
-        return res.status(500).send(
-            {
-                success: false,
-                message: somethingWentWrong,
-                statusCode: 500
-            }
-        )
-    }
-} 
+            return res.status(200).send({
+              success: true,
+              message: "Insert theme Successfully",
+              data: final_response,
+              statusCode: 200,
+            });
+          }
+        });
+      }
+    });
+  } catch (error) {
+    console.log(`error: ${error}`);
+    return res.status(500).send({
+      success: false,
+      message: somethingWentWrong,
+      statusCode: 500,
+    });
+  }
+};

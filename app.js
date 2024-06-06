@@ -1,12 +1,12 @@
-const express = require('express')
-const cors = require("cors")
+const express = require("express");
+const cors = require("cors");
 
-const app = express()
+const app = express();
 const port = 8080;
 // const port = 8081;
 
 var corsOptions = {
-  origin: "http://localhost:3000"
+  origin: "http://localhost:3000",
 };
 
 app.use(cors(corsOptions));
@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
 
-app.use("/src/files", express.static('src/files'))
+app.use("/src/files", express.static("src/files"));
 
 require("./src/routes/route")(app);
 // Handling Errors

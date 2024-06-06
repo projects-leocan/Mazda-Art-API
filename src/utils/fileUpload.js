@@ -31,20 +31,20 @@
 
 // const upload = multer({ storage: storage }).single('image');
 
-const formidable = require('formidable');
-const path = require('path');
-const fs = require('fs');
+const formidable = require("formidable");
+const path = require("path");
+const fs = require("fs");
 
 // Custom function to handle file uploads and return the file paths
 exports.fileUpload = (storagePath, filePath) => {
-    fs.rename(storagePath, filePath, (err) => {
-        // console.log(`storagePath: ${storagePath}`);
-        // console.log(`filePath: ${filePath}`);
-        if (err) {
-            console.log(`Error moving file: ${err}`);
-            return err;
-        } else {
-            console.log("file uploaded success !!!!!!!");
-        }
-    });
-}
+  fs.rename(storagePath, filePath, (err) => {
+    // console.log(`storagePath: ${storagePath}`);
+    // console.log(`filePath: ${filePath}`);
+    if (err) {
+      console.log(`Error moving file: ${err}`);
+      return err;
+    } else {
+      console.log("file uploaded success !!!!!!!");
+    }
+  });
+};
