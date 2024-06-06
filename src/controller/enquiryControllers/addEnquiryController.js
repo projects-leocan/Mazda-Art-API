@@ -3,11 +3,11 @@ const _ = require("lodash");
 const { somethingWentWrong } = require("../../constants/messages");
 
 exports.addEnquiryController = async (req, res) => {
-  const { full_name, email, contact_no, message } = req.body;
+  const { full_name, email, contact_no, enquiry_query } = req.body;
 
   try {
-    const query = `INSERT INTO enquiries(created_date, full_name, email, contact_no, message)
-        VALUES (CURRENT_TIMESTAMP, '${full_name}', '${email}', '${contact_no}', '${message}') RETURNING id`;
+    const query = `INSERT INTO enquiries(created_date, full_name, email, contact_no, query)
+        VALUES (CURRENT_TIMESTAMP, '${full_name}', '${email}', '${contact_no}', '${enquiry_query}') RETURNING id`;
     pool.query(query, async (error, result) => {
       // console.log(`error: ${error}`);
       // console.log(`result: ${result}`);
