@@ -193,6 +193,7 @@ const {
 const {
   addEnquiryValidation,
   getAllEnquiryValidation,
+  updateEnquiryValidation,
 } = require("../validations/enquiriesValidations");
 const {
   getAllUnresolvedEnquiryController,
@@ -207,6 +208,12 @@ const {
 const {
   getArtistProfileCommentsController,
 } = require("../controller/artistControllers/getArtistProfileCommentsController");
+
+// Shweta Changes
+
+const {
+  updateEnquiryController,
+} = require("../controller/enquiryControllers/updateEnquiryController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -486,6 +493,13 @@ module.exports = (app) => {
     validateAccessToken,
     addEnquiryValidation,
     addEnquiryController
+  );
+
+  router.post(
+    "/updateEnquiry",
+    validateAccessToken,
+    updateEnquiryValidation,
+    updateEnquiryController
   );
 
   router.get("/test", testController);
