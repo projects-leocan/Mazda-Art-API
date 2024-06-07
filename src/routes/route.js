@@ -218,6 +218,20 @@ const {
 const {
   getAdminDetailsController,
 } = require("../controller/adminControllers/getAdminDetailsController");
+const {
+  getAllContactUsValidation,
+  addContactUsValidation,
+  updateContactUsValidation,
+} = require("../validations/contactUsValidations");
+const {
+  getAllContactUsController,
+} = require("../controller/contactUsControllers/getAllContactUsController");
+const {
+  addContactUsController,
+} = require("../controller/contactUsControllers/addContactUsController");
+const {
+  updateContactUsController,
+} = require("../controller/contactUsControllers/updateContactUsController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -511,6 +525,27 @@ module.exports = (app) => {
     validateAccessToken,
     getAdminDetailsValidator,
     getAdminDetailsController
+  );
+
+  // contact us
+  router.get(
+    "/getAllUnresolvedContactUs",
+    validateAccessToken,
+    getAllContactUsValidation,
+    getAllContactUsController
+  );
+  router.post(
+    "/addContactUs",
+    validateAccessToken,
+    addContactUsValidation,
+    addContactUsController
+  );
+
+  router.post(
+    "/updateContactUs",
+    validateAccessToken,
+    updateContactUsValidation,
+    updateContactUsController
   );
 
   router.get("/test", testController);
