@@ -12,15 +12,34 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
   // console.log("props artist", req)
   try {
     // const query = `SELECT * FROM artist WHERE artist_id = ${user_id}`;
-    const query = `SELECT 
-            artist.*,
-            ARRAY_AGG(artist_moc.moc_id) AS artist_moc
-        FROM artist
-        LEFT JOIN artist_moc ON artist.artist_id = artist_moc.artist_id
-        WHERE artist.artist_id = ${artist_id}
-        GROUP BY artist.artist_id`;
+    // const query = `SELECT
+    //         artist.*,
+    //         ARRAY_AGG(artist_moc.moc_id) AS artist_moc
+    //     FROM artist
+    //     LEFT JOIN artist_moc ON artist.artist_id = artist_moc.artist_id
+    //     WHERE artist.artist_id = ${artist_id}
+    //     GROUP BY artist.artist_id`;
+
+    const query = `SELECT artist.*,
+                  ARRAY_AGG(DISTINCT artist_moc.moc_id) AS artist_moc,
+                  ARRAY_AGG(
+                    JSON_BUILD_OBJECT(
+                      'transaction_id', trasaction_detail.trasaction_id,
+                      'payment_success_date', trasaction_detail.payment_success_date,
+                      'transaction_amount', trasaction_detail.trasaction_amount,
+                      'grant_id',trasaction_detail.grant_id
+                    )
+                  ) AS transactions
+                  FROM artist
+                  LEFT JOIN artist_moc ON artist.artist_id = artist_moc.artist_id
+                  LEFT JOIN trasaction_detail ON artist.artist_id = trasaction_detail.artist_id
+                  WHERE artist.artist_id = ${artist_id}
+                  GROUP BY artist.artist_id;
+                  `;
 
     pool.query(query, async (err, result) => {
+      // console.log("error", err);
+
       if (err) {
         return res.status(500).send({
           success: false,
@@ -53,12 +72,34 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
           ]);
 
           delete result.rows[0].artist_moc;
-          const finalResult = {
+          let finalResult = {
             ...result.rows[0],
             mocs: data[0],
             grants: data[1],
             comments: data[2],
           };
+
+          const updatedGrants = finalResult?.grants?.map((grant) => {
+            // Find corresponding transaction
+            const transaction = finalResult?.transactions.find(
+              (tran) => tran.grant_id === +grant.grant_id
+            );
+
+            // If transaction found, add it to the grant object
+            if (transaction) {
+              return { ...grant, transaction };
+            } else {
+              return grant;
+            }
+          });
+
+          finalResult = {
+            ...finalResult,
+            grants: updatedGrants,
+          };
+
+          delete finalResult?.transactions;
+
           return res.status(200).send({
             success: true,
             message: message,
@@ -70,7 +111,7 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,
@@ -83,7 +124,7 @@ const getGrantsData = async (artist_id, req) => {
   const submitted_grant_data = await pool.query(
     `SELECT * FROM submission_details WHERE artist_id=${artist_id}`
   );
-  console.log("submitted_grant_data: ", JSON.stringify(submitted_grant_data));
+  // console.log("submitted_grant_data: ", JSON.stringify(submitted_grant_data));
   if (!lodash.isEmpty(submitted_grant_data.rows)) {
     const prePath = getFileURLPreFixPath(req);
     submitted_grant_data.rows.map((e) => {
