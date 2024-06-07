@@ -130,3 +130,14 @@ exports.getAllAdminValidator = (req, res, next) => {
   }
   next();
 };
+
+exports.getAdminDetailsValidator = (req, res, next) => {
+  const { admin_id } = req.query;
+  if (admin_id == undefined) {
+    return res.status(500).send({
+      success: false,
+      message: "admin_id can not be empty",
+    });
+  }
+  next();
+};

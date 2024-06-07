@@ -24,6 +24,7 @@ const {
   adminIdValidator,
   getAllAdminValidator,
   addCommentOnArtistProfileValidator,
+  getAdminDetailsValidator,
 } = require("../validations/adminValidations");
 
 // Artist controllers
@@ -214,6 +215,9 @@ const {
 const {
   updateEnquiryController,
 } = require("../controller/enquiryControllers/updateEnquiryController");
+const {
+  getAdminDetailsController,
+} = require("../controller/adminControllers/getAdminDetailsController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -500,6 +504,13 @@ module.exports = (app) => {
     validateAccessToken,
     updateEnquiryValidation,
     updateEnquiryController
+  );
+
+  router.get(
+    "/getAdminDetails",
+    validateAccessToken,
+    getAdminDetailsValidator,
+    getAdminDetailsController
   );
 
   router.get("/test", testController);
