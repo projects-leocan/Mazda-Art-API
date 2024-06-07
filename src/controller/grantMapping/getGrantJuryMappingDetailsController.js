@@ -87,7 +87,7 @@ exports.getGrantJuryMappingDetailsController = async (req, res) => {
             success: true,
             statusCode: 200,
             message: "Grant-Jury-Mapping get successfully.",
-            data: finalResponse,
+            data: finalResponse[0],
             total_count: count,
           });
         }
