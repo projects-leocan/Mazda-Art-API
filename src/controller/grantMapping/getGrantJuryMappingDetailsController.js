@@ -6,30 +6,21 @@ const {
   artistGrantSubmissionFilesPath,
 } = require("../../constants/filePaths");
 
-exports.getGrantJuryMappingController = async (req, res) => {
-  let { record_per_page, page_no, isAll, admin_id } = req.query;
+exports.getGrantJuryMappingDetailsController = async (req, res) => {
+  let { grant_id, admin_id } = req.query;
 
   try {
-    if (record_per_page == undefined) {
-      record_per_page = 10;
-    }
-    if (page_no == undefined) {
-      page_no = 1;
-    }
-
-    let query = `SELECT g.grant_id, (SELECT COUNT(*) AS total_count FROM grants),
+    let query = `SELECT g.*, (SELECT COUNT(*) AS total_count FROM grants), m.medium_of_choice, t.theme, 
         COALESCE(ARRAY_AGG(ga.jury_id) FILTER (WHERE ga.jury_id IS NOT NULL), '{}') AS jury
         FROM grants AS g
+        JOIN medium_of_choice AS m ON g."category_MOD" = m.id
+        JOIN theme AS t ON g.theme_id = t.id
         LEFT JOIN grant_assign AS ga ON g.grant_id = ga.grant_id
-        GROUP BY g.grant_id`;
-
-    if (isAll == undefined) {
-      offset = (page_no - 1) * record_per_page;
-      query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
-    }
+        WHERE g.grant_id = ${grant_id}
+        GROUP BY g.grant_id, g.submission_end_date, m.medium_of_choice, t.theme`;
 
     pool.query(query, async (err, result) => {
-      // console.log(`err: ${err}`);
+      console.log(`err: ${err}`);
       //   console.log(`result:::: ${JSON.stringify(result.rows)}`);
       if (err) {
         res.status(500).send({
@@ -49,7 +40,7 @@ exports.getGrantJuryMappingController = async (req, res) => {
           let juryIds = [];
           result.rows.map((e) => {
             if (!lodash.isEmpty(e.jury)) {
-              // console.log("e.jury: ", e.jury);
+              console.log("e.jury: ", e.jury);
               return e.jury.map((a) => juryIds.push(a));
             }
           });
@@ -63,7 +54,7 @@ exports.getGrantJuryMappingController = async (req, res) => {
               if (!lodash.isEmpty(e)) {
                 return new Promise((resolve, reject) => {
                   const juryQuery = `SELECT id, full_name, email, contact_no, designation, is_jury_password_updated FROM jury WHERE id = ${e}`;
-                  // console.log("juryQuery: ", juryQuery);
+                  //   console.log("juryQuery: ", juryQuery);
                   pool.query(juryQuery, (err, response) => {
                     if (err) {
                       reject(err);
@@ -103,7 +94,7 @@ exports.getGrantJuryMappingController = async (req, res) => {
       }
     });
   } catch (error) {
-    // console.log(`error: ${error}`);
+    console.log(`error: ${error}`);
     res.status(500).send({
       success: false,
       message: err,

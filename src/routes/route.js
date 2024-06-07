@@ -119,6 +119,7 @@ const {
   assignGrantToJuryValidator,
   updateGrantStatusValidator,
   getGrantJuryMappingValidation,
+  getGrantJuryMappingDetailsValidation,
 } = require("../validations/grantMappingValidations");
 const {
   getGrantDetailsController,
@@ -232,6 +233,10 @@ const {
 const {
   updateContactUsController,
 } = require("../controller/contactUsControllers/updateContactUsController");
+
+const {
+  getGrantJuryMappingDetailsController,
+} = require("../controller/grantMapping/getGrantJuryMappingDetailsController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -546,6 +551,13 @@ module.exports = (app) => {
     validateAccessToken,
     updateContactUsValidation,
     updateContactUsController
+  );
+
+  router.get(
+    "/getGrantJuryMappingDetails",
+    validateAccessToken,
+    getGrantJuryMappingDetailsValidation,
+    getGrantJuryMappingDetailsController
   );
 
   router.get("/test", testController);
