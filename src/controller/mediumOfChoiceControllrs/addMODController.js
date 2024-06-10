@@ -14,7 +14,7 @@ exports.addMODControllers = async (req, res) => {
       if (err) {
         return res.status(500).send({
           success: false,
-          messages: err,
+          message: err,
           statusCode: 500,
         });
       } else {
@@ -23,7 +23,7 @@ exports.addMODControllers = async (req, res) => {
           if (newErr) {
             res.status(500).send({
               success: false,
-              messages: "Something went wrong",
+              message: "Something went wrong",
               statusCode: 500,
             });
           } else {

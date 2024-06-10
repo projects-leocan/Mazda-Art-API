@@ -28,7 +28,7 @@ exports.getAllJuryController = async (req, res) => {
       if (err) {
         res.status(500).send({
           success: false,
-          messages: somethingWentWrong,
+          message: somethingWentWrong,
           statusCode: 500,
         });
       } else {

@@ -13,7 +13,7 @@ exports.addThemeController = async (req, res) => {
       console.log(`err: ${err}`);
       res.status(500).send({
         success: false,
-        messages: "Something went wrong",
+        message: "Something went wrong",
         statusCode: 500,
       });
     } else {
@@ -22,7 +22,7 @@ exports.addThemeController = async (req, res) => {
         if (newErr) {
           res.status(500).send({
             success: false,
-            messages: "Something went wrong",
+            message: "Something went wrong",
             statusCode: 500,
           });
         } else {

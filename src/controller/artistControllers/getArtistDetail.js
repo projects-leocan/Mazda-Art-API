@@ -43,7 +43,7 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
       if (err) {
         return res.status(500).send({
           success: false,
-          messages: err,
+          message: err,
           statusCode: 500,
         });
       } else {

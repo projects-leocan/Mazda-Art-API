@@ -18,7 +18,7 @@ exports.addAdminController = async (req, res) => {
     if (hashedPassword === "Error in hashing") {
       res.status(500).send({
         success: false,
-        messages: "Error in hashing",
+        message: "Error in hashing",
       });
     }
     if (timezone == undefined || timezone === "") {
@@ -47,14 +47,14 @@ exports.addAdminController = async (req, res) => {
         ) {
           res.status(500).send({
             success: false,
-            messages: "Email Id already Exist, try different email or sign in.",
+            message: "Email Id already Exist, try different email or sign in.",
             statusCode: 500,
           });
         } else {
           console.log(`err: ${err}`);
           res.status(500).send({
             success: false,
-            messages: somethingWentWrong,
+            message: somethingWentWrong,
             statusCode: 500,
           });
         }
@@ -64,7 +64,7 @@ exports.addAdminController = async (req, res) => {
           if (newErr) {
             res.status(500).send({
               success: false,
-              messages: "Something went wrong",
+              message: "Something went wrong",
               statusCode: 500,
             });
           } else {
@@ -81,7 +81,7 @@ exports.addAdminController = async (req, res) => {
   } catch (error) {
     res.status(500).send({
       success: false,
-      messages: "Something went wrong",
+      message: "Something went wrong",
       statusCode: 500,
     });
   }

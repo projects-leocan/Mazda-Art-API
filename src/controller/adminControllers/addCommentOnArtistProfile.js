@@ -14,7 +14,7 @@ exports.addCommentOnArtistProfileController = async (req, res) => {
       if (err) {
         res.status(500).send({
           success: false,
-          messages: somethingWentWrong,
+          message: somethingWentWrong,
           statusCode: 500,
         });
       } else {
@@ -22,7 +22,7 @@ exports.addCommentOnArtistProfileController = async (req, res) => {
         const finalResponse = await pool.query(getCommentById);
         res.status(200).send({
           success: true,
-          messages: "Comment added Successfully.",
+          message: "Comment added Successfully.",
           data: finalResponse.rows[0],
           statusCode: 200,
         });
@@ -32,7 +32,7 @@ exports.addCommentOnArtistProfileController = async (req, res) => {
     console.log("error: ", error);
     res.status(500).send({
       success: false,
-      messages: somethingWentWrong,
+      message: somethingWentWrong,
       statusCode: 500,
     });
   }

@@ -35,14 +35,14 @@ exports.addJuryController = async (req, res) => {
         if (err.detail === `Key (email)=(${email}) already exists.`) {
           res.status(500).send({
             success: false,
-            messages: "Email Id already Exist, try different email or sign in.",
+            message: "Email Id already Exist, try different email or sign in.",
             statusCode: 500,
           });
         } else {
           console.log(`err: ${err}`);
           res.status(500).send({
             success: false,
-            messages: somethingWentWrong,
+            message: somethingWentWrong,
             statusCode: 500,
           });
         }

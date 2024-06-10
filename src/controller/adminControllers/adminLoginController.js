@@ -15,13 +15,13 @@ exports.adminLoginController = async (req, res) => {
     if (err) {
       res.status(500).send({
         success: false,
-        messages: "Invalid Credential",
+        message: "Invalid Credential",
         statusCode: 500,
       });
     } else if (result.rowCount === 0) {
       res.status(500).send({
         success: false,
-        messages: "Invalid Credential",
+        message: "Invalid Credential",
         statusCode: 500,
       });
     } else {
@@ -52,14 +52,14 @@ exports.adminLoginController = async (req, res) => {
         } else {
           res.status(500).send({
             success: false,
-            messages: "Invalid Password",
+            message: "Invalid Password",
             statusCode: 500,
           });
         }
       } else {
         res.status(500).send({
           success: false,
-          messages: "Invalid Password",
+          message: "Invalid Password",
           statusCode: 500,
         });
       }

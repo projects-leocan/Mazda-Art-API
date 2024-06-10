@@ -30,7 +30,7 @@ exports.getArtistDetailsController = async (req, res) => {
                 return res.status(500).send(
                     {
                         success: false,
-                        messages: err,
+                        message: err,
                         statusCode: 500
                     }
                 )

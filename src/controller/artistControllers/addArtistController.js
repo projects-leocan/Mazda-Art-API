@@ -52,7 +52,7 @@ exports.addArtistController = async (req, res) => {
           if (newErr.detail === `Key (email)=(${email}) already exists.`) {
             res.status(500).send({
               success: false,
-              messages: `${email} is already exists.`,
+              message: `${email} is already exists.`,
               statusCode: 500,
               profileImageUploadError: profileImageUploadError,
               portfolioImageUploadError: portfolioImageUploadError,
@@ -60,7 +60,7 @@ exports.addArtistController = async (req, res) => {
           } else {
             res.status(500).send({
               success: false,
-              messages: "Something went wrong",
+              message: "Something went wrong",
               statusCode: 500,
               profileImageUploadError: profileImageUploadError,
               portfolioImageUploadError: portfolioImageUploadError,

@@ -15,7 +15,7 @@ exports.getJuryDetails = async (jury_id, message, res) => {
       if (newErr) {
         res.status(500).send({
           success: false,
-          messages: "Something went wrong",
+          message: "Something went wrong",
           statusCode: 500,
         });
       } else {

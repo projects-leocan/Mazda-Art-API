@@ -65,7 +65,7 @@ exports.updateJuryDetailsController = async (req, res) => {
         res.status(500).send({
           success: false,
           error: err,
-          messages: "Something went wrong",
+          message: "Something went wrong",
           statusCode: 500,
         });
       } else {

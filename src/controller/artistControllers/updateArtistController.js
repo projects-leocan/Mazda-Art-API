@@ -199,7 +199,7 @@ exports.updateArtistController = async (req, res) => {
         if (err) {
           res.status(500).send({
             success: false,
-            messages: err,
+            message: err,
             statusCode: 500,
           });
         } else {

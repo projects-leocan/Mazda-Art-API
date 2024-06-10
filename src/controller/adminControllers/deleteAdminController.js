@@ -11,7 +11,7 @@ exports.deleteAdminController = async (req, res) => {
   if (isMainAdmin.rows[0].is_main_admin === 1) {
     res.status(200).send({
       success: false,
-      messages: "Main Admin can not be Deleted.",
+      message: "Main Admin can not be Deleted.",
       statusCode: 200,
     });
   } else {
@@ -22,7 +22,7 @@ exports.deleteAdminController = async (req, res) => {
       if (err) {
         res.status(500).send({
           success: false,
-          messages: err,
+          message: err,
           statusCode: 500,
         });
       } else {
