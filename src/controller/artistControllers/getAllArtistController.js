@@ -7,7 +7,7 @@ const {
 const { somethingWentWrong } = require("../../constants/messages");
 
 exports.getAllArtistController = async (req, res) => {
-  let { record_per_page, page_no, isAll } = req.query;
+  let { record_per_page, page_no, isAll, kyc } = req.query;
 
   try {
     if (record_per_page == undefined) {
@@ -17,12 +17,16 @@ exports.getAllArtistController = async (req, res) => {
       page_no = 1;
     }
     // let query = `SELECT artist_id, fname, lname, dob, gender, email, COUNT(*) OVER() AS totalArtist FROM artist Order by artist_id`;
-    let query = `SELECT artist_id, fname, lname, dob, gender, email, profile_pic, artist_portfolio, COUNT(*) OVER() AS totalArtist FROM artist Order by artist_id`;
+    let query = `SELECT artist_id, fname, lname, dob, gender, email, profile_pic, artist_portfolio, COUNT(*) OVER() AS totalArtist FROM artist`;
 
     if (isAll == undefined) {
       offset = (page_no - 1) * record_per_page;
-      query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
+      query += ` ORDER BY artist_id LIMIT ${record_per_page} OFFSET ${offset}`;
     }
+    if (kyc !== undefined) {
+      query += ` WHERE is_kyc_verified = '1' ORDER BY artist_id LIMIT ${record_per_page} OFFSET ${offset}`;
+    }
+
     // console.log(`query: ${query}`);
     pool.query(query, async (err, result) => {
       if (err) {
