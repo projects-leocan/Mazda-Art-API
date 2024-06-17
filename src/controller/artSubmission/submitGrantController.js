@@ -55,11 +55,11 @@ exports.submitGrantController = async (req, res) => {
       } else if (
         submitGrantValidationResult.rows[0].submission_end_date < date
       ) {
-        console.log(
-          `con: ${
-            submitGrantValidationResult.rows[0].submission_end_date < date
-          }`
-        );
+        // console.log(
+        //   `con: ${
+        //     submitGrantValidationResult.rows[0].submission_end_date < date
+        //   }`
+        // );
         res.status(500).send({
           success: false,
           message: "Grant Submission date is passed.",
@@ -154,7 +154,7 @@ exports.submitGrantController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     res.status(500).send({
       success: false,
       message: somethingWentWrong,

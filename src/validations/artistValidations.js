@@ -288,14 +288,14 @@ exports.addArtistValidation = (req, res, next) => {
       profile_pic,
       MOC,
     } = fields;
-    console.log(`validations: ${JSON.stringify(fields)}`);
+    // console.log(`validations: ${JSON.stringify(fields)}`);
     if (Object.entries(fields).length === 0) {
       return res.status(500).send({
         success: false,
         message: "Please Pass data in body",
       });
     }
-    console.log("fname: ", fname);
+    // console.log("fname: ", fname);
     if (fname == undefined || _.isEmpty(fname)) {
       return res.status(500).send({
         success: false,

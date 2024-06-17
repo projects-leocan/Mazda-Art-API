@@ -22,6 +22,8 @@ exports.updateGrantController = async (req, res) => {
     is_flat_pyramid,
   } = req.body;
 
+  console.log("req . body", req.body);
+
   const currentTime = new Date().toISOString().slice(0, 10);
   let query = `UPDATE grants set `;
 
@@ -80,13 +82,13 @@ exports.updateGrantController = async (req, res) => {
   }
 
   query += ` WHERE grant_id='${grant_id}'`;
-  console.log(`query: ${query}`);
+  // console.log(`query: ${query}`);
   try {
     pool.query(query, async (err, result) => {
-      // console.log(`err: ${err}`);
+      // console.log(`err update Grant: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
-        console.log(`err: ${err}`);
+        // console.log(`err: ${err}`);
         res.status(500).send({
           success: false,
           message: "Something went wrong",
@@ -124,7 +126,7 @@ exports.updateGrantController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,

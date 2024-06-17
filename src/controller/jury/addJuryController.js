@@ -31,7 +31,7 @@ exports.addJuryController = async (req, res) => {
       // console.log(`query: ${query}`);
       // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
-        console.log(`err: ${err}`);
+        // console.log(`err: ${err}`);
         if (err.detail === `Key (email)=(${email}) already exists.`) {
           res.status(500).send({
             success: false,
@@ -39,7 +39,7 @@ exports.addJuryController = async (req, res) => {
             statusCode: 500,
           });
         } else {
-          console.log(`err: ${err}`);
+          // console.log(`err: ${err}`);
           res.status(500).send({
             success: false,
             message: somethingWentWrong,
@@ -84,7 +84,7 @@ exports.addJuryController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,

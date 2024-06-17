@@ -12,6 +12,7 @@ exports.searchArtistController = async (req, res) => {
     // const query = `SELECT * FROM artist WHERE mobile_number ILIKE '${search_text}%' or mobile_number ILIKE '%${search_text}'
 
     // search by name and contact number
+    // console.log("search text", search_text);
     const query = `SELECT * FROM artist WHERE mobile_number ILIKE '${search_text}%' or mobile_number ILIKE '%${search_text}' or fname ILIKE '${search_text}%' or fname ILIKE '%${search_text}' or lname ILIKE '${search_text}%' or lname ILIKE '%${search_text}'`;
     // console.log(`search query: ${query}`);
     pool.query(query, async (err, result) => {

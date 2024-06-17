@@ -56,11 +56,11 @@ exports.updateJuryDetailsController = async (req, res) => {
     }
 
     query += ` WHERE id = ${jury_id}`;
-    console.log(`query: ${query}`);
+    // console.log(`query: ${query}`);
 
     pool.query(query, async (err, result) => {
-      console.log(`err: ${err}`);
-      console.log(`result: ${JSON.stringify(result)}`);
+      // console.log(`err: ${err}`);
+      // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
         res.status(500).send({
           success: false,
@@ -110,7 +110,7 @@ exports.updateJuryDetailsController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,

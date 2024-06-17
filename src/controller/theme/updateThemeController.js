@@ -5,12 +5,12 @@ exports.updateThemeController = async (req, res) => {
 
   const currentTime = new Date().toISOString().slice(0, 10);
   const query = `UPDATE theme SET theme='${theme}', updated_at='${currentTime}', updated_by=${admin_id} WHERE id = ${theme_id}`;
-  console.log(`query: ${query}`);
+  // console.log(`query: ${query}`);
   pool.query(query, async (err, result) => {
     // console.log(`err: ${err}`);
     // console.log(`result: ${JSON.stringify(result)}`);
     if (err) {
-      console.log(`err: ${err}`);
+      // console.log(`err: ${err}`);
       res.status(500).send({
         success: false,
         message: "Something went wrong",

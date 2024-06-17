@@ -20,7 +20,7 @@ exports.getGrantJuryMappingDetailsController = async (req, res) => {
         GROUP BY g.grant_id, g.submission_end_date, m.medium_of_choice, t.theme`;
 
     pool.query(query, async (err, result) => {
-      console.log(`err: ${err}`);
+      // console.log(`err: ${err}`);
       //   console.log(`result:::: ${JSON.stringify(result.rows)}`);
       if (err) {
         res.status(500).send({
@@ -40,7 +40,7 @@ exports.getGrantJuryMappingDetailsController = async (req, res) => {
           let juryIds = [];
           result.rows.map((e) => {
             if (!lodash.isEmpty(e.jury)) {
-              console.log("e.jury: ", e.jury);
+              // console.log("e.jury: ", e.jury);
               return e.jury.map((a) => juryIds.push(a));
             }
           });
@@ -94,7 +94,7 @@ exports.getGrantJuryMappingDetailsController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     res.status(500).send({
       success: false,
       message: err,

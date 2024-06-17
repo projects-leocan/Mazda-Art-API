@@ -23,10 +23,10 @@ exports.getAllContactUsController = async (req, res) => {
       offset = (page_no - 1) * record_per_page;
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
-    console.log(`query: ${query}`);
+    // console.log(`query: ${query}`);
     pool.query(query, async (err, result) => {
-      console.log(`err: ${err}`);
-      console.log(`result: ${JSON.stringify(result)}`);
+      // console.log(`err: ${err}`);
+      // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
         return res.status(500).send({
           success: false,
@@ -52,7 +52,7 @@ exports.getAllContactUsController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,

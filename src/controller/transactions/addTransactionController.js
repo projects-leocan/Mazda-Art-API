@@ -22,8 +22,8 @@ exports.addTransactionController = async (req, res) => {
             artist_id, grant_id, trasaction_id, payment_init_date, trasaction_status, trasaction_amount, payment_success_date)
             VALUES (${artist_id}, ${grant_id}, '${transaction_id}', '${payment_init_date}', '${payment_status}','${transaction_amount}', '${payment_success_date}') RETURNING id`;
     pool.query(query, async (error, result) => {
-      console.log(`error: ${error}`);
-      console.log(`result: ${result}`);
+      // console.log(`error: ${error}`);
+      // console.log(`result: ${result}`);
       if (error) {
         return res.status(500).send({
           success: false,
@@ -39,7 +39,7 @@ exports.addTransactionController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,

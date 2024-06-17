@@ -19,8 +19,8 @@ exports.updateTransactionController = async (req, res) => {
     }
     query += ` WHERE id = ${id}`;
     pool.query(query, async (error, result) => {
-      console.log(`error: ${error}`);
-      console.log(`result: ${result}`);
+      // console.log(`error: ${error}`);
+      // console.log(`result: ${result}`);
       if (error) {
         return res.status(500).send({
           success: false,
@@ -32,7 +32,7 @@ exports.updateTransactionController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,

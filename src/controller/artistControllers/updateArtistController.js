@@ -114,11 +114,11 @@ exports.updateArtistController = async (req, res) => {
         query += `, is_kyc_verified=${is_kyc_verified}`;
       }
 
-      console.log(`query: ${query}`);
+      // console.log(`query: ${query}`);
       // console.log('request: ', req);
 
       if (is_portfolio_updated !== undefined) {
-        console.log("is_portfolio_updated", is_portfolio_updated);
+        // console.log("is_portfolio_updated", is_portfolio_updated);
         const getFilesQuery = `SELECT artist_portfolio FROM artist WHERE artist_id = ${artist_id}`;
         const getFileResponse = await pool.query(getFilesQuery);
         if (!lodash.isEmpty(getFileResponse.rows)) {
@@ -144,11 +144,11 @@ exports.updateArtistController = async (req, res) => {
         }
       }
 
-      console.log("mocInsertQuery: ", JSON.stringify(mocs));
+      // console.log("mocInsertQuery: ", JSON.stringify(mocs));
       if (is_moc_update !== undefined) {
         let deleteQuery = `DELETE FROM artist_moc WHERE artist_id = ${artist_id}`;
         const deleteResult = await pool.query(deleteQuery);
-        console.log("deleteResult: ", JSON.stringify(deleteResult));
+        // console.log("deleteResult: ", JSON.stringify(deleteResult));
 
         if (!lodash.isEmpty(mocs)) {
           let mocInsertQuery = `INSERT INTO artist_moc(artist_id, moc_id) VALUES `;
@@ -162,7 +162,7 @@ exports.updateArtistController = async (req, res) => {
           });
           // console.log('mocInsertQuery: ', mocInsertQuery);
           const mocInsertResult = await pool.query(mocInsertQuery);
-          console.log("mocInsertResult: ", JSON.stringify(mocInsertResult));
+          // console.log("mocInsertResult: ", JSON.stringify(mocInsertResult));
         }
       }
       if (is_profile_pic_updated !== undefined) {
@@ -192,7 +192,7 @@ exports.updateArtistController = async (req, res) => {
       }
 
       query += ` WHERE artist_id=${artist_id}`;
-      console.log(`query: ${query}`);
+      // console.log(`query: ${query}`);
       pool.query(query, async (err, result) => {
         // console.log(`err: ${err}`);
         // console.log(`result: ${JSON.stringify(result)}`);

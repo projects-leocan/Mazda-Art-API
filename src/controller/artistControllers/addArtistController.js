@@ -10,7 +10,7 @@ var lodash = require("lodash");
 const { getArtistDetails } = require("./getArtistDetail");
 
 exports.addArtistController = async (req, res) => {
-  console.log(`req.body: ${JSON.stringify()}`);
+  // console.log(`req.body: ${JSON.stringify()}`);
   try {
     var form = new formidable.IncomingForm();
     form.parse(req, async function (err, fields, files) {
@@ -33,7 +33,7 @@ exports.addArtistController = async (req, res) => {
         is_profile_pic_updated,
       } = fields;
 
-      console.log(`controller: ${JSON.stringify(fields)}`);
+      // console.log(`controller: ${JSON.stringify(fields)}`);
 
       const portfolio_image = files["portfolio"];
       const profile_image = files["profile_pic"];
@@ -45,9 +45,9 @@ exports.addArtistController = async (req, res) => {
       // const data = [fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_link, currentTime, currentTime];
       let query = `INSERT INTO artist(fname, lname, dob, gender, email, mobile_number, address1, address2, city, state, pincode, social_media_profile_link, artist_portfolio, profile_pic, created_at, updated_at) VALUES ('${fname}', '${lname}', '${dob}', '${gender}', '${email}', '${mobile_number}', '${address1}', '${address2}', '${city}', '${state}', ${pincode}, '${social_media_link}', 'null', 'null', '${currentTime}', '${currentTime}') RETURNING artist_id`;
       pool.query(query, async (newErr, newResult) => {
-        console.log("query: ", query);
-        console.log(`newErr: ${JSON.stringify(newErr)}`);
-        console.log(`newResult: ${JSON.stringify(newResult)}`);
+        // console.log("query: ", query);
+        // console.log(`newErr: ${JSON.stringify(newErr)}`);
+        // console.log(`newResult: ${JSON.stringify(newResult)}`);
         if (newErr) {
           if (newErr.detail === `Key (email)=(${email}) already exists.`) {
             res.status(500).send({
@@ -76,9 +76,9 @@ exports.addArtistController = async (req, res) => {
             const updateImagesQuery = `UPDATE artist set `;
 
             if (is_portfolio_updated != undefined) {
-              console.log(
-                `portfolio_image: ${JSON.stringify(portfolio_image)}`
-              );
+              // console.log(
+              //   `portfolio_image: ${JSON.stringify(portfolio_image)}`
+              // );
               const portfolioImagePath = portfolio_image[0].filepath;
               const filename =
                 artist_id + "_" + Date.now() + `.${portfolio_file_ext}`;
@@ -92,9 +92,9 @@ exports.addArtistController = async (req, res) => {
             }
 
             if (is_profile_pic_updated != undefined) {
-              console.log(
-                `portfolio_image: ${JSON.stringify(portfolio_image)}`
-              );
+              // console.log(
+              //   `portfolio_image: ${JSON.stringify(portfolio_image)}`
+              // );
               const profileImagePath = profile_image[0].filepath;
               const filename =
                 artist_id + "_" + Date.now() + `.${profile_pic_file_ext}`;
@@ -114,7 +114,7 @@ exports.addArtistController = async (req, res) => {
               }
             }
             updateImagesQuery += ` WHERE artist_id=${artist_id}`;
-            console.log(`updateImagesQuery: ${updateImagesQuery}`);
+            // console.log(`updateImagesQuery: ${updateImagesQuery}`);
             const updatedResult = await pool.query(updateImagesQuery);
           }
 
@@ -128,7 +128,7 @@ exports.addArtistController = async (req, res) => {
       });
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     res.status(500).send({
       success: false,
       message: somethingWentWrong,

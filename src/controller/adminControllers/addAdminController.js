@@ -26,7 +26,7 @@ exports.addAdminController = async (req, res) => {
     }
     const currentTime = moment().tz(timezone);
     const formattedTime = currentTime.format("YYYY-MM-DD HH:mm:ss");
-    console.log(`formattedTime: ${formattedTime}`);
+    // console.log(`formattedTime: ${formattedTime}`);
 
     const data = [
       admin_name,
@@ -41,7 +41,7 @@ exports.addAdminController = async (req, res) => {
       // console.log(`err: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
-        console.log(`err: ${err}`);
+        // console.log(`err: ${err}`);
         if (
           err.detail === `Key (admin_email)=(${admin_email}) already exists.`
         ) {
@@ -51,7 +51,7 @@ exports.addAdminController = async (req, res) => {
             statusCode: 500,
           });
         } else {
-          console.log(`err: ${err}`);
+          // console.log(`err: ${err}`);
           res.status(500).send({
             success: false,
             message: somethingWentWrong,

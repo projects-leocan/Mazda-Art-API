@@ -11,7 +11,7 @@ exports.updateAdminController = async (req, res) => {
     admin_password,
   } = req.body;
 
-  console.log(`req.body: ${JSON.stringify(req.body)}`);
+  // console.log(`req.body: ${JSON.stringify(req.body)}`);
 
   // const data = [admin_name, admin_email, admin_contact, admin_address]
   // const query = `UPDATE admin set admin_name=$1, admin_email=$2, admin_contact=$4, admin_address=$5 WHERE admin_id=${admin_id}`
@@ -34,10 +34,10 @@ exports.updateAdminController = async (req, res) => {
     query += `, admin_password='${hashedPassword}'`;
   }
   query += ` WHERE admin_id=${admin_id}`;
-  console.log("query: ", query);
+  // console.log("query: ", query);
   pool.query(query, async (err, result) => {
-    console.log(`err: ${err}`);
-    console.log(`result: ${JSON.stringify(result)}`);
+    // console.log(`err: ${err}`);
+    // console.log(`result: ${JSON.stringify(result)}`);
     if (err) {
       res.status(500).send({
         success: false,

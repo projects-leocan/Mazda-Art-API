@@ -39,8 +39,8 @@ exports.updateGrantStatusController = async (req, res) => {
     query += ` WHERE id = ${submission_id}`;
 
     pool.query(query, async (err, result) => {
-      console.log(`err: ${err}`);
-      console.log(`result: ${JSON.stringify(result)}`);
+      // console.log(`err: ${err}`);
+      // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
         res.status(500).send({
           success: false,
@@ -100,7 +100,7 @@ exports.updateGrantStatusController = async (req, res) => {
   try {
     const juryAssignQuery = ``;
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,

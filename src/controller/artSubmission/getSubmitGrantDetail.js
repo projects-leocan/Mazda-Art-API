@@ -24,15 +24,15 @@ exports.getGrantSubmittedDetails = async (
             statusCode: 500,
           });
         } else {
-          console.log(
-            `submissionDetailResult: ${JSON.stringify(submissionDetailResult)}`
-          );
+          // console.log(
+          //   `submissionDetailResult: ${JSON.stringify(submissionDetailResult)}`
+          // );
           const prePath = getFileURLPreFixPath(req);
 
           if (!lodash.isEmpty(submissionDetailResult.rows)) {
             if (submissionDetailResult.rows[0].transaction_id != undefined) {
               const transactionQuery = `SELECT * FROM trasaction_detail WHERE id = '${submissionDetailResult.rows[0].transaction_id}'`;
-              console.log(`transactionQuery: ${transactionQuery}`);
+              // console.log(`transactionQuery: ${transactionQuery}`);
               const transactionResult = await pool.query(transactionQuery);
               const finalResponse = {
                 ...submissionDetailResult.rows[0],
@@ -74,7 +74,7 @@ exports.getGrantSubmittedDetails = async (
       }
     );
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     res.status(500).send({
       success: false,
       message: somethingWentWrong,

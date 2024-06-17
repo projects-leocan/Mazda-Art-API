@@ -23,7 +23,7 @@ exports.getAllGrantController = async (req, res) => {
 
   try {
     pool.query(query, async (err, result) => {
-      console.log(`err: ${err}`);
+      // console.log(`err: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
         res.status(500).send({
@@ -56,7 +56,7 @@ exports.getAllGrantController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,

@@ -18,7 +18,7 @@ exports.addGrantValidation = (req, res, next) => {
     nominee_price,
     grand_amount,
   } = req.body;
-  console.log(`req.body: ${JSON.stringify(req.body)}`);
+  // console.log(`req.body: ${JSON.stringify(req.body)}`);
   if (_.isEmpty(req.body)) {
     return res.status(500).send({
       success: false,

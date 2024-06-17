@@ -13,14 +13,14 @@ exports.getGrantsForJuryController = async (req, res) => {
       page_no = 1;
     }
 
-    let query = `SELECT (SELECT Count(id) as total_count FROM grant_assign WHERE jury_id = ${jury_id}),ga.*, g.* FROM grant_assign as ga JOIN grants g ON g.grant_id = ga.grant_id WHERE jury_id = ${jury_id} ORDER BY id`;
+    let query = `SELECT (SELECT Count(id) as total_count FROM grant_assign WHERE jury_id = ${jury_id}),ga.*, g.* FROM grant_assign as ga JOIN grants g ON g.grant_id = ga.grant_id WHERE jury_id = ${jury_id} ORDER BY jury_id`;
     if (isAll == undefined) {
       offset = (page_no - 1) * record_per_page;
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
 
     pool.query(query, async (err, result) => {
-      // console.log(`error: ${err}`);
+      // console.log(`error-------------------: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
         res.status(500).send({
@@ -46,7 +46,7 @@ exports.getGrantsForJuryController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log("error: ", error);
+    // console.log("error: ", error);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,

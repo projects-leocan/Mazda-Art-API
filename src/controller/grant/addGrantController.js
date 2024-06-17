@@ -34,7 +34,7 @@ exports.addGrantController = async (req, res) => {
     ${no_of_awards}, ${no_of_nominations}, ${rank_1_price}, ${rank_2_price}, ${rank_3_price}, ${nominee_price}, ${grand_amount}, '${currentTime}', 
     ${admin_id}, '${currentTime}', ${flat_pyramid}) RETURNING grant_id`;
 
-  console.log(`query: ${query}`);
+  // console.log(`query: ${query}`);
 
   try {
     const data = await pool.query(query);
@@ -66,7 +66,7 @@ exports.addGrantController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,

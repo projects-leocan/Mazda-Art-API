@@ -5,12 +5,12 @@ exports.addThemeController = async (req, res) => {
 
   const currentTime = new Date().toISOString().slice(0, 10);
   const query = `INSERT INTO theme (theme, created_at, updated_at, created_by, updated_by) VALUES ('${theme}', '${currentTime}', '${currentTime}', ${admin_id}, ${admin_id}) RETURNING id`;
-  console.log(`query: ${query}`);
+  // console.log(`query: ${query}`);
   pool.query(query, async (err, result) => {
     // console.log(`err: ${err}`);
     // console.log(`result: ${JSON.stringify(result)}`);
     if (err) {
-      console.log(`err: ${err}`);
+      // console.log(`err: ${err}`);
       res.status(500).send({
         success: false,
         message: "Something went wrong",

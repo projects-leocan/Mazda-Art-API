@@ -14,7 +14,7 @@ exports.assignGrantToJuryController = async (req, res) => {
     let query = `INSERT INTO grant_assign( jury_id, grant_id, assign_by) `;
     jurys.map((e) => {
       let lastElement = _.last(jurys);
-      console.log(`jury_id: ${e.id}`);
+      // console.log(`jury_id: ${e.id}`);
       query += `SELECT ${e.id}, ${grant_id}, ${admin_id}
             WHERE NOT EXISTS (
                 SELECT 1 FROM grant_assign WHERE jury_id = ${e.id} AND grant_id = ${grant_id}
@@ -85,7 +85,7 @@ exports.assignGrantToJuryController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,
