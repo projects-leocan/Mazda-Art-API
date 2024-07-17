@@ -4,6 +4,7 @@ const {
   userProfileImagePath,
   getFileURLPreFixPath,
 } = require("../../constants/filePaths");
+const { getUTCdate } = require("../../constants/getUTCdate");
 const { somethingWentWrong } = require("../../constants/messages");
 
 exports.getAllArtistController = async (req, res) => {
@@ -17,7 +18,7 @@ exports.getAllArtistController = async (req, res) => {
       page_no = 1;
     }
     // let query = `SELECT artist_id, fname, lname, dob, gender, email, COUNT(*) OVER() AS totalArtist FROM artist Order by artist_id`;
-    let query = `SELECT artist_id, fname, lname, dob, gender, email, profile_pic, artist_portfolio, COUNT(*) OVER() AS totalArtist FROM artist`;
+    let query = `SELECT artist_id, fname, lname, dob, gender, email, profile_pic, artist_portfolio, created_at, COUNT(*) OVER() AS totalArtist FROM artist`;
 
     if (isAll == undefined) {
       offset = (page_no - 1) * record_per_page;
@@ -56,6 +57,7 @@ exports.getAllArtistController = async (req, res) => {
               res.artist_portfolio == null
                 ? null
                 : `${prePath}${userPortFoliaImagePath}${res.artist_portfolio}`,
+            created_at: getUTCdate(res.created_at),
           };
         });
         res.status(200).send({
