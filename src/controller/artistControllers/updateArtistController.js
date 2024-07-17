@@ -144,27 +144,30 @@ exports.updateArtistController = async (req, res) => {
         }
       }
 
-      // console.log("mocInsertQuery: ", JSON.stringify(mocs));
+      // console.log("mocInsertQuery: ", Array.isArray(mocs));
+
       if (is_moc_update !== undefined) {
         let deleteQuery = `DELETE FROM artist_moc WHERE artist_id = ${artist_id}`;
         const deleteResult = await pool.query(deleteQuery);
-        // console.log("deleteResult: ", JSON.stringify(deleteResult));
 
         if (!lodash.isEmpty(mocs)) {
-          let mocInsertQuery = `INSERT INTO artist_moc(artist_id, moc_id) VALUES `;
-          mocs.map((e) => {
-            let lastElement = lodash.last(mocs);
-            if (e === lastElement) {
-              mocInsertQuery += `(${artist_id}, ${e})`;
-            } else {
-              mocInsertQuery += `(${artist_id}, ${e}), `;
-            }
-          });
-          // console.log('mocInsertQuery: ', mocInsertQuery);
+          // Parse the JSON string into an array of objects
+          const mocsArray = JSON.parse(mocs[0]);
+
+          // Construct the values string for the INSERT query
+          let values = mocsArray
+            .map((e) => `(${artist_id}, ${e.id})`)
+            .join(", ");
+
+          // Construct the INSERT query
+          let mocInsertQuery = `INSERT INTO artist_moc(artist_id, moc_id) VALUES ${values}`;
+
+          // Execute the INSERT query
           const mocInsertResult = await pool.query(mocInsertQuery);
-          // console.log("mocInsertResult: ", JSON.stringify(mocInsertResult));
+          // console.log("mocInsertResult:", JSON.stringify(mocInsertResult));
         }
       }
+
       if (is_profile_pic_updated !== undefined) {
         const getFilesQuery = `SELECT profile_pic FROM artist WHERE artist_id = ${artist_id}`;
         const getProfileResponse = await pool.query(getFilesQuery);
