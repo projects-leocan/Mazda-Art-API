@@ -9,7 +9,8 @@ exports.adminLoginValidation = (req, res, next) => {
   if (admin_password === undefined || admin_password === "") {
     return res.status(500).send({
       success: false,
-      message: "Invalid password",
+      // message: "Invalid password",
+      message: "Invalid Credential",
     });
   }
   next();
@@ -33,7 +34,8 @@ exports.addAdminValidator = (req, res, next) => {
   if (admin_password === undefined || admin_password === "") {
     return res.status(500).send({
       success: false,
-      message: "Invalid password",
+      // message: "Invalid password",
+      message: "Invalid Credential",
     });
   }
   const regEx =

@@ -6,6 +6,7 @@ const { createAccessToken } = require("../../constants/createAccessToken");
 
 exports.juryLoginController = async (req, res) => {
   const { email, password } = req.query;
+  // console.log("response", req.query);
 
   const query = `SELECT * FROM jury WHERE email='${email}'`;
   pool.query(query, async (err, result) => {
@@ -47,14 +48,16 @@ exports.juryLoginController = async (req, res) => {
         } else {
           res.status(500).send({
             success: false,
-            message: "Invalid Password",
+            // message: "Invalid Password",
+            message: "Invalid Credential",
             statusCode: 500,
           });
         }
       } else {
         res.status(500).send({
           success: false,
-          message: "Invalid Password",
+          // message: "Invalid Password",
+          message: "Invalid Credential",
           statusCode: 500,
         });
       }

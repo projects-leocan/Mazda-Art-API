@@ -52,14 +52,16 @@ exports.adminLoginController = async (req, res) => {
         } else {
           res.status(500).send({
             success: false,
-            message: "Invalid Password",
+            // message: "Invalid Password",
+            message: "Invalid Credential",
             statusCode: 500,
           });
         }
       } else {
         res.status(500).send({
           success: false,
-          message: "Invalid Password",
+          // message: "Invalid Password",
+          message: "Invalid Credential",
           statusCode: 500,
         });
       }
