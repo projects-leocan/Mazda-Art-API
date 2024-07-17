@@ -240,6 +240,9 @@ const {
 const {
   demoController,
 } = require("../controller/demoControllers/demoController");
+const {
+  getAllArtistDemoController,
+} = require("../controller/demoControllers/getAllArtistDemoController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -564,6 +567,7 @@ module.exports = (app) => {
   );
 
   router.get("/demo", demoController);
+  router.get("/getAllArtistDemo", getAllArtistDemoController);
 
   router.get("/test", testController);
 
