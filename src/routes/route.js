@@ -237,6 +237,9 @@ const {
 const {
   getGrantJuryMappingDetailsController,
 } = require("../controller/grantMapping/getGrantJuryMappingDetailsController");
+const {
+  demoController,
+} = require("../controller/demoControllers/demoController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -559,6 +562,8 @@ module.exports = (app) => {
     getGrantJuryMappingDetailsValidation,
     getGrantJuryMappingDetailsController
   );
+
+  router.get("/demo", demoController);
 
   router.get("/test", testController);
 
