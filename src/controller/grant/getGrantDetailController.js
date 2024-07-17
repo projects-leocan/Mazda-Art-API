@@ -44,6 +44,7 @@ exports.getGrantDetailsController = async (req, res) => {
 
           // console.log(`updatedResult: ${JSON.stringify(updatedResult)}`);
           delete updatedResult.jury_ids;
+          delete updatedResult.id;
           res.status(200).send({
             success: true,
             message: "Grants fetched successfully",
@@ -75,8 +76,8 @@ const getJuryDetails = async (juryIds) => {
         return result.rows[0];
       })
     );
-    // console.log(`juryData: ${JSON.stringify(juryData)}`);
-    return juryData;
+
+    return juryData.filter((jury) => jury !== undefined);
   } else {
     return [];
   }
