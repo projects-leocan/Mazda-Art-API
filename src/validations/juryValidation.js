@@ -1,6 +1,6 @@
 exports.addJuryValidation = (req, res, next) => {
   const {
-    full_name,
+    fullName,
     email,
     contact_no,
     password,
@@ -16,7 +16,7 @@ exports.addJuryValidation = (req, res, next) => {
       message: "Pass data in Body field.",
     });
   }
-  if (full_name == undefined || full_name === "") {
+  if (fullName == undefined || fullName === "") {
     return res.status(500).send({
       success: false,
       message: "full name can not be Empty",
@@ -108,7 +108,7 @@ exports.updateJuryValidation = (req, res, next) => {
   const {
     jury_id,
     password,
-    full_name,
+    fullName,
     email,
     contact_no,
     address,
@@ -124,7 +124,7 @@ exports.updateJuryValidation = (req, res, next) => {
       message: "Jury id can not be Empty",
     });
   }
-  if (full_name != undefined && full_name === "") {
+  if (fullName != undefined && fullName === "") {
     return res.status(500).send({
       success: false,
       message: "full name can not be Empty",
