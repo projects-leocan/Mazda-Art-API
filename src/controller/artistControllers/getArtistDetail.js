@@ -4,6 +4,7 @@ const {
   userPortFoliaImagePath,
   userProfileImagePath,
   getFileURLPreFixPath,
+  artistGrantSubmissionFilesPath,
 } = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
 const { getUTCdate } = require("../../constants/getUTCdate");
@@ -74,7 +75,7 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
           delete result.rows[0].artist_moc;
           let finalResult = {
             ...result.rows[0],
-            mocs: data[0],
+            mocs: data[0][0] === undefined ? [] : data[0],
             grants: data[1],
             comments: data[2],
           };
@@ -130,7 +131,7 @@ const getGrantsData = async (artist_id, req) => {
     submitted_grant_data.rows.map((e) => {
       delete e.transaction_id,
         delete e.jury_id,
-        (e.art_file = `${prePath}${userProfileImagePath}${e.art_file}`);
+        (e.art_file = `${prePath}${artistGrantSubmissionFilesPath}${e.art_file}`);
     });
   }
   return submitted_grant_data.rows;
