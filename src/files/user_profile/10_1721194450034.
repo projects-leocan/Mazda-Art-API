@@ -1,0 +1,43 @@
+<!doctype html>
+<!--
+* CoreUI Free React.js Admin Template
+* @version v5.0.0
+* @link https://coreui.io/product/free-react-admin-template/
+* Copyright (c) 2024 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://github.com/coreui/coreui-free-react-admin-template/blob/main/LICENSE)
+-->
+<html lang="en" data-coreui-theme="light">
+  <head>
+    <script type="module">
+import RefreshRuntime from "/@react-refresh"
+RefreshRuntime.injectIntoGlobalHook(window)
+window.$RefreshReg$ = () => {}
+window.$RefreshSig$ = () => (type) => type
+window.__vite_plugin_react_preamble_installed__ = true
+</script>
+
+    <script type="module" src="/@vite/client"></script>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="Mazda Art" />
+    <meta name="author" content="Łukasz Holeczek" />
+    <meta
+      name="keyword"
+      content="Bootstrap,Admin,Template,Open,Source,CSS,SCSS,HTML,RWD,Dashboard,React"
+    />
+    <title>Mazda Art</title>
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+  </head>
+  <body>
+    <noscript> You need to enable JavaScript to run this app </noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/index.js?t=1721192779188"></script>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
