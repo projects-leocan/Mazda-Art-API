@@ -13,7 +13,7 @@ exports.getAllJuryController = async (req, res) => {
     page_no = 1;
   }
 
-  let query = `SELECT jury.id, jury.full_name, jury.email ,jury.contact_no ,jury.designation, array_agg(jury_links.link) AS links, 
+  let query = `SELECT jury.id, jury.full_name, jury.email ,jury.contact_no ,jury.designation, jury.created_at, array_agg(jury_links.link) AS links, 
 	(SELECT COUNT(*) AS total_count FROM jury)
 	FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id GROUP BY jury.id`;
   if (isAll == undefined) {
@@ -33,8 +33,15 @@ exports.getAllJuryController = async (req, res) => {
         });
       } else {
         const count = result.rows[0].total_count;
-        // console.log(`result.rows.: ${JSON.stringify(result.rows)}`);
-        result.rows.map((e) => {
+
+        const updatedResult = result.rows?.map((res) => {
+          return {
+            ...res,
+            links: res.links[0] === null ? [] : res.links,
+            created_at: getUTCdate(res.created_at),
+          };
+        });
+        updatedResult?.map((e) => {
           if (e.total_count != undefined) delete e.total_count;
         });
         return res.status(200).send({
@@ -42,7 +49,7 @@ exports.getAllJuryController = async (req, res) => {
           statusCode: 200,
           totalCount: count,
           message: "Get all jury successfully",
-          data: result.rows,
+          data: updatedResult,
         });
       }
     });
