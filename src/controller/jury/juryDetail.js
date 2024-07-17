@@ -57,6 +57,9 @@ exports.getJuryDetails = async (jury_id, message, res) => {
             dob: getUTCdate(newResult.rows[0].dob),
             assignGrants: juryGrantsResult.rows,
           };
+          response?.assignGrants?.map((e) => {
+            if (e.id === null) delete e.id;
+          });
           return res.status(200).send({
             success: true,
             statusCode: 200,
