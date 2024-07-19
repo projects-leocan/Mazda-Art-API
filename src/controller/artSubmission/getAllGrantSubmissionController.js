@@ -16,10 +16,10 @@ exports.getAllGrantSubmissionController = async (req, res) => {
       jury_id === undefined
         ? `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, sd.id, sd.artist_id, sd.grant_id, sd.submited_time, a.fname, a.lname, a.dob, a.gender
         FROM submission_details as sd
-        JOIN artist a ON sd.artist_id = a.artist_id order by id`
+        JOIN artist a ON sd.artist_id = a.artist_id order by sd.submited_time DESC`
         : `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, sd.id, sd.grant_id, sd.submited_time
         FROM submission_details as sd
-        JOIN artist a ON sd.artist_id = a.artist_id where jury_id=${jury_id} order by id`;
+        JOIN artist a ON sd.artist_id = a.artist_id where jury_id=${jury_id} order by sd.submited_time DESC`;
 
     if (isAll == undefined) {
       const offset = (page_no - 1) * record_per_page;

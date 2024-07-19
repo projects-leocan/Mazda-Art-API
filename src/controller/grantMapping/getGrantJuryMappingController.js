@@ -21,7 +21,7 @@ exports.getGrantJuryMappingController = async (req, res) => {
         COALESCE(ARRAY_AGG(ga.jury_id) FILTER (WHERE ga.jury_id IS NOT NULL), '{}') AS jury
         FROM grants AS g
         LEFT JOIN grant_assign AS ga ON g.grant_id = ga.grant_id
-        GROUP BY g.grant_id`;
+        GROUP BY g.grant_id ORDER BY g.grant_id DESC`;
 
     if (isAll == undefined) {
       offset = (page_no - 1) * record_per_page;

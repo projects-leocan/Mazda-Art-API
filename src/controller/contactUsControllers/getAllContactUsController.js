@@ -17,7 +17,7 @@ exports.getAllContactUsController = async (req, res) => {
       page_no = 1;
     }
     // let query = `SELECT artist_id, fname, lname, dob, gender, email, COUNT(*) OVER() AS totalArtist FROM artist Order by artist_id`;
-    let query = `SELECT *, (SELECT count(*) as total_count FROM contact_us WHERE status = '${status}') FROM contact_us WHERE status = '${status}'`;
+    let query = `SELECT *, (SELECT count(*) as total_count FROM contact_us WHERE status = '${status}') FROM contact_us WHERE status = '${status}' ORDER BY created_date DESC`;
 
     if (isAll == undefined) {
       offset = (page_no - 1) * record_per_page;

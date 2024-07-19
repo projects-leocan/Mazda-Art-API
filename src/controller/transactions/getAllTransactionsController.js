@@ -16,7 +16,7 @@ exports.getAllTransactionsController = async (req, res) => {
     // let query = `SELECT * FROM trasaction_detail`;
     let query = `SELECT (SELECT COUNT(*) FROM trasaction_detail) AS total_count, td.*, a.fname, a.lname, a.dob, a.gender
         FROM trasaction_detail as td
-        JOIN artist a ON td.artist_id = a.artist_id order by id`;
+        JOIN artist a ON td.artist_id = a.artist_id order by td.payment_success_date DESC`;
     if (isAll == undefined) {
       offset = (page_no - 1) * record_per_page;
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;

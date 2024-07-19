@@ -17,7 +17,7 @@ exports.getAllEnquiryController = async (req, res) => {
       page_no = 1;
     }
     // let query = `SELECT artist_id, fname, lname, dob, gender, email, COUNT(*) OVER() AS totalArtist FROM artist Order by artist_id`;
-    let query = `SELECT *, (SELECT count(*) as total_count FROM enquiries WHERE status = '${enquiryType}') FROM enquiries WHERE status = '${enquiryType}'`;
+    let query = `SELECT *, (SELECT count(*) as total_count FROM enquiries WHERE status = '${enquiryType}') FROM enquiries WHERE status = '${enquiryType}' ORDER BY created_date DESC`;
 
     if (isAll == undefined) {
       offset = (page_no - 1) * record_per_page;

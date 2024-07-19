@@ -13,9 +13,14 @@ exports.getAllJuryController = async (req, res) => {
     page_no = 1;
   }
 
+  // let query = `SELECT jury.id, jury.full_name, jury.email ,jury.contact_no ,jury.designation, jury.created_at, array_agg(jury_links.link) AS links,
+  // (SELECT COUNT(*) AS total_count FROM jury)
+  // FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id GROUP BY jury.id`;
+
   let query = `SELECT jury.id, jury.full_name, jury.email ,jury.contact_no ,jury.designation, jury.created_at, array_agg(jury_links.link) AS links, 
 	(SELECT COUNT(*) AS total_count FROM jury)
-	FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id GROUP BY jury.id`;
+	FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id GROUP BY jury.id ORDER By created_at DESC`;
+
   if (isAll == undefined) {
     offset = (page_no - 1) * record_per_page;
     query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
