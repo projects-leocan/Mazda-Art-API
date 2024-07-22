@@ -22,10 +22,10 @@ exports.getAllArtistController = async (req, res) => {
 
     if (isAll == undefined) {
       offset = (page_no - 1) * record_per_page;
-      query += ` ORDER BY created_at DESC LIMIT ${record_per_page} OFFSET ${offset}`;
+      query += ` ORDER BY artist_id DESC LIMIT ${record_per_page} OFFSET ${offset}`;
     }
     if (kyc !== undefined) {
-      query += ` WHERE is_kyc_verified = '1' ORDER BY created_at DESC LIMIT ${record_per_page} OFFSET ${offset}`;
+      query += ` WHERE is_kyc_verified = '1' ORDER BY artist_id DESC LIMIT ${record_per_page} OFFSET ${offset}`;
     }
 
     // console.log(`query: ${query}`);
