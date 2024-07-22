@@ -31,7 +31,7 @@ exports.updateArtistController = async (req, res) => {
         city,
         state,
         pincode,
-        social_media_link,
+        social_media_profile_link,
         portfolio_file_ext,
         profile_pic_file_ext,
         is_profile_pic_updated,
@@ -107,8 +107,8 @@ exports.updateArtistController = async (req, res) => {
       if (pincode !== undefined) {
         query += `, pincode='${pincode}'`;
       }
-      if (social_media_link !== undefined) {
-        query += `, social_media_profile_link='${social_media_link}'`;
+      if (social_media_profile_link !== undefined) {
+        query += `, social_media_profile_link='${social_media_profile_link}'`;
       }
       if (is_kyc_verified !== undefined) {
         query += `, is_kyc_verified=${is_kyc_verified}`;
