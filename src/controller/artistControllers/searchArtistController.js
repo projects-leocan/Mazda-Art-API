@@ -1,4 +1,10 @@
 const pool = require("../../config/db");
+const {
+  getFileURLPreFixPath,
+  userProfileImagePath,
+  userPortFoliaImagePath,
+} = require("../../constants/filePaths");
+const { getUTCdate } = require("../../constants/getUTCdate");
 const { somethingWentWrong } = require("../../constants/messages");
 
 exports.searchArtistController = async (req, res) => {
@@ -33,12 +39,30 @@ exports.searchArtistController = async (req, res) => {
       } else {
         // console.log(`response: ${JSON.stringify(result.rows)}`);
         const totalArtist = result.rows[0]?.totalartist;
-        delete res.totalartist;
+        const updatedResult = result.rows?.map((res) => {
+          // console.log(`__dirname: ${__dirname}`)
+          // console.log(`__dirname: ${path.join(__dirname, userPortFoliaImagePath, res.artist_portfolio)}`)
+          const prePath = getFileURLPreFixPath(req);
+          delete res.totalartist;
+          return {
+            ...res,
+            profile_pic:
+              res.profile_pic == null
+                ? null
+                : `${prePath}${userProfileImagePath}${res.profile_pic}`,
+            artist_portfolio:
+              res.artist_portfolio == null
+                ? null
+                : `${prePath}${userPortFoliaImagePath}${res.artist_portfolio}`,
+            created_at: getUTCdate(res.created_at),
+          };
+        });
+        // delete res.totalartist;
         res.status(200).send({
           success: true,
           message: "Data fetch successfully",
           totalArtist: totalArtist,
-          data: result.rows,
+          data: updatedResult,
           statusCode: 200,
         });
       }
