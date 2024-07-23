@@ -25,7 +25,7 @@ exports.getAllArtistController = async (req, res) => {
       query += ` ORDER BY artist_id DESC LIMIT ${record_per_page} OFFSET ${offset}`;
     }
     if (kyc !== undefined) {
-      query += ` WHERE is_kyc_verified = '1' ORDER BY artist_id DESC LIMIT ${record_per_page} OFFSET ${offset}`;
+      query += ` WHERE is_kyc_verified = '1' ORDER BY artist_id DESC`;
     }
 
     // console.log(`query: ${query}`);
@@ -71,7 +71,6 @@ exports.getAllArtistController = async (req, res) => {
       }
     });
   } catch (error) {
-    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,
