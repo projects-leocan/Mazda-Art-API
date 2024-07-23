@@ -41,7 +41,7 @@ exports.getAllArtistController = async (req, res) => {
         //http://192.168.1.8:8080/src/files/user_portfolio/8_1716549179751.jpeg
         // src/files/user_portfolio/8_1716549179751.jpeg
 
-        const totalArtist = result.rows[0].totalartist;
+        const totalArtist = result.rows[0]?.totalartist;
         const updatedResult = result.rows?.map((res) => {
           // console.log(`__dirname: ${__dirname}`)
           // console.log(`__dirname: ${path.join(__dirname, userPortFoliaImagePath, res.artist_portfolio)}`)

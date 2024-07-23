@@ -9,6 +9,7 @@ const { somethingWentWrong } = require("../../constants/messages");
 
 exports.searchArtistController = async (req, res) => {
   const search_text = req.query.search_text;
+  let { record_per_page, page_no, isAll, kyc } = req.query;
 
   try {
     // search by name
@@ -20,12 +21,24 @@ exports.searchArtistController = async (req, res) => {
     // search by name and contact number
     // console.log("search text", search_text);
     // const query = `SELECT * FROM artist WHERE mobile_number ILIKE '${search_text}%' or mobile_number ILIKE '%${search_text}' or fname ILIKE '${search_text}%' or fname ILIKE '%${search_text}' or lname ILIKE '${search_text}%' or lname ILIKE '%${search_text}'`;
-    const query = `SELECT *, COUNT(*) OVER() AS totalArtist 
+
+    if (record_per_page == undefined) {
+      record_per_page = 10;
+    }
+    if (page_no == undefined) {
+      page_no = 1;
+    }
+    let query = `SELECT *, COUNT(*) OVER() AS totalArtist 
     FROM artist 
     WHERE mobile_number ILIKE '${search_text}%' 
        OR mobile_number ILIKE '%${search_text}' 
        OR fname ILIKE '%${search_text}%' 
-       OR lname ILIKE '%${search_text}%' ORDER BY artist_id`;
+       OR lname ILIKE '%${search_text}%'`;
+
+    if (isAll == undefined) {
+      offset = (page_no - 1) * record_per_page;
+      query += ` ORDER BY artist_id DESC LIMIT ${record_per_page} OFFSET ${offset}`;
+    }
     // console.log(`search query: ${query}`);
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
