@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const pool = require("../../config/db");
 const _ = require("lodash");
 const { somethingWentWrong } = require("../../constants/messages");
@@ -23,8 +24,7 @@ exports.updateJuryDetailsController = async (req, res) => {
   try {
     const currentTime = new Date().toISOString().slice(0, 10);
 
-    let query = `UPDATE jury SET `;
-    query += `updated_at='${currentTime}'`;
+    let query = `UPDATE jury SET updated_at='${currentTime}'`;
 
     if (full_name != undefined) {
       query += `, full_name='${full_name}'`;
@@ -36,8 +36,29 @@ exports.updateJuryDetailsController = async (req, res) => {
       query += `, contact_no='${contact_no}'`;
     }
     if (password != undefined) {
-      const hashedPassword = await passwordHashing(password);
-      query += `, password='${hashedPassword}'`;
+      // Fetch the current password hash from the database
+      const fetchPasswordQuery = `SELECT password FROM jury WHERE id = ${jury_id}`;
+      const currentPasswordHashResult = await pool.query(fetchPasswordQuery);
+
+      if (currentPasswordHashResult.rows.length > 0) {
+        const currentPasswordHash = currentPasswordHashResult.rows[0].password;
+        const isSamePassword = await bcrypt.compare(
+          password,
+          currentPasswordHash
+        );
+
+        if (isSamePassword) {
+          return res.status(400).send({
+            success: false,
+            message: "You cannot set the current password as the new password.",
+            statusCode: 400,
+          });
+        } else {
+          // Hash the new password
+          const hashedPassword = await passwordHashing(password);
+          query += `, password='${hashedPassword}'`;
+        }
+      }
     }
     if (address != undefined) {
       query += `, address='${address}'`;
@@ -56,65 +77,37 @@ exports.updateJuryDetailsController = async (req, res) => {
     }
 
     query += ` WHERE id = ${jury_id}`;
-    // console.log(`query: ${query}`);
 
-    pool.query(query, async (err, result) => {
-      // console.log(`err: ${err}`);
-      // console.log(`result: ${JSON.stringify(result)}`);
-      if (err) {
-        res.status(500).send({
-          success: false,
-          error: err,
-          message: "Something went wrong",
-          statusCode: 500,
+    // Run the update query
+    await pool.query(query);
+
+    // Proceed with link updates if required
+    if (is_link_updated != undefined) {
+      const deleteQuery = `DELETE FROM jury_links WHERE jury_id = ${jury_id}`;
+      await pool.query(deleteQuery);
+
+      if (links != undefined && !_.isEmpty(links)) {
+        let linkQuery = `INSERT INTO jury_links(jury_id, link) VALUES `;
+        links.forEach((link, index) => {
+          linkQuery += `(${jury_id}, '${link}')${
+            index < links.length - 1 ? ", " : ""
+          }`;
         });
-      } else {
-        /// delete jury_links for jury_id from jury table
-        if (is_link_updated != undefined) {
-          const deleteQuery = `DELETE FROM jury_links WHERE jury_id = ${jury_id};`;
-          await pool.query(deleteQuery);
 
-          /// add links in jury_link table
-          if (links != undefined && !_.isEmpty(links)) {
-            let linkQuery = `INSERT INTO jury_links(jury_id, link) VALUES `;
-            const last = links[links.length - 1];
-            links.map((e) => {
-              if (e === last) {
-                linkQuery += `(${jury_id}, '${e}')`;
-              } else {
-                linkQuery += `(${jury_id}, '${e}'), `;
-              }
-            });
-            // console.log(`linkQuery: ${linkQuery}`);
-
-            // get latest inserted data
-            pool.query(linkQuery, async (linkError, linkResult) => {
-              // console.log(`err: ${err}`);
-              // console.log(`linkResult: ${JSON.stringify(linkResult)}`);
-              if (linkError) {
-                await getJuryDetails(
-                  jury_id,
-                  "Jury added success, failed to add links for Jury",
-                  res
-                );
-              } else {
-                await getJuryDetails(jury_id, "Jury Updated Successfully", res);
-              }
-            });
-          } else {
-            getJuryDetails(jury_id, "Jury Updated Successfully", res);
-          }
-        } else {
-          getJuryDetails(jury_id, "Jury Updated Successfully", res);
-        }
+        await pool.query(linkQuery);
       }
-    });
+    }
+
+    // Send successful response
+    getJuryDetails(jury_id, "Jury Updated Successfully", res);
   } catch (error) {
-    // console.log(`error: ${error}`);
-    return res.status(500).send({
-      success: false,
-      message: somethingWentWrong,
-      statusCode: 500,
-    });
+    console.error(`error: ${error}`);
+    if (!res.headersSent) {
+      return res.status(500).send({
+        success: false,
+        message: somethingWentWrong,
+        statusCode: 500,
+      });
+    }
   }
 };
