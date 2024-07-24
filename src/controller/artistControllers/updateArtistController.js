@@ -46,7 +46,6 @@ exports.updateArtistController = async (req, res) => {
           fields[key] = fields[key][0];
         }
       }
-      // console.log('fields data: ', fields);
 
       let query = `UPDATE artist set `;
       if (Object.keys(fields).length === 0) {
@@ -90,7 +89,21 @@ exports.updateArtistController = async (req, res) => {
         query += `, email='${email}'`;
       }
       if (mobile_number !== undefined) {
-        query += `, mobile_number=${mobile_number}`;
+        const mobile = JSON.parse(mobile_number);
+
+        const checkQuery = `SELECT * FROM artist WHERE mobile_number = $1`;
+        const values = [mobile];
+        const contactUsResult = await pool.query(checkQuery, values);
+
+        if (contactUsResult.rows.length > 0) {
+          return res.status(400).send({
+            success: false,
+            message: "Contact number already exists, try a different number.",
+            statusCode: 400,
+          });
+        } else {
+          query += `, mobile_number='${mobile_number}'`;
+        }
       }
       if (address1 !== undefined) {
         query += `, address1='${address1}'`;
@@ -216,7 +229,7 @@ exports.updateArtistController = async (req, res) => {
       });
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     res.status(500).send({
       success: false,
       message: somethingWentWrong,

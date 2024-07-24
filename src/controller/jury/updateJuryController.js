@@ -33,7 +33,19 @@ exports.updateJuryDetailsController = async (req, res) => {
       query += `, email='${email}'`;
     }
     if (contact_no != undefined) {
-      query += `, contact_no='${contact_no}'`;
+      const checkQuery = `SELECT * FROM jury WHERE contact_no = $1`;
+      const values = [contact_no];
+      const contactUsResult = await pool.query(checkQuery, values);
+
+      if (contactUsResult.rows.length > 0) {
+        return res.status(400).send({
+          success: false,
+          message: "Contact number already exists, try a different number.",
+          statusCode: 400,
+        });
+      } else {
+        query += `, contact_no='${contact_no}'`;
+      }
     }
     if (password != undefined) {
       // Fetch the current password hash from the database
@@ -101,7 +113,7 @@ exports.updateJuryDetailsController = async (req, res) => {
     // Send successful response
     getJuryDetails(jury_id, "Jury Updated Successfully", res);
   } catch (error) {
-    console.error(`error: ${error}`);
+    // console.error(`error: ${error}`);
     if (!res.headersSent) {
       return res.status(500).send({
         success: false,

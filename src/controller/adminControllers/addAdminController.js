@@ -36,47 +36,72 @@ exports.addAdminController = async (req, res) => {
       admin_address,
       formattedTime,
     ];
-    const query = `INSERT INTO admin (admin_name, admin_email, admin_password, admin_contact, admin_address, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING admin_id`;
-    pool.query(query, data, async (err, result) => {
-      // console.log(`err: ${err}`);
-      // console.log(`result: ${JSON.stringify(result)}`);
-      if (err) {
+
+    const checkQuery = `SELECT * FROM admin WHERE admin_contact = $1`;
+    const values = [admin_contact];
+
+    pool.query(checkQuery, values, async (checkErr, checkResult) => {
+      if (checkErr) {
+        // Handle error from check query
+        return res.status(500).send({
+          success: false,
+          message: somethingWentWrong,
+          statusCode: 500,
+        });
+      }
+
+      if (checkResult.rows.length > 0) {
+        // Contact number already exists
+        return res.status(400).send({
+          success: false,
+          message: "Contact number already exists, try a different number.",
+          statusCode: 400,
+        });
+      }
+
+      const query = `INSERT INTO admin (admin_name, admin_email, admin_password, admin_contact, admin_address, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING admin_id`;
+      pool.query(query, data, async (err, result) => {
         // console.log(`err: ${err}`);
-        if (
-          err.detail === `Key (admin_email)=(${admin_email}) already exists.`
-        ) {
-          res.status(500).send({
-            success: false,
-            message: "Email Id already Exist, try different email or sign in.",
-            statusCode: 500,
-          });
-        } else {
+        // console.log(`result: ${JSON.stringify(result)}`);
+        if (err) {
           // console.log(`err: ${err}`);
-          res.status(500).send({
-            success: false,
-            message: somethingWentWrong,
-            statusCode: 500,
-          });
-        }
-      } else {
-        const newQuery = `SELECT * FROM admin WHERE admin_id = ${result.rows[0].admin_id}`;
-        pool.query(newQuery, async (newErr, newResult) => {
-          if (newErr) {
+          if (
+            err.detail === `Key (admin_email)=(${admin_email}) already exists.`
+          ) {
             res.status(500).send({
               success: false,
-              message: "Something went wrong",
+              message:
+                "Email Id already Exist, try different email or sign in.",
               statusCode: 500,
             });
           } else {
-            return res.status(200).send({
-              success: true,
-              statusCode: 200,
-              message: "Insert Admin Successfully",
-              data: newResult.rows[0],
+            // console.log(`err: ${err}`);
+            res.status(500).send({
+              success: false,
+              message: somethingWentWrong,
+              statusCode: 500,
             });
           }
-        });
-      }
+        } else {
+          const newQuery = `SELECT * FROM admin WHERE admin_id = ${result.rows[0].admin_id}`;
+          pool.query(newQuery, async (newErr, newResult) => {
+            if (newErr) {
+              res.status(500).send({
+                success: false,
+                message: "Something went wrong",
+                statusCode: 500,
+              });
+            } else {
+              return res.status(200).send({
+                success: true,
+                statusCode: 200,
+                message: "Insert Admin Successfully",
+                data: newResult.rows[0],
+              });
+            }
+          });
+        }
+      });
     });
   } catch (error) {
     res.status(500).send({

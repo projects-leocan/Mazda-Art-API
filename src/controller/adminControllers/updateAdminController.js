@@ -24,7 +24,19 @@ exports.updateAdminController = async (req, res) => {
     query += `, admin_email='${admin_email}'`;
   }
   if (admin_contact != undefined && admin_contact != "") {
-    query += `, admin_contact=${admin_contact}`;
+    const checkQuery = `SELECT * FROM admin WHERE admin_contact = $1`;
+    const values = [admin_contact];
+    const contactUsResult = await pool.query(checkQuery, values);
+
+    if (contactUsResult.rows.length > 0) {
+      return res.status(400).send({
+        success: false,
+        message: "Contact number already exists, try a different number.",
+        statusCode: 400,
+      });
+    } else {
+      query += `, admin_contact=${admin_contact}`;
+    }
   }
   if (admin_address != undefined && admin_address != "") {
     query += `, admin_address='${admin_address}'`;
