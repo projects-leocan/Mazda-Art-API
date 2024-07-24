@@ -213,11 +213,20 @@ exports.updateArtistController = async (req, res) => {
         // console.log(`err: ${err}`);
         // console.log(`result: ${JSON.stringify(result)}`);
         if (err) {
-          res.status(500).send({
-            success: false,
-            message: err,
-            statusCode: 500,
-          });
+          if (err.detail === `Key (email)=(${email}) already exists.`) {
+            res.status(400).send({
+              success: false,
+              message:
+                "Email Id already Exist, try different email or sign in.",
+              statusCode: 400,
+            });
+          } else {
+            res.status(500).send({
+              success: false,
+              message: err,
+              statusCode: 500,
+            });
+          }
         } else {
           getArtistDetails(
             artist_id,
