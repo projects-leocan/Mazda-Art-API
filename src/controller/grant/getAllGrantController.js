@@ -16,7 +16,7 @@ exports.getAllGrantController = async (req, res) => {
   // from grants
   // ORDER By submission_end_date`;
 
-  let query = `SELECT grant_id, submission_end_date, application_fees, created_at, updated_at, (SELECT COUNT(*) AS total_count FROM grants) 
+  let query = `SELECT grant_id, grant_uid, submission_end_date, application_fees, created_at, updated_at, (SELECT COUNT(*) AS total_count FROM grants) 
 	from grants 
 	ORDER By created_at DESC`;
 
