@@ -12,8 +12,10 @@ exports.addGrantController = async (req, res) => {
     app_fees,
     submission_end_date,
     max_allow_submision,
+    knowMore,
     no_of_awards,
     no_of_nominations,
+    for_each_amount,
     rank_1_price,
     rank_2_price,
     rank_3_price,
@@ -29,9 +31,9 @@ exports.addGrantController = async (req, res) => {
 
   const currentTime = new Date().toISOString().slice(0, 10);
   const query = `INSERT INTO grants ("category_MOD", created_by, hight, width, theme_id, application_fees, submission_end_date, max_allow_submision, 
-	no_of_awards, no_of_nominations, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, created_at, updated_by, updated_at, is_flat_pyramid) 
+	no_of_awards,know_more, no_of_nominations, for_each_amount, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, created_at, updated_by, updated_at, is_flat_pyramid) 
     VALUES (${category_id}, ${admin_id}, ${hight}, ${width}, ${theme_id}, ${app_fees}, '${submission_end_date}', ${max_allow_submision}, 
-    ${no_of_awards}, ${no_of_nominations}, ${rank_1_price}, ${rank_2_price}, ${rank_3_price}, ${nominee_price}, ${grand_amount}, '${currentTime}', 
+    ${no_of_awards}, ${knowMore}, ${no_of_nominations}, ${for_each_amount} ${rank_1_price}, ${rank_2_price}, ${rank_3_price}, ${nominee_price}, ${grand_amount}, '${currentTime}', 
     ${admin_id}, '${currentTime}', ${flat_pyramid}) RETURNING grant_id`;
 
   // console.log(`query: ${query}`);

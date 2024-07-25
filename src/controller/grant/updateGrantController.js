@@ -13,7 +13,9 @@ exports.updateGrantController = async (req, res) => {
     submission_end_date,
     max_allow_submision,
     no_of_awards,
+    knowMore,
     no_of_nominations,
+    for_each_amount,
     rank_1_price,
     rank_2_price,
     rank_3_price,
@@ -55,12 +57,19 @@ exports.updateGrantController = async (req, res) => {
   if (no_of_awards != undefined) {
     query += `, no_of_awards='${no_of_awards}'`;
   }
+  if (knowMore != undefined) {
+    query += `, know_more='${knowMore}'`;
+  }
   if (no_of_nominations != undefined) {
     query += `, no_of_nominations='${no_of_nominations}'`;
   }
   if (is_flat_pyramid == 1) {
     query += `, rank_1_price=0, rank_2_price=0, rank_3_price=0`;
+    if (for_each_amount !== undefined) {
+      query += `, for_each_amount='${for_each_amount}'`;
+    }
   } else {
+    query += `, for_each_amount=0`;
     if (rank_1_price != undefined) {
       query += `, rank_1_price='${rank_1_price}'`;
     }
