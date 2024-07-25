@@ -243,6 +243,9 @@ const {
 const {
   getAllArtistDemoController,
 } = require("../controller/demoControllers/getAllArtistDemoController");
+const {
+  getGrantWiseSubmitArtStatisticsController,
+} = require("../controller/statisticsControllers/getGrantWiseSubmitArtStatisticsController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -496,6 +499,12 @@ module.exports = (app) => {
     validateAccessToken,
     adminIdValidation,
     getSubmitArtStatisticsController
+  );
+  router.get(
+    "/getGrantWiseSubmitArtStatistics",
+    validateAccessToken,
+    adminIdValidation,
+    getGrantWiseSubmitArtStatisticsController
   );
   router.get(
     "/getJuryStatistics",
