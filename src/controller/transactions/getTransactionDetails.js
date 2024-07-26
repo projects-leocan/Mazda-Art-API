@@ -4,10 +4,22 @@ const { somethingWentWrong } = require("../../constants/messages");
 
 exports.getTransactionDetails = async (transaction_id, message, res) => {
   try {
-    const query = `SELECT * FROM trasaction_detail WHERE id = ${transaction_id}`;
-    pool.query(query, async (error, result) => {
+    // const query = `SELECT td.*, g.grant_uid FROM trasaction_detail JOIN
+    //   grants g ON td.grant_id = g.grant_id WHERE id = ${transaction_id}`;
+    const query = `
+      SELECT 
+        td.*, 
+        g.grant_uid 
+      FROM 
+        trasaction_detail td
+      JOIN 
+        grants g ON td.grant_id = g.grant_id 
+      WHERE 
+        td.id = $1;
+    `;
+    pool.query(query, [transaction_id], async (error, result) => {
       // console.log('error: ', error);
-      // console.log('result: ', result);
+      console.log("result: ", result);
       if (error) {
         return res.status(500).send({
           success: false,

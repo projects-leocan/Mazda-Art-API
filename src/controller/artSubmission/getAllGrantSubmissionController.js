@@ -14,11 +14,13 @@ exports.getAllGrantSubmissionController = async (req, res) => {
     // let query = `SELECT DISTINCT on (grant_id) * FROM submission_details`;
     let query =
       jury_id === undefined
-        ? `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, sd.id, sd.artist_id, sd.grant_id, sd.submited_time, a.fname, a.lname, a.dob, a.gender
+        ? `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.id, sd.artist_id, sd.grant_id, sd.submited_time, a.fname, a.lname, a.dob, a.gender
         FROM submission_details as sd
+        JOIN grants g ON sd.grant_id = g.grant_id
         JOIN artist a ON sd.artist_id = a.artist_id order by sd.submited_time DESC`
-        : `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, sd.id, sd.grant_id, sd.submited_time
+        : `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.id, sd.grant_id, sd.submited_time
         FROM submission_details as sd
+        JOIN grants g ON sd.grant_id = g.grant_id
         JOIN artist a ON sd.artist_id = a.artist_id where jury_id=${jury_id} order by sd.submited_time DESC`;
 
     if (isAll == undefined) {
@@ -27,7 +29,7 @@ exports.getAllGrantSubmissionController = async (req, res) => {
     }
     pool.query(query, async (err, result) => {
       // console.log('err: ', err);
-      // console.log('result: ', result.rows);
+      // console.log("result: ", result.rows);
       if (err) {
         res.status(500).send({
           success: false,

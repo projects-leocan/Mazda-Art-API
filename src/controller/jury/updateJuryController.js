@@ -47,6 +47,45 @@ exports.updateJuryDetailsController = async (req, res) => {
         query += `, contact_no='${contact_no}'`;
       }
     }
+    // if (password != undefined) {
+    //   // Fetch the current password hash from the database
+    //   const fetchPasswordQuery = `SELECT password FROM jury WHERE id = ${jury_id}`;
+
+    //   const currentPasswordHashResult = await pool.query(fetchPasswordQuery);
+
+    //   if (currentPasswordHashResult.rows.length > 0) {
+    //     const currentPasswordHash = currentPasswordHashResult.rows[0].password;
+    //     const isSamePassword = await bcrypt.compare(
+    //       password,
+    //       currentPasswordHash
+    //     );
+
+    //     const isCorrectCurrentPassword = await bcrypt.compare(
+    //       currentPassword,
+    //       currentPasswordHash
+    //     );
+
+    //     if (isSamePassword) {
+    //       return res.status(400).send({
+    //         success: false,
+    //         message: "You cannot set the current password as the new password.",
+    //         statusCode: 400,
+    //       });
+    //     } else {
+    //       if (isCorrectCurrentPassword) {
+    //         const hashedPassword = await passwordHashing(password);
+    //         query += `, password='${hashedPassword}'`;
+    //       } else {
+    //         return res.status(400).send({
+    //           success: false,
+    //           message: "Current Password is wrong",
+    //           statusCode: 400,
+    //         });
+    //       }
+    //       // Hash the new password
+    //     }
+    //   }
+    // }
     if (password != undefined) {
       // Fetch the current password hash from the database
       const fetchPasswordQuery = `SELECT password FROM jury WHERE id = ${jury_id}`;

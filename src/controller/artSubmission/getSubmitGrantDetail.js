@@ -12,7 +12,18 @@ exports.getGrantSubmittedDetails = async (
   res,
   req
 ) => {
-  const submissionDetailQuery = `SELECT * FROM submission_details WHERE id = ${grant_submit_id}`;
+  // const submissionDetailQuery = `SELECT * FROM submission_details WHERE id = ${grant_submit_id}`;
+  const submissionDetailQuery = `
+  SELECT 
+    sd.*, 
+    g.grant_uid 
+  FROM 
+    trasaction_detail sd
+  JOIN 
+    grants g ON sd.grant_id = g.grant_id 
+  WHERE 
+    sd.id = ${grant_submit_id};
+`;
   try {
     pool.query(
       submissionDetailQuery,

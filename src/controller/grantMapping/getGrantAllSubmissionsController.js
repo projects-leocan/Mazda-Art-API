@@ -21,7 +21,20 @@ exports.getGrantAllSubmissionsController = async (req, res) => {
     //         message: "Grant is not assign to you.",
     //     });
     // } else {
-    const query = `SELECT * FROM submission_details WHERE grant_id = ${grant_id} ORDER BY id DESC`;
+    // const query = `SELECT * FROM submission_details WHERE grant_id = ${grant_id} ORDER BY id DESC`;
+    const query = `
+      SELECT 
+        sd.*, 
+        g.grant_uid
+      FROM 
+        submission_details sd
+      JOIN 
+        grants g ON sd.grant_id = g.grant_id
+      WHERE 
+        sd.grant_id = ${grant_id}
+      ORDER BY 
+        sd.id DESC;
+    `;
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);
