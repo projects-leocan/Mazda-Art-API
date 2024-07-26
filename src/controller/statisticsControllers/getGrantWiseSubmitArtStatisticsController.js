@@ -78,18 +78,20 @@ exports.getGrantWiseSubmitArtStatisticsController = async (req, res) => {
   try {
     const query = `
       SELECT 
-        sd.grant_id,
-        (SELECT COUNT(*) FROM trasaction_detail WHERE grant_id = sd.grant_id AND trasaction_status = 'SUCCESS') AS total_transaction,
-        COUNT(*) AS total_art_submission,
-        COUNT(*) FILTER (WHERE sd.status = '${rejected}') AS rejected,
-        COUNT(*) FILTER (WHERE sd.status = '${short_listed}') AS short_listed,
-        COUNT(*) FILTER (WHERE sd.status = '${scholarship_winner}') AS scholarship_winner,
-        COUNT(*) FILTER (WHERE sd.status = '${grant_winner}') AS grant_winner,
-        COUNT(*) FILTER (WHERE sd.status = '${nominated}') AS nominated
+        g.grant_uid,
+        COUNT(DISTINCT CASE WHEN td.trasaction_status = 'SUCCESS' THEN td.id ELSE NULL END) AS total_transaction,
+        COUNT(sd.*) AS total_art_submission,
+        COUNT(sd.*) FILTER (WHERE sd.status = '${rejected}') AS rejected,
+        COUNT(sd.*) FILTER (WHERE sd.status = '${short_listed}') AS short_listed,
+        COUNT(sd.*) FILTER (WHERE sd.status = '${scholarship_winner}') AS scholarship_winner,
+        COUNT(sd.*) FILTER (WHERE sd.status = '${grant_winner}') AS grant_winner,
+        COUNT(sd.*) FILTER (WHERE sd.status = '${nominated}') AS nominated
       FROM 
         submission_details sd
+      JOIN grants g ON sd.grant_id = g.grant_id
+      JOIN trasaction_detail td ON sd.grant_id = td.grant_id AND td.trasaction_status = 'SUCCESS'
       GROUP BY 
-        sd.grant_id;
+        g.grant_uid;
     `;
 
     pool.query(query, (err, result) => {
@@ -101,13 +103,16 @@ exports.getGrantWiseSubmitArtStatisticsController = async (req, res) => {
           statusCode: 500,
         });
       } else {
-        // Convert data string to int
+        // Convert numeric data fields to integers, but keep grant_uid as a string
         const convertedData = result.rows.map((entry) => {
           const convertedEntry = {};
           for (const value in entry) {
             if (entry[value] === null) {
               convertedEntry[value] = 0;
-            } else if (typeof entry[value] === "string") {
+            } else if (
+              typeof entry[value] === "string" &&
+              value !== "grant_uid"
+            ) {
               convertedEntry[value] = parseInt(entry[value], 10);
             } else {
               convertedEntry[value] = entry[value];
