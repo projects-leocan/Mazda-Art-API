@@ -53,7 +53,7 @@ exports.getGrantJuryMappingController = async (req, res) => {
 
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
-      //   console.log(`result:::: ${JSON.stringify(result.rows)}`);
+      // console.log(`result:::: ${JSON.stringify(result.rows)}`);
       if (err) {
         res.status(500).send({
           success: false,
@@ -114,7 +114,7 @@ exports.getGrantJuryMappingController = async (req, res) => {
                   }),
             };
           });
-
+          // console.log("final response", finalResponse);
           res.status(200).send({
             success: true,
             statusCode: 200,
