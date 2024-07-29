@@ -62,11 +62,13 @@ exports.getGrantSubmittedDetails = async (
             } else {
               const finalResponse = {
                 ...submissionDetailResult.rows[0],
+                grant_id: submissionDetailResult.rows[0].grant_uid,
                 art_file:
                   prePath +
                   artistGrantSubmissionFilesPath +
                   submissionDetailResult.rows[0].art_file,
               };
+              delete finalResponse.grant_uid;
               res.status(200).send({
                 success: true,
                 message: message,

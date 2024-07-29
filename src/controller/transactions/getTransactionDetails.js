@@ -19,7 +19,15 @@ exports.getTransactionDetails = async (transaction_id, message, res) => {
     `;
     pool.query(query, [transaction_id], async (error, result) => {
       // console.log('error: ', error);
-      console.log("result: ", result);
+      const finalResult = {
+        ...result.rows[0],
+        grant_id: result.rows[0].grant_uid,
+        transaction_amount: result.rows[0].trasaction_amount,
+        transaction_status: result.rows[0].trasaction_status,
+      };
+      delete finalResult.grant_uid;
+      delete finalResult.trasaction_amount;
+      delete finalResult.trasaction_status;
       if (error) {
         return res.status(500).send({
           success: false,
@@ -38,7 +46,7 @@ exports.getTransactionDetails = async (transaction_id, message, res) => {
             success: true,
             statusCode: 200,
             message: message,
-            data: result.rows[0],
+            data: finalResult,
           });
         }
       }

@@ -36,6 +36,7 @@ exports.getGrantDetailsController = async (req, res) => {
         } else {
           const updatedResult = {
             ...result.rows[0],
+            grant_id: result.rows[0].grant_uid,
             updated_at: getUTCdate(result.rows[0].updated_at),
             submission_end_date: getUTCdate(result.rows[0].submission_end_date),
             created_at: getUTCdate(result.rows[0].created_at),
@@ -45,6 +46,7 @@ exports.getGrantDetailsController = async (req, res) => {
           // console.log(`updatedResult: ${JSON.stringify(updatedResult)}`);
           delete updatedResult.jury_ids;
           delete updatedResult.id;
+          delete updatedResult.grant_uid;
           res.status(200).send({
             success: true,
             message: "Grants fetched successfully",

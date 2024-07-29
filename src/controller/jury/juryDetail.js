@@ -34,6 +34,8 @@ exports.getJuryDetails = async (jury_id, message, res) => {
             juryGrantsResult.rows.map((e) => {
               e.submission_end_date = getUTCdate(e.submission_end_date);
               e.updated_at = getUTCdate(e.updated_at);
+              e.grant_id = e.grant_uid;
+              delete e.grant_uid;
               grants.push(e);
             });
           }
