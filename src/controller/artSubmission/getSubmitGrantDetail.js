@@ -8,6 +8,7 @@ const { somethingWentWrong } = require("../../constants/messages");
 
 exports.getGrantSubmittedDetails = async (
   grant_submit_id,
+  jury_id,
   message,
   res,
   req
@@ -18,7 +19,7 @@ exports.getGrantSubmittedDetails = async (
     sd.*, 
     g.grant_uid 
   FROM 
-    trasaction_detail sd
+    submission_details sd
   JOIN 
     grants g ON sd.grant_id = g.grant_id 
   WHERE 
@@ -47,12 +48,25 @@ exports.getGrantSubmittedDetails = async (
               const transactionResult = await pool.query(transactionQuery);
               const finalResponse = {
                 ...submissionDetailResult.rows[0],
+                // grant_id: submissionDetailResult.rows[0].grant_uid,
                 transactionDetail: transactionResult.rows[0],
                 art_file:
                   prePath +
                   artistGrantSubmissionFilesPath +
                   submissionDetailResult.rows[0].art_file,
               };
+
+              console.log("final response 1", finalResponse);
+              if (jury_id !== undefined) {
+                delete finalResponse.artist_id;
+                delete finalResponse.transaction_id;
+                delete finalResponse.jury_id;
+                delete finalResponse.transactionDetail;
+                delete finalResponse.submited_time;
+                delete finalResponse.submission_updated_count;
+                delete finalResponse.updated_at;
+              }
+              // delete finalResponse.grant_uid;
               res.status(200).send({
                 success: true,
                 message: message,
@@ -62,13 +76,21 @@ exports.getGrantSubmittedDetails = async (
             } else {
               const finalResponse = {
                 ...submissionDetailResult.rows[0],
-                grant_id: submissionDetailResult.rows[0].grant_uid,
+                // grant_id: submissionDetailResult.rows[0].grant_uid,
                 art_file:
                   prePath +
                   artistGrantSubmissionFilesPath +
                   submissionDetailResult.rows[0].art_file,
               };
-              delete finalResponse.grant_uid;
+              if (jury_id !== undefined) {
+                delete finalResponse.artist_id;
+                delete finalResponse.payment_init_date;
+                delete finalResponse.payment_success_date;
+                delete finalResponse.trasaction_amount;
+                delete finalResponse.trasaction_status;
+                delete finalResponse.transaction_id;
+              }
+              // delete finalResponse.grant_uid;
               res.status(200).send({
                 success: true,
                 message: message,
