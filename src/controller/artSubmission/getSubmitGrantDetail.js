@@ -46,7 +46,7 @@ exports.getGrantSubmittedDetails = async (
               const transactionQuery = `SELECT * FROM trasaction_detail WHERE id = '${submissionDetailResult.rows[0].transaction_id}'`;
               // console.log(`transactionQuery: ${transactionQuery}`);
               const transactionResult = await pool.query(transactionQuery);
-              const finalResponse = {
+              let finalResponse = {
                 ...submissionDetailResult.rows[0],
                 // grant_id: submissionDetailResult.rows[0].grant_uid,
                 transactionDetail: transactionResult.rows[0],
@@ -56,7 +56,13 @@ exports.getGrantSubmittedDetails = async (
                   submissionDetailResult.rows[0].art_file,
               };
 
-              console.log("final response 1", finalResponse);
+              const artistEmailQuery = `SELECT email FROM artist WHERE artist_id=${finalResponse.artist_id}`;
+              const artistEmailQueryResult = await pool.query(artistEmailQuery);
+              finalResponse = {
+                ...finalResponse,
+                artist_email: artistEmailQueryResult.rows[0].email,
+              };
+
               if (jury_id !== undefined) {
                 delete finalResponse.artist_id;
                 delete finalResponse.transaction_id;
@@ -74,13 +80,19 @@ exports.getGrantSubmittedDetails = async (
                 data: finalResponse,
               });
             } else {
-              const finalResponse = {
+              let finalResponse = {
                 ...submissionDetailResult.rows[0],
                 // grant_id: submissionDetailResult.rows[0].grant_uid,
                 art_file:
                   prePath +
                   artistGrantSubmissionFilesPath +
                   submissionDetailResult.rows[0].art_file,
+              };
+              const artistEmailQuery = `SELECT email FROM artist WHERE artist_id=${finalResponse.artist_id}`;
+              const artistEmailQueryResult = await pool.query(artistEmailQuery);
+              finalResponse = {
+                ...finalResponse,
+                artist_email: artistEmailQueryResult.rows[0].email,
               };
               if (jury_id !== undefined) {
                 delete finalResponse.artist_id;
