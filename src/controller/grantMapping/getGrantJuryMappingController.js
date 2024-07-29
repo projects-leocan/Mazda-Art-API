@@ -17,14 +17,37 @@ exports.getGrantJuryMappingController = async (req, res) => {
       page_no = 1;
     }
 
-    let query = `SELECT g.grant_id,g.grant_uid, (SELECT COUNT(*) AS total_count FROM grants),
-        COALESCE(ARRAY_AGG(ga.jury_id) FILTER (WHERE ga.jury_id IS NOT NULL), '{}') AS jury
-        FROM grants AS g
-        LEFT JOIN grant_assign AS ga ON g.grant_id = ga.grant_id
-        GROUP BY g.grant_id ORDER BY g.grant_id DESC`;
+    // let query = `SELECT g.grant_id,g.grant_uid, (SELECT COUNT(*) AS total_count FROM grants),
+    //     COALESCE(ARRAY_AGG(ga.jury_id) FILTER (WHERE ga.jury_id IS NOT NULL), '{}') AS jury
+    //     FROM grants AS g
+    //     LEFT JOIN grant_assign AS ga ON g.grant_id = ga.grant_id
+    //     GROUP BY g.grant_id ORDER BY g.grant_id DESC`;
 
-    if (isAll == undefined) {
-      offset = (page_no - 1) * record_per_page;
+    // if (isAll == undefined) {
+    //   offset = (page_no - 1) * record_per_page;
+    //   query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
+    // }
+
+    let query = `
+  SELECT 
+    g.grant_id,
+    g.grant_uid,
+    COUNT(*) OVER() AS total_count,
+    COALESCE(ARRAY_AGG(ga.jury_id) FILTER (WHERE ga.jury_id IS NOT NULL), '{}') AS jury
+  FROM 
+    grants AS g
+  LEFT JOIN 
+    grant_assign AS ga ON g.grant_id = ga.grant_id
+  WHERE 
+    ga.jury_id IS NOT NULL
+  GROUP BY 
+    g.grant_id 
+  ORDER BY 
+    g.grant_id DESC
+`;
+
+    if (!isAll) {
+      const offset = (page_no - 1) * record_per_page;
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
 
