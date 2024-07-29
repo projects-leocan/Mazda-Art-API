@@ -246,6 +246,12 @@ const {
 const {
   getGrantWiseSubmitArtStatisticsController,
 } = require("../controller/statisticsControllers/getGrantWiseSubmitArtStatisticsController");
+const {
+  addArtistKycController,
+} = require("../controller/artistControllers/addArtistKycController");
+const {
+  getArtistKycDocumentController,
+} = require("../controller/artistControllers/getArtistKycDocument");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -573,6 +579,18 @@ module.exports = (app) => {
     validateAccessToken,
     getGrantJuryMappingDetailsValidation,
     getGrantJuryMappingDetailsController
+  );
+
+  router.post(
+    "/addArtistKycDocument",
+    validateAccessToken,
+    addArtistKycController
+  );
+
+  router.get(
+    "/getArtistKycDocument",
+    validateAccessToken,
+    getArtistKycDocumentController
   );
 
   router.get("/demo", demoController);

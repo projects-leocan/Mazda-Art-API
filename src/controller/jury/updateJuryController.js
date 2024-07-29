@@ -9,7 +9,7 @@ exports.updateJuryDetailsController = async (req, res) => {
   const {
     jury_id,
     is_link_updated,
-    full_name,
+    fullName,
     email,
     contact_no,
     password,
@@ -26,8 +26,8 @@ exports.updateJuryDetailsController = async (req, res) => {
 
     let query = `UPDATE jury SET updated_at='${currentTime}'`;
 
-    if (full_name != undefined) {
-      query += `, full_name='${full_name}'`;
+    if (fullName != undefined) {
+      query += `, full_name='${fullName}'`;
     }
     if (email != undefined) {
       query += `, email='${email}'`;
