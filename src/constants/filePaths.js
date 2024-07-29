@@ -5,6 +5,7 @@ module.exports = {
   userProfileImagePath: storagePath + "user_profile/",
   artistGrantSubmissionFilesPath:
     storagePath + "artist_grant_submission_files/",
+  artistKycDocumentsPath: storagePath + "artist_kyc_documents/",
 };
 
 function getFileURLPreFixPath(req) {
