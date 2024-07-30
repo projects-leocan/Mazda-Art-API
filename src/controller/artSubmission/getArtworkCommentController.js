@@ -41,20 +41,29 @@ WHERE a.artwork_id = sd.id AND a.jury_id = j.id AND a.artwork_id=${artwork_id}`;
           statusCode: 500,
         });
       } else {
-        let data = result.rows[0]?.grant_id;
-        const grant_uid_query = `SELECT grant_uid from grants where grant_id=${data}`;
-        const grant_uid = await pool.query(grant_uid_query);
+        if (result.rows?.length > 0) {
+          let data = result.rows[0]?.grant_id;
+          const grant_uid_query = `SELECT grant_uid from grants where grant_id=${data}`;
+          const grant_uid = await pool.query(grant_uid_query);
 
-        const finalData = {
-          data: result.rows,
-          grant_uid: grant_uid.rows[0].grant_uid,
-        };
-        return res.status(200).send({
-          success: true,
-          message: "Comments get Successfully",
-          data: finalData,
-          statusCode: 200,
-        });
+          const finalData = {
+            data: result.rows,
+            grant_uid: grant_uid.rows[0].grant_uid,
+          };
+          return res.status(200).send({
+            success: true,
+            message: "Comments get Successfully",
+            data: finalData,
+            statusCode: 200,
+          });
+        } else {
+          return res.status(200).send({
+            success: true,
+            message: "No Comments",
+            data: [],
+            statusCode: 200,
+          });
+        }
       }
     });
   } catch (error) {
