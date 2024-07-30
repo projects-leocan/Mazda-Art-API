@@ -46,10 +46,24 @@ exports.getGrantSubmittedDetails = async (
               const transactionQuery = `SELECT * FROM trasaction_detail WHERE id = '${submissionDetailResult.rows[0].transaction_id}'`;
               // console.log(`transactionQuery: ${transactionQuery}`);
               const transactionResult = await pool.query(transactionQuery);
+              const transactionResultData = {
+                ...transactionResult?.rows[0],
+                transaction_amount:
+                  transactionResult?.rows[0]?.trasaction_amount,
+                transaction_id: transactionResult?.rows[0]?.trasaction_id,
+                transaction_status:
+                  transactionResult?.rows[0]?.trasaction_status,
+              };
+              delete transactionResultData.trasaction_id;
+              delete transactionResultData.trasaction_amount;
+              delete transactionResultData.trasaction_status;
+              delete transactionResultData.grant_uid;
+              delete transactionResultData.grant_id;
+
               let finalResponse = {
                 ...submissionDetailResult.rows[0],
-                // grant_id: submissionDetailResult.rows[0].grant_uid,
-                transactionDetail: transactionResult.rows[0],
+                grant_id: submissionDetailResult.rows[0].grant_uid,
+                transactionDetail: transactionResultData,
                 art_file:
                   prePath +
                   artistGrantSubmissionFilesPath +
@@ -72,7 +86,7 @@ exports.getGrantSubmittedDetails = async (
                 delete finalResponse.submission_updated_count;
                 delete finalResponse.updated_at;
               }
-              // delete finalResponse.grant_uid;
+              delete finalResponse.grant_uid;
               res.status(200).send({
                 success: true,
                 message: message,
@@ -82,7 +96,7 @@ exports.getGrantSubmittedDetails = async (
             } else {
               let finalResponse = {
                 ...submissionDetailResult.rows[0],
-                // grant_id: submissionDetailResult.rows[0].grant_uid,
+                grant_id: submissionDetailResult.rows[0].grant_uid,
                 art_file:
                   prePath +
                   artistGrantSubmissionFilesPath +
@@ -102,7 +116,7 @@ exports.getGrantSubmittedDetails = async (
                 delete finalResponse.trasaction_status;
                 delete finalResponse.transaction_id;
               }
-              // delete finalResponse.grant_uid;
+              delete finalResponse.grant_uid;
               res.status(200).send({
                 success: true,
                 message: message,
