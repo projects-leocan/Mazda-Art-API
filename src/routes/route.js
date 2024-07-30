@@ -252,6 +252,12 @@ const {
 const {
   getArtistKycDocumentController,
 } = require("../controller/artistControllers/getArtistKycDocument");
+const {
+  addCommentOnArtWorkController,
+} = require("../controller/artSubmission/addCommentOnArtWorkController");
+const {
+  getArtworkCommentController,
+} = require("../controller/artSubmission/getArtworkCommentController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -581,16 +587,22 @@ module.exports = (app) => {
     getGrantJuryMappingDetailsController
   );
 
-  // router.post(
-  //   "/addArtistKycDocument",
-  //   validateAccessToken,
-  //   addArtistKycController
-  // );
+  router.post(
+    "/addCommentOnArtwork",
+    validateAccessToken,
+    addCommentOnArtWorkController
+  );
 
   router.get(
     "/getArtistKycDocument",
     validateAccessToken,
     getArtistKycDocumentController
+  );
+
+  router.get(
+    "/getArtworkComment",
+    validateAccessToken,
+    getArtworkCommentController
   );
 
   router.get("/demo", demoController);
