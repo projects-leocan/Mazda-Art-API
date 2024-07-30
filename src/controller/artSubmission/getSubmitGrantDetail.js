@@ -58,11 +58,12 @@ exports.getGrantSubmittedDetails = async (
               delete transactionResultData.trasaction_amount;
               delete transactionResultData.trasaction_status;
               delete transactionResultData.grant_uid;
-              delete transactionResultData.grant_id;
+              // delete transactionResultData.grant_id;
 
               let finalResponse = {
                 ...submissionDetailResult.rows[0],
                 grant_id: submissionDetailResult.rows[0].grant_uid,
+                grantId: submissionDetailResult.rows[0].grant_id,
                 transactionDetail: transactionResultData,
                 art_file:
                   prePath +
@@ -97,6 +98,8 @@ exports.getGrantSubmittedDetails = async (
               let finalResponse = {
                 ...submissionDetailResult.rows[0],
                 grant_id: submissionDetailResult.rows[0].grant_uid,
+                grantId: submissionDetailResult.rows[0].grant_id,
+
                 art_file:
                   prePath +
                   artistGrantSubmissionFilesPath +
