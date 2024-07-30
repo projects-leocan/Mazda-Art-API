@@ -26,14 +26,16 @@ exports.getJuryDetails = async (jury_id, message, res) => {
             statusCode: 500,
           });
         } else {
-          const grantQuery = `SELECT ga.jury_id, g.* FROM grant_assign as ga,grants as g WHERE ga.grant_id = g.grant_id AND jury_id = ${jury_id}`;
+          // const grantQuery = `SELECT ga.jury_id, g.* FROM grant_assign as ga,grants as g WHERE ga.grant_id = g.grant_id AND jury_id = ${jury_id}`;
+          const grantQuery = `SELECT g.grant_uid FROM grant_assign as ga,grants as g WHERE ga.grant_id = g.grant_id AND jury_id = ${jury_id}`;
+
           const juryGrantsResult = await pool.query(grantQuery);
           const grants = [];
 
           if (juryGrantsResult.rowCount > 0) {
             juryGrantsResult.rows.map((e) => {
-              e.submission_end_date = getUTCdate(e.submission_end_date);
-              e.updated_at = getUTCdate(e.updated_at);
+              // e.submission_end_date = getUTCdate(e.submission_end_date);
+              // e.updated_at = getUTCdate(e.updated_at);
               e.grant_id = e.grant_uid;
               delete e.grant_uid;
               grants.push(e);
@@ -72,7 +74,7 @@ exports.getJuryDetails = async (jury_id, message, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,
