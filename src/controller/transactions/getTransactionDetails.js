@@ -25,11 +25,13 @@ exports.getTransactionDetails = async (transaction_id, message, res) => {
         transaction_amount: result.rows[0].trasaction_amount,
         transaction_status: result.rows[0].trasaction_status,
         transaction_id: result.rows[0].trasaction_id,
+        created_by: await getAdminDetails(result.rows[0].artist_id),
       };
       delete finalResult.grant_uid;
       delete finalResult.trasaction_amount;
       delete finalResult.trasaction_status;
       delete finalResult.trasaction_id;
+      delete finalResult.artist_id;
 
       if (error) {
         return res.status(500).send({
@@ -61,5 +63,16 @@ exports.getTransactionDetails = async (transaction_id, message, res) => {
       message: somethingWentWrong,
       statusCode: 500,
     });
+  }
+};
+
+const getAdminDetails = async (admin_id) => {
+  // console.log(`juryData: ${JSON.stringify(juryIds)}`);
+  if (admin_id !== undefined) {
+    const result = await pool.query(
+      `SELECT admin_name FROM admin WHERE admin_id = ${admin_id}`
+    );
+    console.log("resuly", result.rows[0]);
+    return result.rows[0]?.admin_name;
   }
 };

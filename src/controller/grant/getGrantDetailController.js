@@ -19,7 +19,7 @@ exports.getGrantDetailsController = async (req, res) => {
   try {
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
-      // console.log(`result: ${JSON.stringify(result)}`);
+      // console.log(`result: ${JSON.stringify(result.rows[0])}`);
       if (err) {
         res.status(500).send({
           success: false,
@@ -41,6 +41,7 @@ exports.getGrantDetailsController = async (req, res) => {
             submission_end_date: getUTCdate(result.rows[0].submission_end_date),
             created_at: getUTCdate(result.rows[0].created_at),
             juryList: await getJuryDetails(result.rows[0].jury_ids),
+            created_by: await getAdminDetails(result.rows[0].created_by),
           };
 
           // console.log(`updatedResult: ${JSON.stringify(updatedResult)}`);
@@ -82,5 +83,16 @@ const getJuryDetails = async (juryIds) => {
     return juryData.filter((jury) => jury !== undefined);
   } else {
     return [];
+  }
+};
+
+const getAdminDetails = async (admin_id) => {
+  // console.log(`juryData: ${JSON.stringify(juryIds)}`);
+  if (admin_id !== undefined) {
+    const result = await pool.query(
+      `SELECT admin_name FROM admin WHERE admin_id = ${admin_id}`
+    );
+    console.log("resuly", result.rows[0]);
+    return result.rows[0]?.admin_name;
   }
 };

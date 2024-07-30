@@ -76,11 +76,14 @@ exports.getGrantSubmittedDetails = async (
               finalResponse = {
                 ...finalResponse,
                 artist_email: artistEmailQueryResult.rows[0].email,
+                created_by: await getAdminDetails(
+                  submissionDetailResult.rows[0].artist_id
+                ),
               };
 
               if (jury_id !== undefined) {
                 delete finalResponse.artist_id;
-                delete finalResponse.transaction_id;
+                delete finalResponse.trasaction_id;
                 delete finalResponse.jury_id;
                 delete finalResponse.transactionDetail;
                 delete finalResponse.submited_time;
@@ -88,6 +91,9 @@ exports.getGrantSubmittedDetails = async (
                 delete finalResponse.updated_at;
               }
               delete finalResponse.grant_uid;
+              delete finalResponse.transaction_id;
+              delete finalResponse.jury_id;
+
               res.status(200).send({
                 success: true,
                 message: message,
@@ -100,6 +106,9 @@ exports.getGrantSubmittedDetails = async (
                 grant_id: submissionDetailResult.rows[0].grant_uid,
                 grantId: submissionDetailResult.rows[0].grant_id,
 
+                created_by: await getAdminDetails(
+                  submissionDetailResult.rows[0].artist_id
+                ),
                 art_file:
                   prePath +
                   artistGrantSubmissionFilesPath +
@@ -110,6 +119,7 @@ exports.getGrantSubmittedDetails = async (
               finalResponse = {
                 ...finalResponse,
                 artist_email: artistEmailQueryResult.rows[0].email,
+                created_by: await getAdminDetails(finalResponse.artist_id),
               };
               if (jury_id !== undefined) {
                 delete finalResponse.artist_id;
@@ -117,7 +127,8 @@ exports.getGrantSubmittedDetails = async (
                 delete finalResponse.payment_success_date;
                 delete finalResponse.trasaction_amount;
                 delete finalResponse.trasaction_status;
-                delete finalResponse.transaction_id;
+                delete finalResponse.trasaction_id;
+                delete finalResponse.jury_id;
               }
               delete finalResponse.grant_uid;
               res.status(200).send({
@@ -144,5 +155,15 @@ exports.getGrantSubmittedDetails = async (
       message: somethingWentWrong,
       statusCode: 500,
     });
+  }
+};
+
+const getAdminDetails = async (admin_id) => {
+  // console.log(`juryData: ${JSON.stringify(juryIds)}`);
+  if (admin_id !== undefined) {
+    const result = await pool.query(
+      `SELECT admin_name FROM admin WHERE admin_id = ${admin_id}`
+    );
+    return result.rows[0]?.admin_name;
   }
 };
