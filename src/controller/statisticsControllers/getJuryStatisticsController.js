@@ -115,9 +115,9 @@ exports.getJuryStatisticsController = async (req, res) => {
                   juries.map(async (jury) => {
                     const juryStatsQuery = `
                     SELECT 
-                      (SELECT Count(*) FROM grant_assign WHERE jury_id = '${jury.jury_id}') AS total_grant_assign,
-                      (SELECT Count(*) FROM submission_details WHERE jury_id = '${jury.jury_id}' AND (status = '${submitted}' OR status = '${in_review}')) AS total_grant_pending,
-                      (SELECT Count(*) FROM submission_details WHERE jury_id = '${jury.jury_id}' AND (status = '${rejected}' OR status = '${short_listed}' OR status = '${scholarship_winner}' OR status = '${grant_winner}' OR status = '${nominated}')) AS total_grant_completed
+                      (SELECT Count(*) from submission_details where jury_id = '${jury.jury_id}' AND grant_id = '${jury.grant_id}') as total_grant_assign,
+                      (SELECT Count(*) FROM submission_details WHERE jury_id = '${jury.jury_id}' AND grant_id = '${jury.grant_id}' AND (status = '${submitted}' OR status = '${in_review}')) AS total_grant_pending,
+                      (SELECT Count(*) FROM submission_details WHERE jury_id = '${jury.jury_id}' AND grant_id = '${jury.grant_id}' AND (status = '${rejected}' OR status = '${short_listed}' OR status = '${scholarship_winner}' OR status = '${grant_winner}' OR status = '${nominated}')) AS total_grant_completed
                   `;
                     const statsResult = await pool.query(juryStatsQuery);
                     const stats = statsResult.rows[0] || {
