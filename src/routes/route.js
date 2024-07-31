@@ -258,6 +258,9 @@ const {
 const {
   getArtworkCommentController,
 } = require("../controller/artSubmission/getArtworkCommentController");
+const {
+  getSubmitArtworkStatusController,
+} = require("../controller/artSubmission/getSubmitArtworkStatusController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -603,6 +606,12 @@ module.exports = (app) => {
     "/getArtworkComment",
     validateAccessToken,
     getArtworkCommentController
+  );
+
+  router.get(
+    "/getSubmitArtworkStatus",
+    validateAccessToken,
+    getSubmitArtworkStatusController
   );
 
   router.get("/demo", demoController);

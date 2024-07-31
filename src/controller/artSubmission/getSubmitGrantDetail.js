@@ -71,11 +71,16 @@ exports.getGrantSubmittedDetails = async (
                   submissionDetailResult.rows[0].art_file,
               };
 
-              const artistEmailQuery = `SELECT email FROM artist WHERE artist_id=${finalResponse.artist_id}`;
+              const artistEmailQuery = `SELECT email, fname, lname FROM artist WHERE artist_id=${finalResponse.artist_id}`;
+
               const artistEmailQueryResult = await pool.query(artistEmailQuery);
               finalResponse = {
                 ...finalResponse,
-                artist_email: artistEmailQueryResult.rows[0].email,
+                artist_email: artistEmailQueryResult?.rows[0]?.email,
+                artist_name:
+                  artistEmailQueryResult?.rows[0]?.fname +
+                  " " +
+                  artistEmailQueryResult?.rows[0]?.lname,
                 created_by: await getAdminDetails(
                   submissionDetailResult.rows[0].artist_id
                 ),
