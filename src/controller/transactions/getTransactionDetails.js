@@ -6,17 +6,31 @@ exports.getTransactionDetails = async (transaction_id, message, res) => {
   try {
     // const query = `SELECT td.*, g.grant_uid FROM trasaction_detail JOIN
     //   grants g ON td.grant_id = g.grant_id WHERE id = ${transaction_id}`;
-    const query = `
-      SELECT 
+    // const query = `
+    //   SELECT
+    //     td.*,
+    //     g.grant_uid,
+    //     a.fname,
+    //     a.lname
+    //   FROM
+    //     trasaction_detail td, artist a
+    //   JOIN
+    //     grants g ON td.grant_id = g.grant_id
+    //     artist a ON td.artist_id = a.artist_id
+    //   WHERE
+    //     td.id = $1;
+    // `;
+
+    const query = `SELECT 
         td.*, 
-        g.grant_uid 
+        g.grant_uid,
+        a.fname,
+        a.lname
       FROM 
-        trasaction_detail td
-      JOIN 
-        grants g ON td.grant_id = g.grant_id 
-      WHERE 
-        td.id = $1;
-    `;
+        trasaction_detail td, artist a, grants g
+		WHERE 
+        td.id = $1 AND td.grant_id = g.grant_id AND td.artist_id = a.artist_id;`;
+
     pool.query(query, [transaction_id], async (error, result) => {
       // console.log('error: ', error);
       const finalResult = {
@@ -26,12 +40,15 @@ exports.getTransactionDetails = async (transaction_id, message, res) => {
         transaction_status: result.rows[0].trasaction_status,
         transaction_id: result.rows[0].trasaction_id,
         created_by: await getAdminDetails(result.rows[0].artist_id),
+        artist_name: result.rows[0].fname + " " + result.rows[0].lname,
       };
       delete finalResult.grant_uid;
       delete finalResult.trasaction_amount;
       delete finalResult.trasaction_status;
       delete finalResult.trasaction_id;
       delete finalResult.artist_id;
+      delete finalResult.fname;
+      delete finalResult.lname;
 
       if (error) {
         return res.status(500).send({
