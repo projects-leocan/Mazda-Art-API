@@ -109,7 +109,7 @@ exports.submitGrantController = async (req, res) => {
                 artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description, status)
                 VALUES (${artist_id}, '${transactionId}', ${grant_id}, '${filename}', '${art_title}', ${art_height}, ${art_width}, '${art_description}', 'SUBMITTED') RETURNING id`;
               pool.query(query, async (err, result) => {
-                console.log(`insert error: ${err}`);
+                // console.log(`insert error: ${err}`);
                 if (err) {
                   // console.log(`insert error: ${err}`);
                   // console.log(`insert result: ${result}`);

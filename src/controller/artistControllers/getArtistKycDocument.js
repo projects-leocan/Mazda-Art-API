@@ -16,8 +16,8 @@ exports.getArtistKycDocumentController = async (req, res) => {
     const query = `SELECT ad.*, a.artist_id FROM artist_kyc ad, artist_kyc_documents a WHERE a.artist_id = ${artist_id} AND ad.document_id = a.document_id`;
 
     pool.query(query, async (err, result) => {
-      console.log("error", err);
-      console.log("result", result);
+      // console.log("error", err);
+      // console.log("result", result);
 
       if (err) {
         return res.status(500).send({

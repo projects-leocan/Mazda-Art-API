@@ -92,7 +92,7 @@ const getAdminDetails = async (admin_id) => {
     const result = await pool.query(
       `SELECT admin_name FROM admin WHERE admin_id = ${admin_id}`
     );
-    console.log("resuly", result.rows[0]);
+    // console.log("resuly", result.rows[0]);
     return result.rows[0]?.admin_name;
   }
 };

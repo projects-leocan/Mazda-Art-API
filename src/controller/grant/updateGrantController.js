@@ -24,7 +24,7 @@ exports.updateGrantController = async (req, res) => {
     is_flat_pyramid,
   } = req.body;
 
-  console.log("req . body", req.body);
+  // console.log("req . body", req.body);
 
   const currentTime = new Date().toISOString().slice(0, 10);
   let query = `UPDATE grants set `;
