@@ -33,7 +33,7 @@ exports.getAllTransactionsController = async (req, res) => {
     JOIN 
       grants g ON td.grant_id = g.grant_id
     ORDER BY 
-      td.payment_success_date DESC;
+      td.payment_success_date DESC
   `;
     if (isAll == undefined) {
       offset = (page_no - 1) * record_per_page;
