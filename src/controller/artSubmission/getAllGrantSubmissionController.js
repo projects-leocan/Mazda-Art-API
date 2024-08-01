@@ -1,4 +1,8 @@
 const pool = require("../../config/db");
+const {
+  getFileURLPreFixPath,
+  artistGrantSubmissionFilesPath,
+} = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
 
 exports.getAllGrantSubmissionController = async (req, res) => {
@@ -14,11 +18,11 @@ exports.getAllGrantSubmissionController = async (req, res) => {
     // let query = `SELECT DISTINCT on (grant_id) * FROM submission_details`;
     let query =
       jury_id === undefined
-        ? `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.id, sd.artist_id, sd.grant_id, sd.submited_time, sd.art_title, sd.art_description, sd.height, sd.width, sd.status, a.fname, a.lname, a.dob, a.gender
+        ? `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.id, sd.artist_id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status, a.fname, a.lname, a.dob, a.gender
         FROM submission_details as sd
         JOIN grants g ON sd.grant_id = g.grant_id
         JOIN artist a ON sd.artist_id = a.artist_id order by sd.submited_time DESC`
-        : `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.id, sd.grant_id, sd.submited_time, sd.art_title, sd.art_description, sd.height, sd.width, sd.status
+        : `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status
         FROM submission_details as sd
         JOIN grants g ON sd.grant_id = g.grant_id
         JOIN artist a ON sd.artist_id = a.artist_id where jury_id=${jury_id} order by sd.submited_time DESC`;
@@ -37,10 +41,20 @@ exports.getAllGrantSubmissionController = async (req, res) => {
           statusCode: 500,
         });
       } else {
+        const prePath = getFileURLPreFixPath(req);
+
         const count = result?.rows[0]?.total_count;
         result.rows.map((e) => {
           delete e.total_count;
         });
+        result.rows.map((row) => {
+          row.art_file = `${prePath}${artistGrantSubmissionFilesPath}/${row.art_file}`;
+        });
+        // const final_result = {
+        //   ...result.rows,
+        //   art_file:
+        //     prePath + artistGrantSubmissionFilesPath + result.rows.art_file,
+        // };
         res.status(200).send({
           success: true,
           message: "Get all submissions Successfully.",
