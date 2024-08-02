@@ -77,7 +77,6 @@ exports.getGrantSubmittedDetails = async (
               if (jury_id === undefined) {
                 finalResponse = {
                   ...finalResponse,
-                  artist_email: artistEmailQueryResult?.rows[0]?.email,
                   artist_name:
                     artistEmailQueryResult?.rows[0]?.fname +
                     " " +
@@ -85,6 +84,11 @@ exports.getGrantSubmittedDetails = async (
                   created_by: await getAdminDetails(
                     submissionDetailResult.rows[0].artist_id
                   ),
+                };
+              } else {
+                finalResponse = {
+                  ...finalResponse,
+                  artist_email: artistEmailQueryResult?.rows[0]?.email,
                 };
               }
 
