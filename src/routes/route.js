@@ -261,6 +261,7 @@ const {
 const {
   getSubmitArtworkStatusController,
 } = require("../controller/artSubmission/getSubmitArtworkStatusController");
+const { addArtistWithImageController } = require("../controller/artistControllers/addArtistWithImageController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -613,6 +614,11 @@ module.exports = (app) => {
     validateAccessToken,
     getSubmitArtworkStatusController
   );
+
+  // Demo artist image upload
+
+  router.post("/createUserWithImage", validateAccessToken, addArtistWithImageController);
+
 
   router.get("/demo", demoController);
   router.get("/getAllArtistDemo", getAllArtistDemoController);
