@@ -122,19 +122,43 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
 };
 
 const getGrantsData = async (artist_id, req) => {
-  const submitted_grant_data = await pool.query(
-    `SELECT * FROM submission_details WHERE artist_id=${artist_id}`
-  );
-  // console.log("submitted_grant_data: ", JSON.stringify(submitted_grant_data));
-  if (!lodash.isEmpty(submitted_grant_data.rows)) {
-    const prePath = getFileURLPreFixPath(req);
-    submitted_grant_data.rows.map((e) => {
-      delete e.transaction_id,
-        delete e.jury_id,
-        (e.art_file = `${prePath}${artistGrantSubmissionFilesPath}${e.art_file}`);
-    });
+  try {
+    // Fetch submitted grant data
+    const submitted_grant_data = await pool.query(
+      `SELECT * FROM submission_details WHERE artist_id=${artist_id}`
+    );
+
+    if (!lodash.isEmpty(submitted_grant_data.rows)) {
+      const prePath = getFileURLPreFixPath(req);
+
+      const grantUIDPromises = submitted_grant_data.rows.map(async (e) => {
+        // Fetch grant_uid for the current grant_id
+        const grantData = await pool.query(
+          `SELECT grant_uid FROM grants WHERE grant_id=${e.grant_id}`
+        );
+      
+        // Check if grantData has rows and assign grant_uid
+        if (!lodash.isEmpty(grantData.rows)) {
+          e.grant_uid = grantData.rows[0].grant_uid; // Append the grant_uid to the current row
+        }
+
+        // Modify the art_file path and delete unnecessary properties
+        delete e.transaction_id;
+        delete e.jury_id;
+        e.art_file = `${prePath}${artistGrantSubmissionFilesPath}${e.art_file}`;
+        return e;
+      });
+
+      // Wait for all the promises to resolve
+      await Promise.all(grantUIDPromises);
+    }
+
+    return submitted_grant_data.rows;
+
+  } catch (error) {
+    console.error("Error in getGrantsData: ", error);
+    throw error;
   }
-  return submitted_grant_data.rows;
 };
 
 const getMocData = async (list) => {
