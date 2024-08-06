@@ -14,7 +14,7 @@ exports.getSubmitArtworkStatusController = async (req, res) => {
 FROM jury j LEFT JOIN submission_details sd ON sd.jury_id = j.id
 WHERE j.id IN 
 (SELECT jury_id FROM grant_assign 
-	WHERE grant_id in (SELECT grant_id FROM public.submission_details WHERE id = ${artwork_id}))`
+	WHERE grant_id in (SELECT grant_id FROM public.submission_details WHERE id = ${artwork_id})) AND (sd.id = ${artwork_id} OR sd.id IS NULL)`
         : //         `SELECT j.id, j.full_name, sd.status, sd.star_assigned, sd.comment, sd.art_title
           // FROM jury j LEFT JOIN submission_details sd ON sd.jury_id = j.id
           // WHERE sd.jury_id = ${jury_id} AND j.id IN
