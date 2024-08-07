@@ -10,7 +10,7 @@ const { getUTCdate } = require("../../constants/getUTCdate");
 const { somethingWentWrong } = require("../../constants/messages");
 
 exports.getAllArtistController = async (req, res) => {
-  let { record_per_page, page_no, isAll, kyc } = req.query;
+  let { record_per_page, page_no, isAll, kyc, search } = req.query;
 
   try {
     if (record_per_page == undefined) {
@@ -26,8 +26,14 @@ exports.getAllArtistController = async (req, res) => {
       offset = (page_no - 1) * record_per_page;
       query += ` ORDER BY artist_id DESC LIMIT ${record_per_page} OFFSET ${offset}`;
     }
-    if (kyc !== undefined) {
+    if (search === undefined && kyc !== undefined) {
       query += ` WHERE is_kyc_verified = '1' ORDER BY artist_id DESC`;
+    }
+    if (search !== undefined && kyc !== undefined) {
+      query += ` WHERE is_kyc_verified = '1' AND (mobile_number ILIKE '${search}%'  
+       OR mobile_number ILIKE '%${search}' 
+       OR fname ILIKE '%${search}%' 
+       OR lname ILIKE '%${search}%') ORDER BY artist_id DESC`;
     }
 
     // console.log(`query: ${query}`);

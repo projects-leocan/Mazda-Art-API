@@ -93,8 +93,8 @@ exports.getGrantSubmittedDetails = async (
               }
 
               if (jury_id !== undefined) {
-                delete finalResponse.artist_id;
-                delete finalResponse.trasaction_id;
+                // delete finalResponse.artist_id;
+                // delete finalResponse.trasaction_id;
                 delete finalResponse.jury_id;
                 delete finalResponse.transactionDetail;
                 delete finalResponse.submited_time;
@@ -102,7 +102,7 @@ exports.getGrantSubmittedDetails = async (
                 delete finalResponse.updated_at;
               }
               delete finalResponse.grant_uid;
-              delete finalResponse.transaction_id;
+              // delete finalResponse.transaction_id;
               delete finalResponse.jury_id;
 
               res.status(200).send({
@@ -133,7 +133,7 @@ exports.getGrantSubmittedDetails = async (
                 created_by: await getAdminDetails(finalResponse.artist_id),
               };
               if (jury_id !== undefined) {
-                delete finalResponse.artist_id;
+                // delete finalResponse.artist_id;
                 delete finalResponse.payment_init_date;
                 delete finalResponse.payment_success_date;
                 delete finalResponse.trasaction_amount;

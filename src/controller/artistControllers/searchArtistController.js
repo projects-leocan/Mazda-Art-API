@@ -28,7 +28,16 @@ exports.searchArtistController = async (req, res) => {
     if (page_no == undefined) {
       page_no = 1;
     }
-    let query = `SELECT *, COUNT(*) OVER() AS totalArtist 
+    let query =
+      kyc === "true"
+        ? `SELECT *, COUNT(*) OVER() AS totalArtist 
+    FROM artist 
+    WHERE is_kyc_verified = '1'
+    AND (mobile_number ILIKE '${search_text}%' 
+       OR mobile_number ILIKE '%${search_text}' 
+       OR fname ILIKE '%${search_text}%' 
+       OR lname ILIKE '%${search_text}%')`
+        : `SELECT *, COUNT(*) OVER() AS totalArtist 
     FROM artist 
     WHERE mobile_number ILIKE '${search_text}%' 
        OR mobile_number ILIKE '%${search_text}' 
