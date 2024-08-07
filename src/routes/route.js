@@ -261,7 +261,12 @@ const {
 const {
   getSubmitArtworkStatusController,
 } = require("../controller/artSubmission/getSubmitArtworkStatusController");
-const { addArtistWithImageController } = require("../controller/artistControllers/addArtistWithImageController");
+// const {
+//   addArtistWithImageController,
+// } = require("../controller/artistControllers/addArtistWithImageController");
+const {
+  updateArtistWithImageController,
+} = require("../controller/artistControllers/updateArtistWithImageController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -327,7 +332,13 @@ module.exports = (app) => {
     searchArtistValidation,
     searchArtistController
   );
-  router.post("/updateUser", validateAccessToken, updateArtistController); // update user profile validation is added in controller
+  // router.post("/updateUser", validateAccessToken, updateArtistController); // update user profile validation is added in controller
+  router.post(
+    "/updateUser",
+    validateAccessToken,
+    updateArtistWithImageController
+  ); // update user profile validation is added in controller
+
   router.get(
     "/getUserDetails",
     validateAccessToken,
@@ -617,8 +628,11 @@ module.exports = (app) => {
 
   // Demo artist image upload
 
-  router.post("/createUserWithImage", validateAccessToken, addArtistWithImageController);
-
+  // router.post(
+  //   "/createUserWithImage",
+  //   validateAccessToken,
+  //   addArtistWithImageController
+  // );
 
   router.get("/demo", demoController);
   router.get("/getAllArtistDemo", getAllArtistDemoController);
