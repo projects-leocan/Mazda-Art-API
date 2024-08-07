@@ -80,7 +80,6 @@
 //   });
 // };
 
-
 const pool = require("../../config/db");
 const multer = require("multer");
 const path = require("path");
@@ -89,59 +88,75 @@ const { somethingWentWrong } = require("../../constants/messages");
 
 // Set up multer for file storage
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        if (file.fieldname === "profile_pic") {
-            cb(null, "src/files/artist_profile/");
-        } else if (file.fieldname === "artist_portfolio") {
-            cb(null, "src/files/artist_portfolio/");
-        }
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
+  //   destination: (req, file, cb) => {
+  //     if (file.fieldname === "profile_pic") {
+  //       cb(null, "src/files/user_profile/");
+  //     } else if (file.fieldname === "user_portfolio") {
+  //       cb(null, "src/files/user_portfolio/");
+  //     }
+  //   },
+  //   filename: (req, file, cb) => {
+  //     cb(null, Date.now() + path.extname(file.originalname));
+  //   },
+  destination: (req, file, cb) => {
+    if (file.fieldname === "profile_pic") {
+      cb(null, "src/files/artist_profile/");
+    } else if (file.fieldname === "artist_portfolio") {
+      cb(null, "src/files/artist_portfolio/");
     }
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
 });
 
 const upload = multer({ storage }).fields([
-    { name: "profile_pic", maxCount: 1 },
-    { name: "artist_portfolio", maxCount: 10 }
+  { name: "profile_pic", maxCount: 1 },
+  { name: "artist_portfolio", maxCount: 10 },
 ]);
 
 exports.addArtistWithImageController = (req, res) => {
-    upload(req, res, async (err) => {
-        if (err) {
-            return res.status(400).send({ error: err.message });
-        }
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.status(400).send({ error: err.message });
+    }
 
-        const {
-            fname,
-            lname,
-            dob,
-            gender,
-            email,
-            mobile_number,
-            address1,
-            address2,
-            city,
-            state,
-            pincode,
-            social_media_profile_link,
-            password,
-            is_kyc_verified
-        } = req.body;
+    const {
+      fname,
+      lname,
+      dob,
+      gender,
+      email,
+      mobile_number,
+      address1,
+      address2,
+      city,
+      state,
+      pincode,
+      social_media_profile_link,
+      password,
+      is_kyc_verified,
+    } = req.body;
 
-        try {
-            const hashedPassword = await passwordHashing(password);
-            const createdAt = new Date().toISOString().slice(0, 10);;
-            const updatedAt = new Date().toISOString().slice(0, 10);;
-            const profilePic = req.files.profile_pic ? req.files.profile_pic[0].filename : null;
-            const artistPortfolio = req.files.artist_portfolio ? req.files.artist_portfolio.map(file => file.filename) : [];
+    console.log("req body", req.body);
 
-            const client = await pool.connect();
+    try {
+      const hashedPassword = await passwordHashing(password);
+      const createdAt = new Date().toISOString().slice(0, 10);
+      const updatedAt = new Date().toISOString().slice(0, 10);
+      const profilePic = req.files.profile_pic
+        ? req.files.profile_pic[0].filename
+        : null;
+      const artistPortfolio = req.files.artist_portfolio
+        ? req.files.artist_portfolio.map((file) => file.filename)
+        : [];
 
-            try {
-                await client.query('BEGIN');
+      const client = await pool.connect();
 
-                const query = `
+      try {
+        await client.query("BEGIN");
+
+        const query = `
           INSERT INTO artist (
             fname, lname, dob, gender, email, mobile_number, address1, address2,
             city, state, pincode, social_media_profile_link, password,
@@ -152,39 +167,45 @@ exports.addArtistWithImageController = (req, res) => {
           RETURNING artist_id
         `;
 
-        console.log("query", query)
+        console.log("query", query);
 
-                // const values = [
-                //     fname, lname, dob, gender, email, mobile_number, address1, address2,
-                //     city, state, pincode, social_media_profile_link, hashedPassword,
-                //     is_kyc_verified, profilePic, createdAt, updatedAt
-                // ];
+        // const values = [
+        //     fname, lname, dob, gender, email, mobile_number, address1, address2,
+        //     city, state, pincode, social_media_profile_link, hashedPassword,
+        //     is_kyc_verified, profilePic, createdAt, updatedAt
+        // ];
 
-                const result = await client.query(query);
-                const artistId = result.rows[0].artist_id;
+        const result = await client.query(query);
+        const artistId = result.rows[0].artist_id;
 
-                if (artistPortfolio.length > 0) {
-                    const portfolioQuery = `
+        if (artistPortfolio.length > 0) {
+          const portfolioQuery = `
             INSERT INTO artist_portfolio (artist_id, artist_portfolio)
-            VALUES ${artistPortfolio.map((_, i) => `($1, $${i + 2})`).join(", ")}
+            VALUES ${artistPortfolio
+              .map((_, i) => `($1, $${i + 2})`)
+              .join(", ")}
           `;
-                    const portfolioValues = [artistId, ...artistPortfolio];
+          const portfolioValues = [artistId, ...artistPortfolio];
 
-                    await client.query(portfolioQuery, portfolioValues);
-                }
-
-                await client.query('COMMIT');
-                res.status(200).send({ success: true, message: "Artist added successfully", artistId });
-            } catch (error) {
-                await client.query('ROLLBACK');
-                console.error(error);
-                res.status(500).send({ success: false, message: somethingWentWrong });
-            } finally {
-                client.release();
-            }
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({ success: false, message: somethingWentWrong });
+          await client.query(portfolioQuery, portfolioValues);
         }
-    });
+
+        await client.query("COMMIT");
+        res.status(200).send({
+          success: true,
+          message: "Artist added successfully",
+          artistId,
+        });
+      } catch (error) {
+        await client.query("ROLLBACK");
+        console.error(error);
+        res.status(500).send({ success: false, message: somethingWentWrong });
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ success: false, message: somethingWentWrong });
+    }
+  });
 };

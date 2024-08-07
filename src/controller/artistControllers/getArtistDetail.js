@@ -186,6 +186,8 @@ const {
   userProfileImagePath,
   getFileURLPreFixPath,
   artistGrantSubmissionFilesPath,
+  artistPortFoliaImagePath,
+  artistProfileImagePath,
 } = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
 const { getUTCdate } = require("../../constants/getUTCdate");
@@ -227,14 +229,14 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
       const prePath = getFileURLPreFixPath(req);
       const artistData = artistResult.rows[0];
 
-      // if (artistPortfolioImage.rows[0]?.artist_portfolio) {
-      //   artistData.artist_portfolio = `${prePath}${userPortFoliaImagePath}${artistPortfolioImage.rows[0].artist_portfolio}`;
-      // }
+      if (artistPortfolioImage.rows[0]?.artist_portfolio) {
+        artistData.artist_portfolio = `${prePath}${artistPortFoliaImagePath}${artistPortfolioImage.rows[0].artist_portfolio}`;
+      }
       artistData.artist_portfolios = artistPortfolioImage.rows.map((row) => {
-        return `${prePath}${userPortFoliaImagePath}${row.artist_portfolio}`;
+        return `${prePath}${artistPortFoliaImagePath}${row.artist_portfolio}`;
       });
       if (artistData.profile_pic) {
-        artistData.profile_pic = `${prePath}${userProfileImagePath}${artistData.profile_pic}`;
+        artistData.profile_pic = `${prePath}${artistProfileImagePath}${artistData.profile_pic}`;
       }
 
       const [mocs, grants, comments] = await Promise.all([

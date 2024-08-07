@@ -2,6 +2,8 @@ const pool = require("../../config/db");
 const {
   userPortFoliaImagePath,
   userProfileImagePath,
+  artistPortFoliaImagePath,
+  artistProfileImagePath,
   getFileURLPreFixPath,
 } = require("../../constants/filePaths");
 const { getUTCdate } = require("../../constants/getUTCdate");
@@ -52,11 +54,11 @@ exports.getAllArtistController = async (req, res) => {
             profile_pic:
               res.profile_pic == null
                 ? null
-                : `${prePath}${userProfileImagePath}${res.profile_pic}`,
+                : `${prePath}${artistProfileImagePath}${res.profile_pic}`,
             artist_portfolio:
               res.artist_portfolio == null
                 ? null
-                : `${prePath}${userPortFoliaImagePath}${res.artist_portfolio}`,
+                : `${prePath}${artistPortFoliaImagePath}${res.artist_portfolio}`,
             created_at: getUTCdate(res.created_at),
           };
         });
