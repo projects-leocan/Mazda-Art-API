@@ -123,6 +123,7 @@ exports.assignGrantToJuryController = async (req, res) => {
     const existingAssignedIds = new Set(
       existingAssignmentsResult.rows.map((row) => row.jury_id)
     );
+
     const notAssignedJuries = jurys.filter(
       (jury) => !existingAssignedIds.has(jury.id)
     );
@@ -171,7 +172,7 @@ exports.assignGrantToJuryController = async (req, res) => {
     if (alreadyAssignedJuries.length > 0) {
       responseMessage +=
         alreadyAssignedJuries
-          .map((jury) => `Jury ID ${jury.id} was already assigned.`)
+          .map((jury) => `Jury '${jury.full_name}' was already assigned.`)
           .join(" ") + " ";
     }
     if (notAssignedJuries.length > 0) {
