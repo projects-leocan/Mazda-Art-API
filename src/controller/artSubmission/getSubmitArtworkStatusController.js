@@ -14,7 +14,7 @@ exports.getSubmitArtworkStatusController = async (req, res) => {
 FROM jury j LEFT JOIN submission_details sd ON sd.jury_id = j.id
 WHERE j.id IN 
 (SELECT jury_id FROM grant_assign 
-	WHERE grant_id in (SELECT grant_id FROM public.submission_details WHERE id = ${artwork_id})) AND (sd.id = ${artwork_id} OR sd.id IS NULL)`
+	WHERE grant_id in (SELECT grant_id FROM public.submission_details WHERE artwork_id = ${artwork_id})) AND (sd.artwork_id = ${artwork_id} OR sd.artwork_id IS NULL)`
         : //         `SELECT j.id, j.full_name, sd.status, sd.star_assigned, sd.comment, sd.art_title
           // FROM jury j LEFT JOIN submission_details sd ON sd.jury_id = j.id
           // WHERE sd.jury_id = ${jury_id} AND j.id IN
@@ -22,11 +22,11 @@ WHERE j.id IN
           // 	WHERE grant_id in (SELECT grant_id FROM public.submission_details WHERE id = ${artwork_id}))`;
           `SELECT j.full_name, s.status, s.star_assigned, s.comment, s.art_title 
 FROM public.submission_details s, public.jury j 
-WHERE s.jury_id = j.id AND s.id = ${artwork_id} AND s.jury_id = ${jury_id}`;
+WHERE s.jury_id = j.id AND s.artwork_id = ${artwork_id} AND s.jury_id = ${jury_id}`;
 
     pool.query(query, async (err, result) => {
       // console.log("result.rows", result.rows);
-      // console.log("query", query);
+      console.log("query", query);
 
       if (err) {
         res.status(500).send({
@@ -35,7 +35,7 @@ WHERE s.jury_id = j.id AND s.id = ${artwork_id} AND s.jury_id = ${jury_id}`;
           statusCode: 500,
         });
       } else {
-        const grant_id_query = `SELECT grant_uid FROM grants WHERE grant_id in (SELECT grant_id FROM submission_details where id = ${artwork_id})`;
+        const grant_id_query = `SELECT grant_uid FROM grants WHERE grant_id in (SELECT grant_id FROM submission_details where artwork_id = ${artwork_id})`;
         const grant_id_result = await pool.query(grant_id_query);
         const grant_uid = grant_id_result.rows[0]?.grant_uid;
 

@@ -18,11 +18,11 @@ exports.getAllGrantSubmissionController = async (req, res) => {
     // let query = `SELECT DISTINCT on (grant_id) * FROM submission_details`;
     let query =
       jury_id === undefined
-        ? `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.id, sd.artist_id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status, a.fname, a.lname, a.dob, a.gender
+        ? `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.artwork_id, sd.artist_id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status, a.fname, a.lname, a.dob, a.gender
         FROM submission_details as sd
         JOIN grants g ON sd.grant_id = g.grant_id
         JOIN artist a ON sd.artist_id = a.artist_id order by sd.submited_time DESC`
-        : `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status
+        : `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.artwork_id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status
         FROM submission_details as sd
         JOIN grants g ON sd.grant_id = g.grant_id
         JOIN artist a ON sd.artist_id = a.artist_id where jury_id=${jury_id} order by sd.submited_time DESC`;

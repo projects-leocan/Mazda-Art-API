@@ -23,10 +23,10 @@ exports.getArtworkCommentController = async (req, res) => {
       admin_id === undefined
         ? `SELECT a.*, j.full_name, sd.art_title , sd.grant_id
 FROM public.artwork_comment a, public.jury j, public.submission_details sd 
-WHERE a.artwork_id = sd.id AND a.jury_id = j.id AND a.jury_id=${jury_id} AND a.artwork_id=${artwork_id}`
+WHERE a.artwork_id = sd.artwork_id AND a.jury_id = j.id AND a.jury_id=${jury_id} AND a.artwork_id=${artwork_id}`
         : `SELECT a.*, j.full_name, sd.art_title, sd.grant_id
 FROM public.artwork_comment a, public.jury j, public.submission_details sd 
-WHERE a.artwork_id = sd.id AND a.jury_id = j.id AND a.artwork_id=${artwork_id}`;
+WHERE a.artwork_id = sd.artwork_id AND a.jury_id = j.id AND a.artwork_id=${artwork_id}`;
     if (isAll == undefined) {
       offset = (page_no - 1) * record_per_page;
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;

@@ -33,7 +33,7 @@ exports.getGrantAllSubmissionsController = async (req, res) => {
       WHERE 
         sd.grant_id = ${grant_id}
       ORDER BY 
-        sd.id DESC;
+        sd.artwork_id DESC;
     `;
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);

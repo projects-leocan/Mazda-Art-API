@@ -130,7 +130,7 @@ exports.updateSubmitedGrantController = async (req, res) => {
                 query += `, art_file='${filename}'`;
               }
 
-              query += ` WHERE id = ${grant_submitted_id}`;
+              query += ` WHERE artwork_id = ${grant_submitted_id}`;
               // console.log('query: ', query);
               pool.query(query, async (err, result) => {
                 // console.log(`insert error: ${err}`);
