@@ -42,26 +42,36 @@ exports.updateGrantStatusController = async (req, res) => {
     });
   } else {
     // let juryFindQuery = `SELECT * FROM jury WHERE id=${jury_id}`;
-    let juryFindQuery = `SELECT jury_id FROM submission_details WHERE jury_id=${jury_id}`;
+    // let juryFindQuery = `SELECT jury_id FROM submission_details WHERE jury_id=${jury_id}`;
+    let juryFindQuery = `SELECT jury_id FROM submission_review_details WHERE jury_id=${jury_id}`;
 
     const juryFindResult = await pool.query(juryFindQuery);
     // const juryFind = juryFindQuery.rows[0]
     console.log("jury", juryFindResult);
     let query;
     if (juryFindResult?.rows.length > 0) {
-      query = `UPDATE submission_details SET status=${status}, jury_id=${jury_id}, star_assigned=${starts}, assign_date=CURRENT_TIMESTAMP`;
+      // query = `UPDATE submission_details SET status=${status}, jury_id=${jury_id}, star_assigned=${starts}, assign_date=CURRENT_TIMESTAMP`;
+      // if (comment != undefined && comment !== "") {
+      //   query += `, comment='${comment}'`;
+      // }
+      // query += ` WHERE artwork_id = ${submission_id} and jury_id=${jury_id}`;
+
+      query = `UPDATE submission_review_details SET status=${status}, star_assigned=${starts}`;
       if (comment != undefined && comment !== "") {
         query += `, comment='${comment}'`;
       }
       query += ` WHERE artwork_id = ${submission_id} and jury_id=${jury_id}`;
     } else {
-      query = `INSERT INTO public.submission_details(
-        artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description, submited_time, submission_updated_count, updated_at, status, jury_id, assign_date, comment, star_assigned, artwork_id)
-        VALUES (${artist_id}, ${transaction_id}, ${grant_id}, '${art_file}', '${art_title}', '${height}', '${width}', '${art_description}', CURRENT_TIMESTAMP, '${submission_updated_count}', CURRENT_TIMESTAMP, ${status}, ${jury_id}, '${assign_date}', '${comment}', ${starts}, ${submission_id});`;
+      // query = `INSERT INTO public.submission_details(
+      //   artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description, submited_time, submission_updated_count, updated_at, status, jury_id, assign_date, comment, star_assigned, artwork_id)
+      //   VALUES (${artist_id}, ${transaction_id}, ${grant_id}, '${art_file}', '${art_title}', '${height}', '${width}', '${art_description}', CURRENT_TIMESTAMP, '${submission_updated_count}', CURRENT_TIMESTAMP, ${status}, ${jury_id}, '${assign_date}', '${comment}', ${starts}, ${submission_id});`;
+      query = `INSERT INTO public.submission_review_details(
+        artwork_id, jury_id, status, comment, star_assigned)
+        VALUES (${submission_id}, ${jury_id}, ${status}, '${comment}', '${starts}');`;
     }
-    console.log("qyuery", query);
+    // console.log("qyuery", query);
     pool.query(query, async (err, result) => {
-      console.log(`err: ${err}`);
+      // console.log(`err: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
         res.status(500).send({
