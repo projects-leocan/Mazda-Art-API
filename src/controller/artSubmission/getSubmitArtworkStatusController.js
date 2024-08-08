@@ -29,9 +29,12 @@ exports.getSubmitArtworkStatusController = async (req, res) => {
           // WHERE sd.jury_id = ${jury_id} AND j.id IN
           // (SELECT jury_id FROM grant_assign
           // 	WHERE grant_id in (SELECT grant_id FROM public.submission_details WHERE id = ${artwork_id}))`;
-          `SELECT j.full_name, s.status, s.star_assigned, s.comment, s.art_title 
-FROM public.submission_review_details s, public.jury j 
-WHERE s.jury_id = j.id AND s.artwork_id = ${artwork_id} AND s.jury_id = ${jury_id}`;
+          //           `SELECT j.full_name, s.status, s.star_assigned, s.comment, s.art_title
+          // FROM public.submission_review_details s, public.jury j
+          // WHERE s.jury_id = j.id AND s.artwork_id = ${artwork_id} AND s.jury_id = ${jury_id}`;
+          `SELECT j.full_name, s.status, s.star_assigned, s.comment, sd.art_title 
+FROM public.submission_review_details s, public.jury j, public.submission_details sd 
+WHERE s.jury_id = j.id AND s.artwork_id = ${artwork_id} AND s.jury_id = ${jury_id} AND s.artwork_id = sd.id`;
 
     pool.query(query, async (err, result) => {
       // console.log("result.rows", result.rows);

@@ -43,11 +43,11 @@ exports.updateGrantStatusController = async (req, res) => {
   } else {
     // let juryFindQuery = `SELECT * FROM jury WHERE id=${jury_id}`;
     // let juryFindQuery = `SELECT jury_id FROM submission_details WHERE jury_id=${jury_id}`;
-    let juryFindQuery = `SELECT jury_id FROM submission_review_details WHERE jury_id=${jury_id}`;
+    let juryFindQuery = `SELECT jury_id FROM submission_review_details WHERE jury_id=${jury_id} AND artwork_id=${submission_id}`;
 
     const juryFindResult = await pool.query(juryFindQuery);
     // const juryFind = juryFindQuery.rows[0]
-    console.log("jury", juryFindResult);
+    // console.log("jury", juryFindResult);
     let query;
     if (juryFindResult?.rows.length > 0) {
       // query = `UPDATE submission_details SET status=${status}, jury_id=${jury_id}, star_assigned=${starts}, assign_date=CURRENT_TIMESTAMP`;
@@ -69,7 +69,6 @@ exports.updateGrantStatusController = async (req, res) => {
         artwork_id, jury_id, status, comment, star_assigned)
         VALUES (${submission_id}, ${jury_id}, ${status}, '${comment}', '${starts}');`;
     }
-    // console.log("qyuery", query);
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);
