@@ -35,19 +35,23 @@ exports.getGrantAllSubmissionsController = async (req, res) => {
     //   ORDER BY
     //     sd.artwork_id DESC;
     // `;
-    let query = `SELECT sd.*, g.grant_uid, srd.status FROM 
-    submission_details AS sd 
-    JOIN 
-    grants g ON sd.grant_id = g.grant_id 
-    JOIN 
-    submission_review_details srd ON sd.artwork_id = srd.artwork_id  WHERE 
+    let query = `SELECT sd.*, g.grant_uid FROM
+    submission_details AS sd
+    JOIN
+    grants g ON sd.grant_id = g.grant_id
+   WHERE
     sd.grant_id = ${grant_id}`;
+
+    //   let query = `select * from submission_details
+    // where grant_id = ${grant_id}`;
 
     if (jury_id !== undefined) {
       query += ` AND sd.jury_id = ${jury_id}`;
     }
 
     query += ` ORDER BY sd.artwork_id DESC`;
+
+    console.log("query", query);
 
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
