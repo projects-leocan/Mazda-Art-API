@@ -63,7 +63,7 @@ WHERE s.jury_id = j.id AND s.artwork_id = ${artwork_id} AND s.jury_id = ${jury_i
       }
     });
   } catch (error) {
-    console.error("error", error);
+    // console.error("error", error);
     res.status(500).send({
       success: false,
       message: somethingWentWrong,

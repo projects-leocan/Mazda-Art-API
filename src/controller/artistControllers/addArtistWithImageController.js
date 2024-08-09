@@ -138,7 +138,7 @@ exports.addArtistWithImageController = (req, res) => {
       is_kyc_verified,
     } = req.body;
 
-    console.log("req body", req.body);
+    // console.log("req body", req.body);
 
     try {
       const hashedPassword = await passwordHashing(password);
@@ -198,13 +198,13 @@ exports.addArtistWithImageController = (req, res) => {
         });
       } catch (error) {
         await client.query("ROLLBACK");
-        console.error(error);
+        // console.error(error);
         res.status(500).send({ success: false, message: somethingWentWrong });
       } finally {
         client.release();
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       res.status(500).send({ success: false, message: somethingWentWrong });
     }
   });

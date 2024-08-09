@@ -67,7 +67,7 @@ exports.getGrantAllSubmissionsController = async (req, res) => {
 
     query += ` ORDER BY sb.artwork_id DESC`;
 
-    console.log("query", query);
+    // console.log("query", query);
 
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);

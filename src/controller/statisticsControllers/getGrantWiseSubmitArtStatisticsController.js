@@ -96,7 +96,7 @@ exports.getGrantWiseSubmitArtStatisticsController = async (req, res) => {
 
     pool.query(query, (err, result) => {
       if (err) {
-        console.error(`Error: ${err}`);
+        // console.error(`Error: ${err}`);
         return res.status(500).send({
           success: false,
           message: somethingWentWrong,
@@ -130,7 +130,7 @@ exports.getGrantWiseSubmitArtStatisticsController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(`Error: ${error}`);
+    // console.error(`Error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,

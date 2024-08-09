@@ -67,7 +67,7 @@ WHERE a.artwork_id = sd.artwork_id AND a.jury_id = j.id AND a.artwork_id=${artwo
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,
