@@ -58,7 +58,7 @@ exports.getAllGrantSubmissionController = async (req, res) => {
       const offset = (page_no - 1) * record_per_page;
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
-    console.log("queyr------------", query);
+    // console.log("queyr------------", query);
 
     pool.query(query, async (err, result) => {
       // console.log("err: ", err);

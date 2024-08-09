@@ -63,8 +63,6 @@ exports.updateGrantStatusController = async (req, res) => {
         query += `, comment='${comment}'`;
       }
       query += ` WHERE artwork_id = ${submission_id} and jury_id=${jury_id}`;
-
-      // console.log("queyr", query);
     } else {
       // query = `INSERT INTO public.submission_details(
       //   artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description, submited_time, submission_updated_count, updated_at, status, jury_id, assign_date, comment, star_assigned, artwork_id)
@@ -73,8 +71,10 @@ exports.updateGrantStatusController = async (req, res) => {
         artwork_id, jury_id, status, comment, star_assigned)
         VALUES (${submission_id}, ${jury_id}, ${status}, '${comment}', '${starts}');`;
     }
+    // console.log("queyr", query);
+
     pool.query(query, async (err, result) => {
-      console.log(`err: ${err}`);
+      // console.log(`err: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
         res.status(500).send({
@@ -100,7 +100,7 @@ exports.updateGrantStatusController = async (req, res) => {
         }
         const detailQuery = `SELECT * FROM submission_details WHERE artwork_id = ${submission_id}`;
         pool.query(detailQuery, (err, result) => {
-          console.log(`err: ${err}`);
+          // console.log(`err: ${err}`);
           // console.log(`result: ${JSON.stringify(result)}`);
           if (err) {
             return res.status(500).send({

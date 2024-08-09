@@ -38,7 +38,7 @@ WHERE s.jury_id = j.id AND s.artwork_id = ${artwork_id} AND s.jury_id = ${jury_i
 
     pool.query(query, async (err, result) => {
       // console.log("result.rows", result.rows);
-      console.log("query", query);
+      // console.log("query", query);
 
       if (err) {
         res.status(500).send({

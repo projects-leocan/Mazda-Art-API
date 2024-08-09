@@ -167,7 +167,7 @@ exports.addArtistWithImageController = (req, res) => {
           RETURNING artist_id
         `;
 
-        console.log("query", query);
+        // console.log("query", query);
 
         // const values = [
         //     fname, lname, dob, gender, email, mobile_number, address1, address2,
