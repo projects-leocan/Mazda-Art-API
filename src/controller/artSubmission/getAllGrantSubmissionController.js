@@ -51,7 +51,7 @@ exports.getAllGrantSubmissionController = async (req, res) => {
           // ORDER BY
           //     sd.submited_time DESC
           // `
-          `select (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sb.* from submission_details as sb, grants g
+          `select (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sb.*, (select status from submission_review_details where jury_id = ${jury_id} AND artwork_id = sb.id) as submission_status from submission_details as sb, grants g
 	where g.grant_id = sb.grant_id and sb.jury_id = ${jury_id}`;
 
     if (isAll == undefined) {
@@ -61,7 +61,7 @@ exports.getAllGrantSubmissionController = async (req, res) => {
     console.log("queyr------------", query);
 
     pool.query(query, async (err, result) => {
-      console.log("err: ", err);
+      // console.log("err: ", err);
       // console.log("result: ", result.rows);
       if (err) {
         res.status(500).send({
