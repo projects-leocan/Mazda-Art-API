@@ -34,6 +34,8 @@ exports.updateGrantStatusController = async (req, res) => {
   const checkJuryAssignResult = await pool.query(checkJuryAssignQuery);
   // console.log(`checkJuryAssignResult: ${JSON.stringify(checkJuryAssignResult)}`);
 
+  const reviewStar = starts === undefined || starts === "" ? "0" : starts;
+
   if (lodash.isEmpty(checkJuryAssignResult.rows)) {
     return res.status(500).send({
       success: false,
@@ -56,11 +58,13 @@ exports.updateGrantStatusController = async (req, res) => {
       // }
       // query += ` WHERE artwork_id = ${submission_id} and jury_id=${jury_id}`;
 
-      query = `UPDATE submission_review_details SET status=${status}, star_assigned=${starts}`;
+      query = `UPDATE submission_review_details SET status=${status}, star_assigned=${reviewStar}`;
       if (comment != undefined && comment !== "") {
         query += `, comment='${comment}'`;
       }
       query += ` WHERE artwork_id = ${submission_id} and jury_id=${jury_id}`;
+
+      // console.log("queyr", query);
     } else {
       // query = `INSERT INTO public.submission_details(
       //   artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description, submited_time, submission_updated_count, updated_at, status, jury_id, assign_date, comment, star_assigned, artwork_id)
@@ -70,7 +74,7 @@ exports.updateGrantStatusController = async (req, res) => {
         VALUES (${submission_id}, ${jury_id}, ${status}, '${comment}', '${starts}');`;
     }
     pool.query(query, async (err, result) => {
-      // console.log(`err: ${err}`);
+      console.log(`err: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
         res.status(500).send({

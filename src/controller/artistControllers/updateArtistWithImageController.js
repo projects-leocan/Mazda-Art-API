@@ -194,7 +194,7 @@ exports.updateArtistWithImageController = (req, res) => {
           if (!lodash.isEmpty(mocs)) {
             // Parse the JSON string into an array of objects
 
-            const mocsArray = JSON.parse(mocs[0]);
+            const mocsArray = JSON.parse(mocs);
 
             // Construct the values string for the INSERT query
             let values = mocsArray
