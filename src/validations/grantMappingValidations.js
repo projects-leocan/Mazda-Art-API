@@ -89,12 +89,12 @@ exports.updateGrantStatusValidator = (req, res, next) => {
       message: "submission_id can not be Empty",
     });
   }
-  if (starts == undefined || starts === "") {
-    return res.status(500).send({
-      success: false,
-      message: "starts can not be Empty",
-    });
-  }
+  // if (starts == undefined || starts === "") {
+  //   return res.status(500).send({
+  //     success: false,
+  //     message: "starts can not be Empty",
+  //   });
+  // }
   if (artist_email == undefined || artist_email === "") {
     return res.status(500).send({
       success: false,
