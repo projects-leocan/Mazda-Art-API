@@ -270,6 +270,15 @@ const {
 const {
   updateAdminArtworkStatusController,
 } = require("../controller/artSubmission/updateAdminArtworkStatusController");
+const {
+  updateAdminRoleController,
+} = require("../controller/adminControllers/updateAdminRoleController");
+const {
+  getAdminRoleController,
+} = require("../controller/adminControllers/getAdminRoleController");
+const {
+  getAdminRoleByIdController,
+} = require("../controller/adminControllers/getAdminRoleByIdController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -633,6 +642,22 @@ module.exports = (app) => {
     "/updateAdminArtworkStatus",
     validateAccessToken,
     updateAdminArtworkStatusController
+  );
+
+  // Update Admin Role
+
+  router.post(
+    "/updateAdminRole",
+    validateAccessToken,
+    updateAdminRoleController
+  );
+
+  router.get("/getAdminRole", validateAccessToken, getAdminRoleController);
+
+  router.get(
+    "/getAdminRoleById",
+    validateAccessToken,
+    getAdminRoleByIdController
   );
 
   // Demo artist image upload
