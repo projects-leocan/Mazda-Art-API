@@ -7,21 +7,24 @@ const { somethingWentWrong } = require("../../constants/messages");
 
 exports.getAllGrantSubmissionController = async (req, res) => {
   try {
-    let { jury_id, admin_id, record_per_page, page_no, isAll } = req.query;
+    let { jury_id, admin_id, record_per_page, page_no, isAll, status } =
+      req.query;
     if (record_per_page == undefined) {
       record_per_page = 10;
     }
     if (page_no == undefined) {
       page_no = 1;
     }
-
     // let query = `SELECT DISTINCT on (grant_id) * FROM submission_details`;
     let query =
       jury_id === undefined
-        ? `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.artwork_id, sd.artist_id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status, a.fname, a.lname, a.dob, a.gender
+        ? status === "undefined" || status === undefined
+          ? `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.artwork_id, sd.artist_id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status, a.fname, a.lname, a.dob, a.gender
         FROM submission_details as sd
         JOIN grants g ON sd.grant_id = g.grant_id
         JOIN artist a ON sd.artist_id = a.artist_id order by sd.submited_time DESC`
+          : `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, sar.artwork_id, sd.art_description, sd.art_file, sd.art_title, sd.artist_id, sd.height, sd.width, 
+sd.submited_time, sar.status, g.grant_id, g.grant_uid, a.fname, a.lname, a.dob, a.gender FROM submission_details sd, submission_admin_review sar, grants g, artist a WHERE sar.status = ${status} AND sd.artwork_id = sar.artwork_id AND sd.grant_id = g.grant_id AND sd.artist_id = a.artist_id`
         : // `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.artwork_id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status
           // FROM submission_details as sd
           // JOIN grants g ON sd.grant_id = g.grant_id
@@ -58,7 +61,8 @@ exports.getAllGrantSubmissionController = async (req, res) => {
       const offset = (page_no - 1) * record_per_page;
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
-    // console.log("queyr------------", query);
+
+    console.log("queyr------------", query);
 
     pool.query(query, async (err, result) => {
       // console.log("err: ", err);
