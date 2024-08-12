@@ -54,15 +54,26 @@ sd.submited_time, sar.status, g.grant_id, g.grant_uid, a.fname, a.lname, a.dob, 
           // ORDER BY
           //     sd.submited_time DESC
           // `
-          `select (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sb.*, (select status from submission_review_details where jury_id = ${jury_id} AND artwork_id = sb.id) as submission_status from submission_details as sb, grants g
-	where g.grant_id = sb.grant_id and sb.jury_id = ${jury_id}`;
+          //         `select (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sb.*, (select status from submission_review_details where jury_id = ${jury_id} AND artwork_id = sb.id) as submission_status from submission_details as sb, grants g
+          // where g.grant_id = sb.grant_id and sb.jury_id = ${jury_id}`;
+          `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.id, sd.art_title, sd.height, sd.width, sd.submited_time, srd.status
+FROM submission_details sd
+JOIN grants g ON sd.grant_id = g.grant_id 
+JOIN submission_review_details srd ON sd.id = srd.artwork_id
+WHERE sd.grant_id IN (
+    SELECT grant_id 
+    FROM grant_assign 
+    WHERE jury_id = ${jury_id}
+) 
+AND srd.jury_id = ${jury_id}
+`;
 
     if (isAll == undefined) {
       const offset = (page_no - 1) * record_per_page;
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
 
-    console.log("queyr------------", query);
+    // console.log("queyr------------", query);
 
     pool.query(query, async (err, result) => {
       // console.log("err: ", err);
