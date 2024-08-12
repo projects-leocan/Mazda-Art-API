@@ -267,6 +267,9 @@ const {
 const {
   updateArtistWithImageController,
 } = require("../controller/artistControllers/updateArtistWithImageController");
+const {
+  updateAdminArtworkStatusController,
+} = require("../controller/artSubmission/updateAdminArtworkStatusController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -624,6 +627,12 @@ module.exports = (app) => {
     "/getSubmitArtworkStatus",
     validateAccessToken,
     getSubmitArtworkStatusController
+  );
+
+  router.post(
+    "/updateAdminArtworkStatus",
+    validateAccessToken,
+    updateAdminArtworkStatusController
   );
 
   // Demo artist image upload
