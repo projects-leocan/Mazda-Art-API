@@ -25,58 +25,48 @@ exports.getAllGrantSubmissionController = async (req, res) => {
         JOIN artist a ON sd.artist_id = a.artist_id order by g.grant_id DESC`
           : `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, sar.artwork_id, sd.art_description, sd.art_file, sd.art_title, sd.artist_id, sd.height, sd.width, 
 sd.submited_time, sar.status, g.grant_id, g.grant_uid, a.fname, a.lname, a.dob, a.gender FROM submission_details sd, submission_admin_review sar, grants g, artist a WHERE sar.status = ${status} AND sd.artwork_id = sar.artwork_id AND sd.grant_id = g.grant_id AND sd.artist_id = a.artist_id order by g.grant_id DESC`
-        : // `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.artwork_id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status
-          // FROM submission_details as sd
-          // JOIN grants g ON sd.grant_id = g.grant_id
-          // JOIN artist a ON sd.artist_id = a.artist_id where jury_id=${jury_id} order by sd.submited_time DESC`;
-          //           `SELECT
-          //     (SELECT COUNT(*) FROM submission_details) AS total_count,
-          //     g.grant_uid,
-          //     sd.artwork_id,
-          //     sd.grant_id,
-          //     sd.submited_time,
-          //     sd.art_file,
-          //     sd.art_title,
-          //     sd.art_description,
-          //     sd.height,
-          //     sd.width,
-          //     srd.status
-          // FROM
-          //     submission_details AS sd
-          // JOIN
-          //     grants g ON sd.grant_id = g.grant_id
-          // JOIN
-          //     artist a ON sd.artist_id = a.artist_id
-          // JOIN
-          //     submission_review_details srd ON sd.artwork_id = srd.artwork_id
-          // WHERE
-          //     sd.jury_id = ${jury_id}
-          // ORDER BY
-          //     sd.submited_time DESC
-          // `
-          //         `select (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sb.*, (select status from submission_review_details where jury_id = ${jury_id} AND artwork_id = sb.id) as submission_status from submission_details as sb, grants g
-          // where g.grant_id = sb.grant_id and sb.jury_id = ${jury_id}`;
-          `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, g.grant_id, sd.id as artwork_id, sd.art_title, sd.height, sd.width, sd.submited_time, srd.status
-FROM submission_details sd
-JOIN grants g ON sd.grant_id = g.grant_id 
-JOIN submission_review_details srd ON sd.id = srd.artwork_id
-WHERE sd.grant_id IN (
-    SELECT grant_id 
-    FROM grant_assign 
-    WHERE jury_id = ${jury_id}
-) 
-AND srd.jury_id = ${jury_id}
-order by g.grant_id DESC`;
+        : 
+//           `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, g.grant_id, sd.id as artwork_id, sd.art_title, sd.height, sd.width, sd.submited_time, srd.status
+// FROM submission_details sd
+// JOIN grants g ON sd.grant_id = g.grant_id 
+// JOIN submission_review_details srd ON sd.id = srd.artwork_id
+// WHERE sd.grant_id IN (
+//     SELECT grant_id 
+//     FROM grant_assign 
+//     WHERE jury_id = ${jury_id}
+// ) 
+// AND srd.jury_id = ${jury_id}
+// order by g.grant_id DESC`;
+`SELECT 
+    (SELECT COUNT(*) FROM submission_details) AS total_count, 
+    g.grant_uid, 
+    sd.artwork_id, 
+    sd.art_title, 
+    sd.height, 
+    sd.width, 
+    sd.submited_time, 
+    srd.status
+FROM 
+    submission_details sd
+JOIN 
+    grants g ON sd.grant_id = g.grant_id  
+LEFT JOIN 
+    submission_review_details srd ON sd.artwork_id = srd.artwork_id
+WHERE 
+    sd.grant_id IN 
+    (SELECT grant_id FROM grant_assign WHERE jury_id = ${jury_id}) 
+order by g.grant_id DESC
+`
 
     if (isAll == undefined) {
       const offset = (page_no - 1) * record_per_page;
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
 
-    // console.log("queyr------------", query);
+    console.log("queyr------------", query);
 
     pool.query(query, async (err, result) => {
-      // console.log("err: ", err);
+      console.log("err: ", err);
       // console.log("result: ", result.rows);
       if (err) {
         res.status(500).send({
@@ -109,7 +99,7 @@ order by g.grant_id DESC`;
       }
     });
   } catch (error) {
-    // console.log(`error: ${error}`);
+    console.log(`error: ${error}`);
     res.status(500).send({
       success: false,
       message: somethingWentWrong,

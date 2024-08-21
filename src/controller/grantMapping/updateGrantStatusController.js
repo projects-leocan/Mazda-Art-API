@@ -34,7 +34,7 @@ exports.updateGrantStatusController = async (req, res) => {
   const checkJuryAssignResult = await pool.query(checkJuryAssignQuery);
   // console.log(`checkJuryAssignResult: ${JSON.stringify(checkJuryAssignResult)}`);
 
-  const reviewStar = starts === undefined || starts === "" ? "0" : starts;
+  const reviewStar = starts === undefined || starts === "" ? 0 : starts;
 
   if (lodash.isEmpty(checkJuryAssignResult.rows)) {
     return res.status(500).send({
@@ -69,9 +69,8 @@ exports.updateGrantStatusController = async (req, res) => {
       //   VALUES (${artist_id}, ${transaction_id}, ${grant_id}, '${art_file}', '${art_title}', '${height}', '${width}', '${art_description}', CURRENT_TIMESTAMP, '${submission_updated_count}', CURRENT_TIMESTAMP, ${status}, ${jury_id}, '${assign_date}', '${comment}', ${starts}, ${submission_id});`;
       query = `INSERT INTO public.submission_review_details(
         artwork_id, jury_id, status, comment, star_assigned)
-        VALUES (${submission_id}, ${jury_id}, ${status}, '${comment}', '${starts}');`;
+        VALUES (${submission_id}, ${jury_id}, ${status}, '${comment}', '${reviewStar}');`;
     }
-    // console.log("queyr", query);
 
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
@@ -135,7 +134,7 @@ exports.updateGrantStatusController = async (req, res) => {
   try {
     const juryAssignQuery = ``;
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,
