@@ -154,6 +154,16 @@ exports.getTransactionStatsController = async (req, res) => {
         month: "long",
         year: "numeric",
       });
+
+      if (
+        date.getFullYear() === currentDate.getFullYear() &&
+        date.getMonth() === currentDate.getMonth()
+      ) {
+        // Skip creating a separate query for the current month as it will be covered in the "Current Month" query
+        date.setMonth(date.getMonth() + 1);
+        continue;
+      }
+
       const nextMonth = new Date(date);
       nextMonth.setMonth(nextMonth.getMonth() + 1);
 
