@@ -59,7 +59,7 @@ exports.updateGrantStatusController = async (req, res) => {
       // query += ` WHERE artwork_id = ${submission_id} and jury_id=${jury_id}`;
 
       query = `UPDATE submission_review_details SET status=${status}, star_assigned=${reviewStar}`;
-      if (comment != undefined && comment !== "") {
+      if (comment != undefined) {
         query += `, comment='${comment}'`;
       }
       query += ` WHERE artwork_id = ${submission_id} and jury_id=${jury_id}`;

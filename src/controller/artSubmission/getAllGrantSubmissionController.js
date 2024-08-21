@@ -22,9 +22,9 @@ exports.getAllGrantSubmissionController = async (req, res) => {
           ? `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.artwork_id, sd.artist_id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status, a.fname, a.lname, a.dob, a.gender
         FROM submission_details as sd
         JOIN grants g ON sd.grant_id = g.grant_id
-        JOIN artist a ON sd.artist_id = a.artist_id order by sd.submited_time DESC`
+        JOIN artist a ON sd.artist_id = a.artist_id order by g.grant_id DESC`
           : `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, sar.artwork_id, sd.art_description, sd.art_file, sd.art_title, sd.artist_id, sd.height, sd.width, 
-sd.submited_time, sar.status, g.grant_id, g.grant_uid, a.fname, a.lname, a.dob, a.gender FROM submission_details sd, submission_admin_review sar, grants g, artist a WHERE sar.status = ${status} AND sd.artwork_id = sar.artwork_id AND sd.grant_id = g.grant_id AND sd.artist_id = a.artist_id`
+sd.submited_time, sar.status, g.grant_id, g.grant_uid, a.fname, a.lname, a.dob, a.gender FROM submission_details sd, submission_admin_review sar, grants g, artist a WHERE sar.status = ${status} AND sd.artwork_id = sar.artwork_id AND sd.grant_id = g.grant_id AND sd.artist_id = a.artist_id order by g.grant_id DESC`
         : // `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.artwork_id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status
           // FROM submission_details as sd
           // JOIN grants g ON sd.grant_id = g.grant_id
@@ -66,7 +66,7 @@ WHERE sd.grant_id IN (
     WHERE jury_id = ${jury_id}
 ) 
 AND srd.jury_id = ${jury_id}
-`;
+order by g.grant_id DESC`;
 
     if (isAll == undefined) {
       const offset = (page_no - 1) * record_per_page;
