@@ -23,7 +23,7 @@ exports.getGrantSubmittedDetails = async (
   JOIN 
     grants g ON sd.grant_id = g.grant_id 
   WHERE 
-    sd.artwork_id = ${grant_submit_id};
+    sd.id = ${grant_submit_id};
 `;
   try {
     pool.query(

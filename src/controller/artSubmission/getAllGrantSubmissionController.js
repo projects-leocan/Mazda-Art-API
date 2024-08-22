@@ -36,13 +36,34 @@ sd.submited_time, sar.status, g.grant_id, g.grant_uid, a.fname, a.lname, a.dob, 
           // )
           // AND srd.jury_id = ${jury_id}
           // order by g.grant_id DESC`;
+          //           `SELECT
+          //     (SELECT COUNT(*) FROM submission_details) AS total_count,
+          //     g.grant_uid,
+          //     sd.artwork_id,
+          //     sd.art_title,
+          //     sd.height,
+          //     sd.width,
+          //     sd.submited_time,
+          //     srd.status
+          // FROM
+          //     submission_details sd
+          // JOIN
+          //     grants g ON sd.grant_id = g.grant_id
+          // LEFT JOIN
+          //     submission_review_details srd ON sd.artwork_id = srd.artwork_id
+          // WHERE
+          //     sd.grant_id IN
+          //     (SELECT grant_id FROM grant_assign WHERE jury_id = ${jury_id})
+          // order by g.grant_id DESC
+          // `;
           `SELECT 
     (SELECT COUNT(*) FROM submission_details) AS total_count, 
     g.grant_uid, 
-    sd.artwork_id, 
+    sd.id as artwork_id, 
     sd.art_title, 
     sd.height, 
     sd.width, 
+    sd.jury_id,
     sd.submited_time, 
     srd.status
 FROM 
@@ -50,13 +71,13 @@ FROM
 JOIN 
     grants g ON sd.grant_id = g.grant_id  
 LEFT JOIN 
-    submission_review_details srd ON sd.artwork_id = srd.artwork_id
+    submission_review_details srd 
+    ON sd.artwork_id = srd.artwork_id AND srd.jury_id = ${jury_id}
 WHERE 
-    sd.grant_id IN 
-    (SELECT grant_id FROM grant_assign WHERE jury_id = ${jury_id}) 
-order by g.grant_id DESC
+    sd.grant_id IN (SELECT grant_id FROM grant_assign WHERE jury_id = ${jury_id}) 
+ORDER BY 
+    g.grant_id DESC
 `;
-
     if (isAll == undefined) {
       const offset = (page_no - 1) * record_per_page;
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
@@ -65,7 +86,7 @@ order by g.grant_id DESC
     // console.log("queyr------------", query);
 
     pool.query(query, async (err, result) => {
-      console.log("err: ", err);
+      // console.log("err: ", err);
       // console.log("result: ", result.rows);
       if (err) {
         res.status(500).send({
