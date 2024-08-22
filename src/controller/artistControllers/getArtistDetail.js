@@ -311,6 +311,11 @@ const getGrantsData = async (artist_id, req) => {
     if (!lodash.isEmpty(submitted_grant_data.rows)) {
       const prePath = getFileURLPreFixPath(req);
 
+      submitted_grant_data.rows.map((row) => {
+        delete row.artwork_id;
+        row.artwork_id = row.id;
+      });
+
       const grantUIDPromises = submitted_grant_data.rows.map(async (e) => {
         // Fetch grant_uid for the current grant_id
         const grantData = await pool.query(
