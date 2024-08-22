@@ -6,7 +6,7 @@ exports.updateAdminRoleController = async (req, res) => {
   try {
     let { admin_id, role, role_is_updated } = req.body;
 
-    console.log("req body", req.body);
+    // console.log("req body", req.body);
 
     // if (role_is_updated !== undefined) {
     //
@@ -17,7 +17,6 @@ exports.updateAdminRoleController = async (req, res) => {
       let deleteQuery = `DELETE FROM admin_role WHERE admin_id = ${admin_id}`;
       const deleteResult = await pool.query(deleteQuery);
       const roleArray = role;
-      console.log("roleArray", roleArray);
       // Construct the values string for the INSERT query
       let values = roleArray.map((e) => `(${admin_id}, ${e.id})`).join(", ");
 
@@ -26,8 +25,8 @@ exports.updateAdminRoleController = async (req, res) => {
 
       // Execute the INSERT query
       pool.query(roleInsertQuery, async (err, result) => {
-        console.log("err in update role", err);
-        console.log("update role result", result);
+        // console.log("err in update role", err);
+        // console.log("update role result", result);
 
         if (err) {
           res.status(500).send({
@@ -46,8 +45,8 @@ exports.updateAdminRoleController = async (req, res) => {
     } else {
       let deleteQuery = `DELETE FROM admin_role WHERE admin_id = ${admin_id}`;
       await pool.query(deleteQuery, async (err, result) => {
-        console.log("err in update role", err);
-        console.log("update role result", result);
+        // console.log("err in update role", err);
+        // console.log("update role result", result);
 
         if (err) {
           res.status(500).send({
@@ -66,7 +65,7 @@ exports.updateAdminRoleController = async (req, res) => {
     }
     // }
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     res.status(500).send({
       success: false,
       message: somethingWentWrong,

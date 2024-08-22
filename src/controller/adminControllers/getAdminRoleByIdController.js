@@ -6,8 +6,8 @@ exports.getAdminRoleByIdController = async (req, res) => {
     const { admin_id } = req.query;
     let query = `SELECT role FROM admin_role where admin_id=${admin_id}`;
     pool.query(query, async (err, result) => {
-      console.log("response-----", result.rows);
-      console.log("error----", err);
+      // console.log("response-----", result.rows);
+      // console.log("error----", err);
       if (err) {
         res.status(500).send({
           success: false,

@@ -37,9 +37,9 @@ exports.getSubmitArtworkStatusController = async (req, res) => {
           `SELECT j.full_name, s.status, s.star_assigned, s.comment, sd.art_title 
 FROM public.submission_review_details s, public.jury j, public.submission_details sd 
 WHERE s.jury_id = j.id AND s.artwork_id = ${artwork_id} AND s.jury_id = ${jury_id} AND s.artwork_id = sd.id`;
-    console.log("query in status", query);
+    // console.log("query in status", query);
     pool.query(query, async (err, result) => {
-      console.log("result.rows", result.rows);
+      // console.log("result.rows", result.rows);
       // console.log("query", query);
 
       if (err) {
