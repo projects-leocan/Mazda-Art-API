@@ -1,7 +1,7 @@
 var nodemailer = require("nodemailer");
 const { email, password } = require("./mailData");
 
-exports.sendEmail = (subject, text, emailIds) => {
+exports.sendEmail = async (emailIds, subject, text) => {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -13,7 +13,7 @@ exports.sendEmail = (subject, text, emailIds) => {
       pass: password,
     },
   });
-  // console.log(`emailIds: ${emailIds}`);
+  console.log(`emailIds: ${emailIds}`);
   var mailOptions = {
     from: email,
     to: emailIds,
@@ -21,11 +21,11 @@ exports.sendEmail = (subject, text, emailIds) => {
     text: text,
   };
 
-  transporter.sendMail(mailOptions, function (error, info) {
+  await transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      // console.log(error);
+      console.log("error while send mail", error);
     } else {
-      // console.log("Email sent: " + info.response);
+      console.log("Email sent: " + info.response);
     }
   });
 };

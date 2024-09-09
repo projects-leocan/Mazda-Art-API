@@ -6,7 +6,12 @@ const port = 8080;
 // const port = 8081;
 
 var corsOptions = {
-  origin: ["http://localhost:3000", "http://157.173.220.57:3000"],
+  origin: [
+    "http://localhost:3000",
+    "http://157.173.220.57:3000",
+    "http://localhost:8000",
+    "http://157.173.220.57:8000/",
+  ],
 };
 
 app.use(cors(corsOptions));

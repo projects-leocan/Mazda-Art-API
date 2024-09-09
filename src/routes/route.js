@@ -358,7 +358,7 @@ module.exports = (app) => {
     getArtistDetailsController
   );
   // router.post("/createUser", validateAccessToken, addArtistValidation, addUserController);
-  router.post("/createUser", validateAccessToken, addArtistController);
+  router.post("/createUser", addArtistController);
 
   /// grants
   router.post(
