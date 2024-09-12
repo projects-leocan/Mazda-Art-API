@@ -36,8 +36,8 @@ exports.adminLoginController = async (req, res) => {
             email: admin_email,
             password: admin_password,
           };
-          if (result.rows[0].admin_password != undefined) {
-            delete result.rows[0].admin_password;
+          if (result.rows[0]?.admin_password != undefined) {
+            delete result.rows[0]?.admin_password;
           }
           // let token = jwt.sign({ user: tokenData }, jwtKeys.JWT_SECRET_KEY, { expiresIn: '3650d' }); // 3650 days = 10 Years
           let token = createAccessToken(tokenData);

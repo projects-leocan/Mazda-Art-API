@@ -16,7 +16,7 @@ exports.getAllGrantController = async (req, res) => {
   // from grants
   // ORDER By submission_end_date`;
 
-  let query = `SELECT grant_id, grant_uid, submission_end_date, application_fees, created_at, updated_at, (SELECT COUNT(*) AS total_count FROM grants) 
+  let query = `SELECT grant_id, grant_uid, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, submission_end_date, application_fees, created_at, updated_at, (SELECT COUNT(*) AS total_count FROM grants) 
 	from grants 
 	ORDER By grant_id DESC`;
 
@@ -53,7 +53,7 @@ exports.getAllGrantController = async (req, res) => {
         res.status(200).send({
           success: true,
           message: "Grants fetched successfully",
-          total_count: result.rows[0].total_count,
+          total_count: result.rows[0]?.total_count,
           data: updatedResult,
           statusCode: 200,
         });

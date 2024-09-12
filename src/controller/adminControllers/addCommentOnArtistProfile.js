@@ -18,7 +18,7 @@ exports.addCommentOnArtistProfileController = async (req, res) => {
           statusCode: 500,
         });
       } else {
-        const getCommentById = `SELECT * FROM artist_comments WHERE id = ${result.rows[0].id}`;
+        const getCommentById = `SELECT * FROM artist_comments WHERE id = ${result.rows[0]?.id}`;
         const finalResponse = await pool.query(getCommentById);
         res.status(200).send({
           success: true,

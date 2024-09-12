@@ -8,7 +8,7 @@ exports.getAdminDetailsController = async (req, res) => {
   pool.query(query, async (err, result) => {
     // console.log("response-----", result.rows);
     // console.log("error----", err);
-    delete result.rows[0].admin_password;
+    delete result.rows[0]?.admin_password;
     if (err) {
       res.status(500).send({
         success: false,

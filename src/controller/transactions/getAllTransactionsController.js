@@ -48,7 +48,7 @@ exports.getAllTransactionsController = async (req, res) => {
           statusCode: 500,
         });
       } else {
-        const count = result.rows[0].total_count;
+        const count = result.rows[0]?.total_count;
 
         result.rows.map((e) => {
           delete e.total_count;

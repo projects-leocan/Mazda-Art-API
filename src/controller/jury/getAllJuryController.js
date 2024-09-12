@@ -37,7 +37,7 @@ exports.getAllJuryController = async (req, res) => {
           statusCode: 500,
         });
       } else {
-        const count = result.rows[0].total_count;
+        const count = result.rows[0]?.total_count;
 
         const updatedResult = result.rows?.map((res) => {
           return {

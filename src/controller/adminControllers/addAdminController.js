@@ -83,7 +83,7 @@ exports.addAdminController = async (req, res) => {
             });
           }
         } else {
-          const newQuery = `SELECT * FROM admin WHERE admin_id = ${result.rows[0].admin_id}`;
+          const newQuery = `SELECT * FROM admin WHERE admin_id = ${result.rows[0]?.admin_id}`;
           pool.query(newQuery, async (newErr, newResult) => {
             if (newErr) {
               res.status(500).send({
