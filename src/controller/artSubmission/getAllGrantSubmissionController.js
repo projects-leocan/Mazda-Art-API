@@ -1,8 +1,8 @@
 const pool = require("../../config/db");
+const { artistGrantSubmissionFilesPath } = require("../../constants/filePaths");
 const {
   getFileURLPreFixPath,
-  artistGrantSubmissionFilesPath,
-} = require("../../constants/filePaths");
+} = require("../../constants/getFileURLPreFixPath");
 const { somethingWentWrong } = require("../../constants/messages");
 
 exports.getAllGrantSubmissionController = async (req, res) => {
@@ -72,7 +72,7 @@ JOIN
     grants g ON sd.grant_id = g.grant_id  
 LEFT JOIN 
     submission_review_details srd 
-    ON sd.artwork_id = srd.artwork_id AND srd.jury_id = ${jury_id}
+    ON sd.id = srd.artwork_id AND srd.jury_id = ${jury_id}
 WHERE 
     sd.grant_id IN (SELECT grant_id FROM grant_assign WHERE jury_id = ${jury_id}) 
 ORDER BY 
