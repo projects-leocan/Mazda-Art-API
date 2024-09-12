@@ -279,6 +279,10 @@ const {
 const {
   getAdminRoleByIdController,
 } = require("../controller/adminControllers/getAdminRoleByIdController");
+const {
+  sendOtpController,
+  verifyOtpController,
+} = require("../controller/otpVerificationController/twilioSmsController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -659,6 +663,11 @@ module.exports = (app) => {
     validateAccessToken,
     getAdminRoleByIdController
   );
+
+  // OTP Verification
+
+  router.post("/send-otp", sendOtpController);
+  router.post("/verify-otp", verifyOtpController);
 
   // Demo artist image upload
 
