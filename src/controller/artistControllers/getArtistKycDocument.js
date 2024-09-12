@@ -3,12 +3,14 @@ const lodash = require("lodash");
 const {
   userPortFoliaImagePath,
   userProfileImagePath,
-  getFileURLPreFixPath,
   artistGrantSubmissionFilesPath,
   artistKycDocumentsPath,
 } = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
 const { getUTCdate } = require("../../constants/getUTCdate");
+const {
+  getFileURLPreFixPath,
+} = require("../../constants/getFileURLPreFixPath");
 
 exports.getArtistKycDocumentController = async (req, res) => {
   const artist_id = req.query.artist_id;

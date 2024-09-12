@@ -1,11 +1,13 @@
 const pool = require("../../config/db");
 const {
-  getFileURLPreFixPath,
   userProfileImagePath,
   userPortFoliaImagePath,
   artistProfileImagePath,
   artistPortFoliaImagePath,
 } = require("../../constants/filePaths");
+const {
+  getFileURLPreFixPath,
+} = require("../../constants/getFileURLPreFixPath");
 const { getUTCdate } = require("../../constants/getUTCdate");
 const { somethingWentWrong } = require("../../constants/messages");
 

@@ -4,8 +4,10 @@ const {
   userProfileImagePath,
   artistPortFoliaImagePath,
   artistProfileImagePath,
-  getFileURLPreFixPath,
 } = require("../../constants/filePaths");
+const {
+  getFileURLPreFixPath,
+} = require("../../constants/getFileURLPreFixPath");
 const { getUTCdate } = require("../../constants/getUTCdate");
 const { somethingWentWrong } = require("../../constants/messages");
 

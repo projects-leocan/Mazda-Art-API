@@ -12,9 +12,8 @@ module.exports = {
   artistKycDocumentsPath: storagePath + "artist_kyc_documents/",
 };
 
-function getFileURLPreFixPath(req) {
-  const { protocol } = req;
-  // console.log("protocol", protocol)
-  return `${protocol}://${req.get("host")}/`;
-}
-module.exports.getFileURLPreFixPath = getFileURLPreFixPath;
+// function getFileURLPreFixPath(req) {
+//   const { protocol } = req;
+//   return `${protocol}://${req.get("host")}/`;
+// }
+// module.exports.getFileURLPreFixPath = getFileURLPreFixPath;

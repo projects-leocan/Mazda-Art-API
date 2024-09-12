@@ -184,13 +184,15 @@ const lodash = require("lodash");
 const {
   userPortFoliaImagePath,
   userProfileImagePath,
-  getFileURLPreFixPath,
   artistGrantSubmissionFilesPath,
   artistPortFoliaImagePath,
   artistProfileImagePath,
 } = require("../../constants/filePaths");
 const { somethingWentWrong } = require("../../constants/messages");
 const { getUTCdate } = require("../../constants/getUTCdate");
+const {
+  getFileURLPreFixPath,
+} = require("../../constants/getFileURLPreFixPath");
 
 exports.getArtistDetails = async (artist_id, message, res, req) => {
   try {

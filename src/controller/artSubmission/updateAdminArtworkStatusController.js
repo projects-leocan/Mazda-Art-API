@@ -2,11 +2,11 @@
 const pool = require("../../config/db");
 const lodash = require("lodash");
 const { somethingWentWrong } = require("../../constants/messages");
+const { artistGrantSubmissionFilesPath } = require("../../constants/filePaths");
+const { sendEmail } = require("../../constants/sendEmail");
 const {
   getFileURLPreFixPath,
-  artistGrantSubmissionFilesPath,
-} = require("../../constants/filePaths");
-const { sendEmail } = require("../../constants/sendEmail");
+} = require("../../constants/getFileURLPreFixPath");
 
 exports.updateAdminArtworkStatusController = async (req, res) => {
   const { admin_id, status, comment, submission_id, starts, artist_email } =

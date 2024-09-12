@@ -2,10 +2,10 @@ const pool = require("../../config/db");
 const _ = require("lodash");
 const lodash = require("lodash");
 const { somethingWentWrong } = require("../../constants/messages");
+const { artistGrantSubmissionFilesPath } = require("../../constants/filePaths");
 const {
   getFileURLPreFixPath,
-  artistGrantSubmissionFilesPath,
-} = require("../../constants/filePaths");
+} = require("../../constants/getFileURLPreFixPath");
 
 exports.getGrantAllSubmissionsController = async (req, res) => {
   let { grant_id, jury_id, admin_id } = req.query;

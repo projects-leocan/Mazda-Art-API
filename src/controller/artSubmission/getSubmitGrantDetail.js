@@ -1,10 +1,10 @@
 const pool = require("../../config/db");
 const lodash = require("lodash");
+const { artistGrantSubmissionFilesPath } = require("../../constants/filePaths");
+const { somethingWentWrong } = require("../../constants/messages");
 const {
   getFileURLPreFixPath,
-  artistGrantSubmissionFilesPath,
-} = require("../../constants/filePaths");
-const { somethingWentWrong } = require("../../constants/messages");
+} = require("../../constants/getFileURLPreFixPath");
 
 exports.getGrantSubmittedDetails = async (
   grant_submit_id,
