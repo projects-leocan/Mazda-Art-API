@@ -2,11 +2,11 @@ exports.addTransactionValidation = (req, res, next) => {
   const {
     artist_id,
     grant_id,
-    transaction_id,
-    payment_init_date,
-    payment_status,
+    // transaction_id,
+    // payment_init_date,
+    // payment_status,
     transaction_amount,
-    payment_success_date,
+    // payment_success_date,
   } = req.body;
   if (artist_id == undefined || artist_id === "") {
     return res.status(500).send({
@@ -20,36 +20,36 @@ exports.addTransactionValidation = (req, res, next) => {
       message: "grant_id can not be Empty",
     });
   }
-  if (transaction_id == undefined || transaction_id === "") {
-    return res.status(500).send({
-      success: false,
-      message: "transaction_id can not be Empty",
-    });
-  }
-  if (payment_init_date == undefined || payment_init_date === "") {
-    return res.status(500).send({
-      success: false,
-      message: "payment_init_date can not be Empty",
-    });
-  }
-  if (payment_status == undefined || payment_status === "") {
-    return res.status(500).send({
-      success: false,
-      message: "payment_status can not be Empty",
-    });
-  }
+  // if (transaction_id == undefined || transaction_id === "") {
+  //   return res.status(500).send({
+  //     success: false,
+  //     message: "transaction_id can not be Empty",
+  //   });
+  // }
+  // if (payment_init_date == undefined || payment_init_date === "") {
+  //   return res.status(500).send({
+  //     success: false,
+  //     message: "payment_init_date can not be Empty",
+  //   });
+  // }
+  // if (payment_status == undefined || payment_status === "") {
+  //   return res.status(500).send({
+  //     success: false,
+  //     message: "payment_status can not be Empty",
+  //   });
+  // }
   if (transaction_amount == undefined || transaction_amount === "") {
     return res.status(500).send({
       success: false,
       message: "transaction_amount can not be Empty",
     });
   }
-  if (payment_success_date == undefined || payment_success_date === "") {
-    return res.status(500).send({
-      success: false,
-      message: "payment_success_date can not be Empty",
-    });
-  }
+  // if (payment_success_date == undefined || payment_success_date === "") {
+  //   return res.status(500).send({
+  //     success: false,
+  //     message: "payment_success_date can not be Empty",
+  //   });
+  // }
   next();
 };
 
