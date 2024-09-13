@@ -1,5 +1,7 @@
 const twilio = require("twilio");
 const twilioConfig = require("../../config/twilioConfig");
+const pool = require("../../config/db");
+const { somethingWentWrong } = require("../../constants/messages");
 
 const accountSid = twilioConfig.TWILIO_ACCOUNT_SID;
 const authToken = twilioConfig.TWILIO_AUTH_TOKEN;
@@ -14,16 +16,40 @@ exports.sendOtpController = async (req, res) => {
     .create({
       body: `Your OTP code is ${generateOTP()}`,
       from: twilioPhoneNumber,
-      to: phoneNumber,
+      to: `+91${phoneNumber}`,
     })
     .then((message) => {
-      res.status(200).json({
-        success: true,
-        message: "OTP sent successfully!",
-        sid: message.sid,
+      const query = `SELECT * FROM artist WHERE mobile_number = '${phoneNumber}'`;
+
+      pool.query(query, async (error, result) => {
+        if (error) {
+          return res.status(500).send({
+            success: false,
+            message: somethingWentWrong,
+            statusCode: 500,
+          });
+        } else {
+          const finalData = result?.rows?.map((res) => {
+            delete res?.password;
+            delete res?.updated_at;
+            delete res?.is_kyc_verified;
+          });
+
+          delete result.rows[0].password;
+          delete result.rows[0].updated_at;
+          delete result.rows[0].is_kyc_verified;
+
+          res.status(200).json({
+            success: true,
+            message: "OTP sent successfully!",
+            sid: message.sid,
+            data: result.rows[0],
+          });
+        }
       });
     })
     .catch((error) => {
+      console.log("error while sending otp", error);
       res.status(500).json({
         success: false,
         message: "Failed to send OTP.",
@@ -39,7 +65,7 @@ exports.verifyOtpController = async (req, res) => {
       .services(accountSid)
       .verificationChecks.create({
         code: otp,
-        to: `${phoneNumber}`,
+        to: `+91${phoneNumber}`,
       });
 
     res.status(200).json({

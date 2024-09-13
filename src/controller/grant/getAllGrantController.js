@@ -34,8 +34,8 @@ exports.getAllGrantController = async (req, res) => {
   g.created_at, 
   g.updated_at,
   CASE 
-    WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL AND srd.status = 1 THEN 4
-    WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL AND srd.status = 3 THEN 5
+    WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL AND sar.status = 1 THEN 4
+    WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL AND sar.status = 3 THEN 5
     WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL THEN 3
     WHEN td.artist_id IS NOT NULL THEN 2
     ELSE 1
@@ -44,7 +44,7 @@ FROM
   grants g
   LEFT JOIN trasaction_detail td ON g.grant_id = td.grant_id AND td.artist_id = ${artist_id}
   LEFT JOIN submission_details sd ON g.grant_id = sd.grant_id AND sd.artist_id = ${artist_id}
-  LEFT JOIN submission_review_details srd ON sd.id = srd.artwork_id
+  LEFT JOIN submission_admin_review sar ON sd.id = sar.artwork_id
 ORDER BY 
   g.grant_id DESC;
 `;
@@ -53,7 +53,7 @@ ORDER BY
     offset = (page_no - 1) * record_per_page;
     query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
   }
-  // console.log("query", query);
+  console.log("query", query);
   try {
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);

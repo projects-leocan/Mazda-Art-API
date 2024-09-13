@@ -62,22 +62,22 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
             statusCode: 500,
           });
         } else {
-          const prePath = getFileURLPreFixPath(req);
+          // const prePath = getFileURLPreFixPath(req);
 
-          const finalResponse = {
-            ...result.rows[0],
-            art_file:
-              prePath +
-              artistGrantSubmissionFilesPath +
-              result.rows[0].art_file,
-          };
-          delete finalResponse.artist_id;
-          delete finalResponse.transaction_id;
+          // const finalResponse = {
+          //   ...result.rows[0],
+          //   art_file:
+          //     prePath +
+          //     artistGrantSubmissionFilesPath +
+          //     result.rows[0].art_file,
+          // };
+          // delete finalResponse.artist_id;
+          // delete finalResponse.transaction_id;
           return res.status(200).send({
             success: true,
             statusCode: 200,
             message: "Grant Status Updated Successfully",
-            data: finalResponse,
+            // data: finalResponse,
           });
         }
       });
