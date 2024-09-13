@@ -283,6 +283,12 @@ const {
   sendOtpController,
   verifyOtpController,
 } = require("../controller/otpVerificationController/twilioSmsController");
+const {
+  createOrderController,
+} = require("../controller/paymentControllers/createOrderController");
+const {
+  verifyPaymentController,
+} = require("../controller/paymentControllers/verifyPaymentController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -676,6 +682,9 @@ module.exports = (app) => {
   //   validateAccessToken,
   //   addArtistWithImageController
   // );
+
+  router.post("/createOrder", createOrderController);
+  router.post("/verifyPayment", verifyPaymentController);
 
   router.get("/demo", demoController);
   router.get("/getAllArtistDemo", getAllArtistDemoController);

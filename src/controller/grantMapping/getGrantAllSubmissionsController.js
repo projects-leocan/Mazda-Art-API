@@ -73,7 +73,7 @@ exports.getGrantAllSubmissionsController = async (req, res) => {
       // console.log(`err: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);
 
-      result.rows.map((row) => {
+      result?.rows?.map((row) => {
         delete row.artwork_id;
         row.artwork_id = row.submission_id;
         delete row.submission_id;
