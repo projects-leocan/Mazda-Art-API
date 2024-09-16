@@ -37,18 +37,18 @@ exports.updateEnquiryController = async (req, res) => {
       } else {
         if (status === "2") {
           // decline mail
-          sendEmail(
-            "Enquiry resolved",
-            `Your enquiry has been resolved.`,
-            email
-          );
+          // sendEmail(
+          //   "Enquiry resolved",
+          //   `Your enquiry has been resolved.`,
+          //   email
+          // );
         } else if (status === "3") {
           //accept mail
-          sendEmail(
-            "Enquiry decline",
-            `Your enquiry request has been decline.`,
-            email
-          );
+          // sendEmail(
+          //   "Enquiry decline",
+          //   `Your enquiry request has been decline.`,
+          //   email
+          // );
         }
         const detailQuery = `SELECT * FROM enquiries WHERE id = ${enquiry_id}`;
         pool.query(detailQuery, (err, result) => {

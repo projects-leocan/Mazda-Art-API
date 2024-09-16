@@ -37,18 +37,18 @@ exports.updateContactUsController = async (req, res) => {
       } else {
         if (status === "2") {
           // decline mail
-          sendEmail(
-            "Contact Us resolved",
-            `Your message request has been resolved.`,
-            email
-          );
+          // sendEmail(
+          //   "Contact Us resolved",
+          //   `Your message request has been resolved.`,
+          //   email
+          // );
         } else if (status === "3") {
           //accept mail
-          sendEmail(
-            "Contact Us decline",
-            `Your message request has been decline.`,
-            email
-          );
+          // sendEmail(
+          //   "Contact Us decline",
+          //   `Your message request has been decline.`,
+          //   email
+          // );
         }
         const detailQuery = `SELECT * FROM contact_us WHERE id = ${id}`;
         pool.query(detailQuery, (err, result) => {

@@ -11,7 +11,6 @@ const {
 exports.updateAdminArtworkStatusController = async (req, res) => {
   const { admin_id, status, comment, submission_id, starts, artist_email } =
     req.body;
-  console.log("req.body", req.body);
   const reviewStar = starts === undefined || starts === "" ? "0" : starts;
 
   let juryFindQuery = `SELECT artwork_id FROM submission_admin_review WHERE artwork_id=${submission_id}`;
@@ -40,18 +39,18 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
     } else {
       if (status === "3") {
         // decline mail
-        sendEmail(
-          "Grant request decline",
-          `Your grant request has been decline.`,
-          artist_email
-        );
+        // sendEmail(
+        //   "Grant request decline",
+        //   `Your grant request has been decline.`,
+        //   artist_email
+        // );
       } else if (status === "4") {
         //accept mail
-        sendEmail(
-          "Grant request accepted",
-          `Your grant request has been accepted.`,
-          artist_email
-        );
+        // sendEmail(
+        //   "Grant request accepted",
+        //   `Your grant request has been accepted.`,
+        //   artist_email
+        // );
       }
       const detailQuery = `SELECT * FROM submission_details WHERE artwork_id = ${submission_id}`;
       pool.query(detailQuery, (err, result) => {

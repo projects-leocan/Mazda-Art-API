@@ -184,11 +184,11 @@ exports.assignGrantToJuryController = async (req, res) => {
     // Send email notifications
     const emailIds = notAssignedJuries.map((e) => e.email);
     if (emailIds.length > 0) {
-      sendEmail(
-        "Grant assigned to you",
-        "You have been assigned a new grant.",
-        emailIds
-      );
+      // sendEmail(
+      //   "Grant assigned to you",
+      //   "You have been assigned a new grant.",
+      //   emailIds
+      // );
     }
 
     res.status(200).send({

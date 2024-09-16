@@ -100,7 +100,7 @@ exports.addArtistController = async (req, res) => {
           const text = `Dear ${fname} ${lname},\n\nThank you for registering as an artist. Your registration is successful.\n\nBest regards,\nYour Team`;
 
           try {
-            await sendEmail(email, subject, text);
+            // await sendEmail(email, subject, text);
             console.log(`Email sent to: ${email}`);
           } catch (emailErr) {
             console.log(`Error sending email: ${emailErr}`);
