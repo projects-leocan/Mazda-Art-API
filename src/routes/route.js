@@ -279,16 +279,17 @@ const {
 const {
   getAdminRoleByIdController,
 } = require("../controller/adminControllers/getAdminRoleByIdController");
-const {
-  sendOtpController,
-  verifyOtpController,
-} = require("../controller/otpVerificationController/twilioSmsController");
+
 const {
   createOrderController,
 } = require("../controller/paymentControllers/createOrderController");
 const {
   verifyPaymentController,
 } = require("../controller/paymentControllers/verifyPaymentController");
+const {
+  sendOtpController,
+  verifyOtpController,
+} = require("../controller/otpVerificationController/twilioSmsController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
