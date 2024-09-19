@@ -167,7 +167,19 @@ exports.verifyOtpController = async (req, res) => {
         }
       })
       .catch((error) => {
-        res.status(500).send(error.message);
+        // console.log("eror in catch", error.status);
+        if (error.status === 404) {
+          res.status(404).send({
+            success: false,
+            message: "Your OTP is expired. Please resend it.",
+          });
+        } else {
+          res.status(500).send({
+            success: false,
+            message: "Something went wrong",
+            error: error,
+          });
+        }
       });
   } catch (error) {
     // console.log("Error:", error.code, error.message);
