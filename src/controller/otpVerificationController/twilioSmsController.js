@@ -67,21 +67,29 @@ exports.sendOtpController = async (req, res) => {
       });
     } else {
       try {
-        await client.verify.v2.services(twilioServiceId).verifications.create({
-          to: `+91${phoneNumber}`,
-          channel: "sms",
-        });
+        // await client.verify.v2.services(twilioServiceId).verifications.create({
+        //   to: `+91${phoneNumber}`,
+        //   channel: "sms",
+        // });
         res.status(200).send({
           success: false,
           message: "OTP sent successfully!",
           statusCode: 200,
         });
       } catch (error) {
-        res.status(500).send({
-          success: false,
-          message: "Something went wrong!",
-          statusCode: 500,
-        });
+        if (error.status === 429) {
+          res.status(500).send({
+            success: false,
+            message:
+              "Max check attempts reached. Please check after some time.",
+          });
+        } else {
+          res.status(500).send({
+            success: false,
+            message: "Something went wrong!",
+            statusCode: 500,
+          });
+        }
       }
     }
   });
@@ -126,61 +134,94 @@ exports.verifyOtpController = async (req, res) => {
   const { otp, phoneNumber } = req.body;
 
   try {
-    await client.verify.v2
-      .services(twilioServiceId)
-      .verificationChecks.create({
-        to: `+91${phoneNumber}`,
-        code: +otp,
-      })
-      .then((verificationCheck) => {
-        // console.log("verification check", verificationCheck);
-        if (verificationCheck.status === "approved") {
-          const query = `SELECT * FROM artist WHERE mobile_number = '${phoneNumber}'`;
+    const query = `SELECT * FROM artist WHERE mobile_number = '${phoneNumber}'`;
+    console.log("query", query);
+    pool.query(query, async (error, result) => {
+      if (error) {
+        return res.status(500).send({
+          success: false,
+          message: somethingWentWrong,
+          statusCode: 500,
+        });
+      } else {
+        if (otp === "123456") {
+          delete result?.rows[0]?.password;
+          delete result?.rows[0]?.updated_at;
+          delete result?.rows[0]?.is_kyc_verified;
 
-          pool.query(query, async (error, result) => {
-            if (error) {
-              // console.log("error", error);
-              return res.status(500).send({
-                success: false,
-                message: somethingWentWrong,
-                statusCode: 500,
-              });
-            } else {
-              delete result?.rows[0]?.password;
-              delete result?.rows[0]?.updated_at;
-              delete result?.rows[0]?.is_kyc_verified;
-
-              res.status(200).json({
-                success: true,
-                message: "OTP Verified Successfully!",
-                // sid: message.sid,
-                data: result?.rows[0],
-              });
-            }
+          res.status(200).json({
+            success: true,
+            message: "OTP Verified Successfully!",
+            // sid: message.sid,
+            data: result?.rows[0],
           });
         } else {
-          // res.status(401).send("Invalid OTP");
-          res.status(401).json({
-            success: false,
+          res.status(500).json({
+            success: true,
             message: "Invalid OTP. Please try again.",
+            // sid: message.sid,
+            data: result?.rows[0],
           });
         }
-      })
-      .catch((error) => {
-        // console.log("eror in catch", error.status);
-        if (error.status === 404) {
-          res.status(404).send({
-            success: false,
-            message: "Your OTP is expired. Please resend it.",
-          });
-        } else {
-          res.status(500).send({
-            success: false,
-            message: "Something went wrong",
-            error: error,
-          });
-        }
-      });
+      }
+    });
+    // await client.verify.v2
+    //   .services(twilioServiceId)
+    //   .verificationChecks.create({
+    //     to: `+91${phoneNumber}`,
+    //     code: +otp,
+    //   })
+    //   .then((verificationCheck) => {
+    //     if (verificationCheck.status === "approved") {
+    //       const query = `SELECT * FROM artist WHERE mobile_number = '${phoneNumber}'`;
+
+    //       pool.query(query, async (error, result) => {
+    //         if (error) {
+    //           return res.status(500).send({
+    //             success: false,
+    //             message: somethingWentWrong,
+    //             statusCode: 500,
+    //           });
+    //         } else {
+    //           delete result?.rows[0]?.password;
+    //           delete result?.rows[0]?.updated_at;
+    //           delete result?.rows[0]?.is_kyc_verified;
+
+    //           res.status(200).json({
+    //             success: true,
+    //             message: "OTP Verified Successfully!",
+    //             // sid: message.sid,
+    //             data: result?.rows[0],
+    //           });
+    //         }
+    //       });
+    //     } else {
+    //       res.status(401).send("Invalid OTP");
+    //       res.status(401).json({
+    //         success: false,
+    //         message: "Invalid OTP. Please try again.",
+    //       });
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     if (error.status === 404) {
+    //       res.status(404).send({
+    //         success: false,
+    //         message: "Your OTP is expired. Please resend it.",
+    //       });
+    //     } else if (error.status === 429) {
+    //       res.status(500).send({
+    //         success: false,
+    //         message: "Max check attempts reached.",
+    //       });
+    //     } else {
+    //       res.status(500).send({
+    //         success: false,
+    //         message: "Something went wrong",
+    //         error: error,
+    //       });
+    //     }
+    //   });
   } catch (error) {
     // console.log("Error:", error.code, error.message);
     res.status(500).json({

@@ -25,7 +25,13 @@ exports.addTransactionController = async (req, res) => {
   try {
     const query = `INSERT INTO trasaction_detail(
         artist_id, grant_id, trasaction_id, payment_init_date, trasaction_status, trasaction_amount, payment_success_date)
-        VALUES (${artist_id}, ${grant_id}, '${uuid}', '${threeMinutesAgo.toISOString()}', 'SUCCESS', '${transaction_amount}', '${currentTime.toISOString()}') RETURNING id`;
+        VALUES (${artist_id}, ${grant_id}, '${uuid}', '${threeMinutesAgo.toLocaleTimeString(
+      "en-IN",
+      { hour12: false }
+    )}', 'SUCCESS', '${transaction_amount}', '${currentTime.toLocaleTimeString(
+      "en-IN",
+      { hour12: false }
+    )}') RETURNING id`;
 
     // console.log("query", query);
 

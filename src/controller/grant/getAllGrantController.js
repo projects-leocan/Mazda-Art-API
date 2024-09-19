@@ -21,7 +21,7 @@ exports.getAllGrantController = async (req, res) => {
       ? `SELECT grant_id, grant_uid, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, submission_end_date, application_fees, created_at, updated_at, (SELECT COUNT(*) AS total_count FROM grants) 
 	from grants 
 	ORDER By grant_id DESC`
-      : `SELECT 
+      : `SELECT DISTINCT
   g.grant_id, 
   g.grant_uid, 
   g.rank_1_price, 
@@ -53,7 +53,7 @@ ORDER BY
     offset = (page_no - 1) * record_per_page;
     query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
   }
-  console.log("query", query);
+  // console.log("query", query);
   try {
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
