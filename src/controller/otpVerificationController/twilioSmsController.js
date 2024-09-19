@@ -139,6 +139,7 @@ exports.verifyOtpController = async (req, res) => {
 
           pool.query(query, async (error, result) => {
             if (error) {
+              // console.log("error", error);
               return res.status(500).send({
                 success: false,
                 message: somethingWentWrong,
@@ -151,7 +152,7 @@ exports.verifyOtpController = async (req, res) => {
 
               res.status(200).json({
                 success: true,
-                message: "OTP sent successfully!",
+                message: "OTP Verified Successfully!",
                 // sid: message.sid,
                 data: result?.rows[0],
               });
