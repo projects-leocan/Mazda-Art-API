@@ -25,6 +25,8 @@ exports.getGrantSubmittedDetails = async (
   WHERE 
     sd.id = ${grant_submit_id};
 `;
+
+  // console.log("query", submissionDetailQuery);
   try {
     pool.query(
       submissionDetailQuery,
@@ -104,6 +106,7 @@ exports.getGrantSubmittedDetails = async (
               delete finalResponse.grant_uid;
               // delete finalResponse.transaction_id;
               delete finalResponse.jury_id;
+              delete finalResponse.assign_date;
 
               res.status(200).send({
                 success: true,

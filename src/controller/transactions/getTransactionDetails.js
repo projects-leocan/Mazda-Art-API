@@ -49,6 +49,7 @@ exports.getTransactionDetails = async (transaction_id, message, res) => {
       delete finalResult.artist_id;
       delete finalResult.fname;
       delete finalResult.lname;
+      delete finalResult.updated_at;
 
       if (error) {
         return res.status(500).send({
