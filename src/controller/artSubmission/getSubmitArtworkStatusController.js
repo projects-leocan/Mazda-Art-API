@@ -3,7 +3,7 @@ const { somethingWentWrong } = require("../../constants/messages");
 
 exports.getSubmitArtworkStatusController = async (req, res) => {
   try {
-    let { artwork_id, jury_id, grantId } = req.query;
+    let { artwork_id, jury_id, grantId, admin_id } = req.query;
     //     let query = `SELECT sd.status, sd.star_assigned, sd.comment, g.grant_uid, j.full_name
     // FROM submission_details sd, grants g, jury j
     // WHERE sd.grant_id = g.grant_id AND sd.jury_id = j.id AND sd.id = ${artwork_id}`;
@@ -15,7 +15,8 @@ exports.getSubmitArtworkStatusController = async (req, res) => {
           // WHERE j.id IN
           // (SELECT jury_id FROM grant_assign
           // 	WHERE grant_id in (SELECT grant_id FROM public.submission_details WHERE artwork_id = ${artwork_id})) AND (sd.artwork_id = ${artwork_id} OR sd.artwork_id IS NULL)`
-          `SELECT jd.*, sd.*, jury.full_name, submission_details.art_title FROM 
+          admin_id === undefined
+          ? `SELECT jd.*, sd.*, jury.full_name, submission_details.art_title FROM 
     (SELECT jury_id FROM grant_assign WHERE grant_id=${grantId}) AS jd
     LEFT JOIN (SELECT * FROM submission_review_details WHERE artwork_id = ${artwork_id}) AS sd
     ON sd.jury_id = jd.jury_id
@@ -23,6 +24,9 @@ exports.getSubmitArtworkStatusController = async (req, res) => {
     ON jury.id = jd.jury_id
     LEFT JOIN submission_details
     ON submission_details.id = sd.artwork_id;`
+          : `SELECT a.admin_name, sd.id, s.status, s.star_assigned, s.comment, sd.art_title 
+FROM public.submission_admin_review s, public.admin a, public.submission_details sd 
+WHERE s.admin_id = a.admin_id AND s.artwork_id = ${artwork_id} AND s.artwork_id = sd.id`
         : //         `select * from (select jury_id from grant_assign where grant_id = ${grantId}) as jd
           // LEFT JOIN (select jd.full_name from (select * from submission_review_details where artwork_id = ${artwork_id}) as filter_submission ) as sd
           // on  sd.jury_id = jd.jury_id`
@@ -37,7 +41,7 @@ exports.getSubmitArtworkStatusController = async (req, res) => {
           `SELECT j.full_name, s.status, s.star_assigned, s.comment, sd.art_title 
 FROM public.submission_review_details s, public.jury j, public.submission_details sd 
 WHERE s.jury_id = j.id AND s.artwork_id = ${artwork_id} AND s.jury_id = ${jury_id} AND s.artwork_id = sd.id`;
-    // console.log("query in status", query);
+    console.log("query in status", query);
     pool.query(query, async (err, result) => {
       // console.log("result.rows", result.rows);
       // console.log("query", query);
