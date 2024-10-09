@@ -4,8 +4,11 @@ exports.addGrantValidation = (req, res, next) => {
   const {
     admin_id,
     category_id,
-    hight,
-    width,
+    max_height,
+    max_width,
+    min_height,
+    min_width,
+    venue,
     theme_id,
     app_fees,
     submission_end_date,
@@ -37,16 +40,34 @@ exports.addGrantValidation = (req, res, next) => {
       message: "Invalid category id can not be empty",
     });
   }
-  if (hight === undefined || hight === "") {
+  if (max_height === undefined || max_height === "") {
     return res.status(500).send({
       success: false,
       message: "Invalid height can not be empty",
     });
   }
-  if (width === undefined || width === "") {
+  if (max_width === undefined || max_width === "") {
     return res.status(500).send({
       success: false,
       message: "Invalid width can not be empty",
+    });
+  }
+  if (min_height === undefined || min_height === "") {
+    return res.status(500).send({
+      success: false,
+      message: "Invalid height can not be empty",
+    });
+  }
+  if (min_width === undefined || min_width === "") {
+    return res.status(500).send({
+      success: false,
+      message: "Invalid width can not be empty",
+    });
+  }
+  if (venue === undefined || venue === "") {
+    return res.status(500).send({
+      success: false,
+      message: "Invalid venue can not be empty",
     });
   }
   if (theme_id === undefined || theme_id === "") {
@@ -123,8 +144,11 @@ exports.updateGrantValidation = (req, res, next) => {
     grant_id,
     admin_id,
     category_id,
-    hight,
-    width,
+    max_height,
+    max_width,
+    min_height,
+    min_width,
+    venue,
     theme_id,
     app_fees,
     submission_end_date,
