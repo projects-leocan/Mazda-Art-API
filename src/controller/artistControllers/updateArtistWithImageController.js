@@ -214,7 +214,7 @@ exports.updateArtistWithImageController = (req, res) => {
           updateFields.push(`profile_pic='${profilePic}'`);
         }
 
-        updateFields.push(`updated_at='${updatedAt}'`);
+        updateFields.push(`updated_at=CURRENT_TIMESTAMP`);
 
         const updateQuery = `
           UPDATE artist

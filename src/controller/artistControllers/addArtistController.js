@@ -92,7 +92,7 @@ exports.addArtistController = async (req, res) => {
           address1 === undefined ? "null" : address1
         }', '${
           address2 === undefined ? "null" : address2
-        }', '${city}', '${state}', ${pincode}, '${social_media_link}', 'null', 'null', '${currentTime}', '${currentTime}') RETURNING artist_id`;
+        }', '${city}', '${state}', ${pincode}, '${social_media_link}', 'null', 'null', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING artist_id`;
 
         pool.query(query, async (newErr, newResult) => {
           // console.log("query: ", query);

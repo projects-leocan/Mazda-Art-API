@@ -6,7 +6,7 @@ exports.addMODControllers = async (req, res) => {
 
   try {
     const currentTimeInMilliseconds = new Date().toISOString().slice(0, 10);
-    const query = `INSERT INTO medium_of_choice (medium_of_choice, created_by, updated_by, created_at, updated_at) VALUES ('${mod_value}', ${admin_id}, ${admin_id}, '${currentTimeInMilliseconds}', '${currentTimeInMilliseconds}') RETURNING id`;
+    const query = `INSERT INTO medium_of_choice (medium_of_choice, created_by, updated_by, created_at, updated_at) VALUES ('${mod_value}', ${admin_id}, ${admin_id}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING id`;
     // console.log(`query: ${query}`);
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);

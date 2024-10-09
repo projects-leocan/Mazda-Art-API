@@ -24,7 +24,7 @@ exports.updateJuryDetailsController = async (req, res) => {
   try {
     const currentTime = new Date().toISOString().slice(0, 10);
 
-    let query = `UPDATE jury SET updated_at='${currentTime}'`;
+    let query = `UPDATE jury SET updated_at=CURRENT_TIMESTAMP`;
 
     if (fullName != undefined) {
       query += `, full_name='${fullName}'`;

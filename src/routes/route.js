@@ -290,6 +290,12 @@ const {
   sendOtpController,
   verifyOtpController,
 } = require("../controller/otpVerificationController/twilioSmsController");
+const {
+  addArtistWithImageController,
+} = require("../controller/artistControllers/addArtistWithImageController");
+const {
+  finalAggregateRatingsController,
+} = require("../controller/grant/finalAggregateRatingsController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -369,7 +375,7 @@ module.exports = (app) => {
     getArtistDetailsController
   );
   // router.post("/createUser", validateAccessToken, addArtistValidation, addUserController);
-  router.post("/createUser", addArtistController);
+  router.post("/createUser", addArtistWithImageController);
 
   /// grants
   router.post(
@@ -689,6 +695,8 @@ module.exports = (app) => {
 
   router.get("/demo", demoController);
   router.get("/getAllArtistDemo", getAllArtistDemoController);
+
+  router.get("/finalAggregateRatings", finalAggregateRatingsController);
 
   router.get("/test", testController);
 

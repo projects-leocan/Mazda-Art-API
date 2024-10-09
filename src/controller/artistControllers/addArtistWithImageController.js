@@ -118,6 +118,7 @@ const upload = multer({ storage }).fields([
 exports.addArtistWithImageController = (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
+      console.log("err", err);
       return res.status(400).send({ error: err.message });
     }
 
@@ -155,7 +156,7 @@ exports.addArtistWithImageController = (req, res) => {
 
       try {
         await client.query("BEGIN");
-
+        const kyc = is_kyc_verified === undefined ? 0 : is_kyc_verified;
         const query = `
           INSERT INTO artist (
             fname, lname, dob, gender, email, mobile_number, address1, address2,
@@ -163,11 +164,11 @@ exports.addArtistWithImageController = (req, res) => {
             is_kyc_verified, profile_pic, created_at, updated_at
           ) VALUES ('${fname}', '${lname}', '${dob}', '${gender}', '${email}', ${mobile_number}, '${address1}', '${address2}',
            '${city}', '${state}', ${pincode}, '${social_media_profile_link}', '${hashedPassword}',
-           '${is_kyc_verified}', '${profilePic}', '${createdAt}', '${updatedAt}')
+           '${kyc}', '${profilePic}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
           RETURNING artist_id
         `;
 
-        // console.log("query", query);
+        console.log("query", query);
 
         // const values = [
         //     fname, lname, dob, gender, email, mobile_number, address1, address2,

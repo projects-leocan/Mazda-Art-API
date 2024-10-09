@@ -68,7 +68,7 @@ exports.updateArtistController = async (req, res) => {
       let profileImageUploadError, portfolioImageUploadError;
 
       const currentTime = new Date().toISOString().slice(0, 10);
-      query += `updated_at='${currentTime}'`;
+      query += `updated_at=CURRENT_TIMESTAMP`;
       if (fname !== undefined) {
         query += `, fname='${fname}'`;
       }

@@ -34,7 +34,7 @@ exports.addAdminController = async (req, res) => {
       hashedPassword,
       admin_contact,
       admin_address,
-      formattedTime,
+      CURRENT_TIMESTAMP,
     ];
 
     const checkQuery = `SELECT * FROM admin WHERE admin_contact = $1`;

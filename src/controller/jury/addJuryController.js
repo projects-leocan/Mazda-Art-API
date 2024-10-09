@@ -47,7 +47,7 @@ exports.addJuryController = async (req, res) => {
 
       const query = `INSERT INTO jury(
             full_name, email, contact_no, password, address, designation, dob, about, created_at, updated_at)
-            VALUES ('${fullName}', '${email}', ${contact_no}, '${hashedPassword}', '${address}', '${designation}', '${DOB}', '${about}', '${currentTime}', '${currentTime}') RETURNING id`;
+            VALUES ('${fullName}', '${email}', ${contact_no}, '${hashedPassword}', '${address}', '${designation}', '${DOB}', '${about}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING id`;
 
       pool.query(query, async (err, result) => {
         // console.log(`query: ${query}`);

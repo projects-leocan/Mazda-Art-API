@@ -6,11 +6,17 @@ exports.updateGrantController = async (req, res) => {
     grant_id,
     admin_id,
     category_id,
-    hight,
-    width,
+    max_height,
+    max_width,
+    min_height,
+    min_width,
+    venue,
     theme_id,
     app_fees,
     submission_end_date,
+    result_date,
+    submission_evaluation_start,
+    submission_evaluation_end,
     max_allow_submision,
     no_of_awards,
     knowMore,
@@ -29,18 +35,27 @@ exports.updateGrantController = async (req, res) => {
   const currentTime = new Date().toISOString().slice(0, 10);
   let query = `UPDATE grants set `;
 
-  query += `updated_at='${currentTime}'`;
+  query += `updated_at=CURRENT_TIMESTAMP`;
   if (admin_id != undefined) {
     query += `, updated_by='${admin_id}'`;
   }
-  if (hight != undefined) {
-    query += `, hight='${hight}'`;
+  if (max_height != undefined) {
+    query += `, max_height='${max_height}'`;
   }
   if (category_id != undefined) {
     query += `, "category_MOD"='${category_id}'`;
   }
-  if (width != undefined) {
-    query += `, width='${width}'`;
+  if (max_width != undefined) {
+    query += `, max_width='${max_width}'`;
+  }
+  if (min_height != undefined) {
+    query += `, min_height='${min_height}'`;
+  }
+  if (min_width != undefined) {
+    query += `, min_width='${min_width}'`;
+  }
+  if (venue !== undefined) {
+    query += `, venue='${venue}'`;
   }
   if (theme_id != undefined) {
     query += `, theme_id='${theme_id}'`;
@@ -50,6 +65,15 @@ exports.updateGrantController = async (req, res) => {
   }
   if (submission_end_date != undefined) {
     query += `, submission_end_date='${submission_end_date}'`;
+  }
+  if (submission_evaluation_start != undefined) {
+    query += `, submission_evaluation_start='${submission_evaluation_start}'`;
+  }
+  if (submission_evaluation_end != undefined) {
+    query += `, submission_evaluation_end='${submission_evaluation_end}'`;
+  }
+  if (result_date !== undefined) {
+    query += `, result_date='${result_date}'`;
   }
   if (max_allow_submision != undefined) {
     query += `, max_allow_submision='${max_allow_submision}'`;
@@ -91,13 +115,13 @@ exports.updateGrantController = async (req, res) => {
   }
 
   query += ` WHERE grant_id='${grant_id}'`;
-  // console.log(`query: ${query}`);
+  console.log(`query: ${query}`);
   try {
     pool.query(query, async (err, result) => {
-      // console.log(`err update Grant: ${err}`);
+      console.log(`err update Grant: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
-        // console.log(`err: ${err}`);
+        console.log(`err: ${err}`);
         res.status(500).send({
           success: false,
           message: "Something went wrong",

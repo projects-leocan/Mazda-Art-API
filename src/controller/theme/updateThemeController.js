@@ -4,7 +4,7 @@ exports.updateThemeController = async (req, res) => {
   let { theme, admin_id, theme_id } = req.body;
 
   const currentTime = new Date().toISOString().slice(0, 10);
-  const query = `UPDATE theme SET theme='${theme}', updated_at='${currentTime}', updated_by=${admin_id} WHERE id = ${theme_id}`;
+  const query = `UPDATE theme SET theme='${theme}', updated_at=CURRENT_TIMESTAMP, updated_by=${admin_id} WHERE id = ${theme_id}`;
   // console.log(`query: ${query}`);
   pool.query(query, async (err, result) => {
     // console.log(`err: ${err}`);
