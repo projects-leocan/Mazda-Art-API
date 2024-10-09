@@ -6,8 +6,11 @@ exports.addGrantController = async (req, res) => {
   let {
     admin_id,
     category_id,
-    hight,
-    width,
+    max_height,
+    max_width,
+    min_height,
+    min_width,
+    venue,
     theme_id,
     app_fees,
     submission_end_date,
@@ -22,6 +25,8 @@ exports.addGrantController = async (req, res) => {
     nominee_price,
     grand_amount,
     is_flat_pyramid,
+    submission_evaluation_start,
+    submission_evaluation_end,
   } = req.body;
 
   let flat_pyramid = 0;
@@ -51,12 +56,12 @@ exports.addGrantController = async (req, res) => {
 
   const currentTime = new Date().toISOString().slice(0, 10);
 
-  const query = `INSERT INTO grants ("grant_uid" ,"category_MOD", created_by, hight, width, theme_id, application_fees, submission_end_date, max_allow_submision, 
+  const query = `INSERT INTO grants ("grant_uid" ,"category_MOD", created_by, max_height, max_width, min_height, min_width, venue, theme_id, application_fees, submission_end_date, submission_evaluation_start, submission_evaluation_end, result_date, max_allow_submision, 
 	no_of_awards,know_more, no_of_nominations, for_each_amount, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, created_at, updated_by, updated_at, is_flat_pyramid) 
-    VALUES ('${grant_uid}' ,${category_id}, ${admin_id}, ${hight}, ${width}, ${theme_id}, ${app_fees}, '${submission_end_date}', ${max_allow_submision}, 
-    ${no_of_awards}, '${knowMore}', ${no_of_nominations}, ${for_each_amount}, ${rank_1_price}, ${rank_2_price}, ${rank_3_price}, ${nominee_price}, ${grand_amount}, '${currentTime}', 
-    ${admin_id}, '${currentTime}', ${flat_pyramid}) RETURNING grant_id`;
-
+    VALUES ('${grant_uid}' ,${category_id}, ${admin_id}, ${max_height}, ${max_width}, ${min_height}, ${min_width}, '${venue}', ${theme_id}, ${app_fees}, '${submission_end_date}', '${submission_evaluation_start}', '${submission_evaluation_end}', '${result_date}', ${max_allow_submision}, 
+    ${no_of_awards}, '${knowMore}', ${no_of_nominations}, ${for_each_amount}, ${rank_1_price}, ${rank_2_price}, ${rank_3_price}, ${nominee_price}, ${grand_amount}, CURRENT_TIMESTAMP, 
+    ${admin_id}, CURRENT_TIMESTAMP, ${flat_pyramid}) RETURNING grant_id`;
+  console.log("query", query);
   try {
     await pool.query(query, async (err, result) => {
       if (err) {

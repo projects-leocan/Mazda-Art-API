@@ -18,7 +18,7 @@ exports.getAllGrantController = async (req, res) => {
 
   let query =
     artist_id === undefined || artist_id === "undefined"
-      ? `SELECT grant_id, grant_uid, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, submission_end_date, application_fees, created_at, updated_at, (SELECT COUNT(*) AS total_count FROM grants) 
+      ? `SELECT grant_id, grant_uid, rank_1_price, rank_2_price, rank_3_price, no_of_nominations, venue, nominee_price, grand_amount, submission_end_date, application_fees, created_at, updated_at, (SELECT COUNT(*) AS total_count FROM grants) 
 	from grants 
 	ORDER By grant_id DESC`
       : `SELECT DISTINCT
@@ -27,15 +27,19 @@ exports.getAllGrantController = async (req, res) => {
   g.rank_1_price, 
   g.rank_2_price, 
   g.rank_3_price, 
+  g.no_of_nominations,
+  g.max_allow_submision,
+  g.venue,
   g.nominee_price, 
   g.grand_amount, 
   g.submission_end_date, 
   g.application_fees, 
   g.created_at, 
   g.updated_at,
+  sar.status as artwork_status,
   CASE 
     WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL AND sar.status = 1 THEN 4
-    WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL AND sar.status = 3 THEN 5
+    WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL AND sar.status = 4 THEN 5
     WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL THEN 3
     WHEN td.artist_id IS NOT NULL THEN 2
     ELSE 1
@@ -53,7 +57,7 @@ ORDER BY
     offset = (page_no - 1) * record_per_page;
     query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
   }
-  // console.log("query", query);
+  // console.log("get all grant query", query);
   try {
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
@@ -65,25 +69,39 @@ ORDER BY
           statusCode: 500,
         });
       } else {
-        const updatedResult = result.rows?.map((res) => {
+        const updatedResult = result.rows?.map(async (res) => {
+          const grantWinnerStatusQuery = `SELECT sar.status, sar.id, sd.grant_id, sd.artist_id
+          FROM submission_admin_review sar
+          JOIN submission_details sd ON sar.artwork_id = sd.id
+          WHERE sd.grant_id = ${res.grant_id} AND sar.status = 5;`;
+
+          const submitGrantCountQuery = `SELECT COUNT(id) FROM submission_details WHERE grant_id = ${res.grant_id}`;
+          const submitGrantCountResult = await pool.query(
+            submitGrantCountQuery
+          );
+          const totalCount = submitGrantCountResult?.rows[0];
+
+          const grantWinnerStatus = await pool.query(grantWinnerStatusQuery);
           return {
             ...res,
+            grantWinnerStatus:
+              grantWinnerStatus?.rows?.length > 0 ? true : false,
+            maxAllowReached:
+              totalCount === res.max_allow_submision ? true : false,
             updated_at: getUTCdate(res.updated_at),
             submission_end_date: getUTCdate(res.submission_end_date),
             created_at: getUTCdate(res.created_at),
           };
         });
 
-        // console.log("uopdated at", updatedResult)
         updatedResult.map((e) => {
           if (e.total_count != undefined) delete e.total_count;
         });
-
         res.status(200).send({
           success: true,
           message: "Grants fetched successfully",
           total_count: result.rows[0]?.total_count,
-          data: updatedResult,
+          data: await Promise.all(updatedResult),
           statusCode: 200,
         });
       }
