@@ -225,9 +225,16 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
       });
     } else {
       const artistPortfolioImageQuery = `SELECT artist_portfolio FROM artist_portfolio WHERE artist_id = $1`;
+      const artistConversionDateQuery = `SELECT MIN(payment_success_date) AS conversion FROM trasaction_detail WHERE artist_id = $1;`;
+
       const artistPortfolioImage = await pool.query(artistPortfolioImageQuery, [
         artist_id,
       ]);
+
+      const artistConversionDate = await pool.query(artistConversionDateQuery, [
+        artist_id,
+      ]);
+
       const prePath = getFileURLPreFixPath(req);
       const artistData = artistResult.rows[0];
 
@@ -257,6 +264,7 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
         mocs,
         grants,
         comments,
+        conversionDate: artistConversionDate?.rows[0]?.conversion,
       };
 
       finalResult.grants = finalResult.grants.map((grant) => {
@@ -274,6 +282,7 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
           +finalResult.grants[0].grant_id,
         ]);
       }
+
       return res.status(200).send({
         success: true,
         message: message,
