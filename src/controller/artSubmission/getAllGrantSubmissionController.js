@@ -24,7 +24,7 @@ exports.getAllGrantSubmissionController = async (req, res) => {
         JOIN grants g ON sd.grant_id = g.grant_id
         JOIN artist a ON sd.artist_id = a.artist_id order by g.grant_id DESC`
           : `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, sar.artwork_id, sd.art_description, sd.art_file, sd.art_title, sd.artist_id, sd.height, sd.width, 
-sd.submited_time, sar.status, g.grant_id, g.grant_uid, a.fname, a.lname, a.dob, a.gender FROM submission_details sd, submission_admin_review sar, grants g, artist a WHERE sar.status = ${status} AND sd.artwork_id = sar.artwork_id AND sd.grant_id = g.grant_id AND sd.artist_id = a.artist_id order by g.grant_id DESC`
+sd.submited_time, sar.status, g.grant_id, g.grant_uid, a.fname, a.lname, a.dob, a.gender FROM submission_details sd, submission_admin_review sar, grants g, artist a WHERE sar.status = ${status} AND sd.id = sar.artwork_id AND sd.grant_id = g.grant_id AND sd.artist_id = a.artist_id order by g.grant_id DESC`
         : //           `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, g.grant_id, sd.id as artwork_id, sd.art_title, sd.height, sd.width, sd.submited_time, srd.status
           // FROM submission_details sd
           // JOIN grants g ON sd.grant_id = g.grant_id
@@ -83,7 +83,7 @@ ORDER BY
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
 
-    // console.log("queyr------------", query);
+    // console.log("get all scrubbing queyr------------", query);
 
     pool.query(query, async (err, result) => {
       // console.log("err: ", err);
