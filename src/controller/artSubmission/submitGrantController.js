@@ -34,6 +34,12 @@ exports.submitGrantController = async (req, res) => {
       const submitGrantValidationResult = await pool.query(
         submitGrantValidationQuery
       );
+
+      // Submission Count
+
+      const submitGrantCountQuery = `SELECT COUNT(id) FROM submission_details WHERE grant_id = ${grant_id}`;
+      const submitGrantCountResult = await pool.query(submitGrantCountQuery);
+      const totalCount = submitGrantCountResult?.rows[0];
       const date = new Date();
 
       submitGrantValidationResult.rows[0].submission_end_date = getUTCdate(
@@ -50,6 +56,15 @@ exports.submitGrantController = async (req, res) => {
         res.status(500).send({
           success: false,
           message: "Grant not Found.",
+          statusCode: 500,
+        });
+      } else if (
+        totalCount === submitGrantValidationResult?.rows[0]?.max_allow_submision
+      ) {
+        res.status(500).send({
+          success: false,
+          message:
+            "The maximum allowed submissions have been completed. No further submissions are accepted at this time.",
           statusCode: 500,
         });
       } else if (
@@ -121,12 +136,17 @@ exports.submitGrantController = async (req, res) => {
                 } else {
                   const submissionId = result.rows[0].id;
                   // console.log(`submit req: ${JSON.stringify(req)}`)
-                  await getGrantSubmittedDetails(
-                    submissionId,
-                    "Grant submitted Successfully.",
-                    res,
-                    req
-                  );
+                  // await getGrantSubmittedDetails(
+                  //   submissionId,
+                  //   "Grant submitted Successfully.",
+                  //   res,
+                  //   req
+                  // );
+                  res.status(200).send({
+                    success: false,
+                    message: "Artwork Submitted Successfully.",
+                    statusCode: 200,
+                  });
                 }
               });
             } else {
@@ -137,12 +157,19 @@ exports.submitGrantController = async (req, res) => {
               });
             }
           } else {
-            await getGrantSubmittedDetails(
-              grantAlreadySubmittedResult.rows[0].id,
-              "Grant already submitted.",
-              res,
-              req
-            );
+            // await getGrantSubmittedDetails(
+            //   grantAlreadySubmittedResult.rows[0].id,
+            //   "Grant already submitted.",
+            //   res,
+            //   req
+            // );
+            console.log("error", err);
+            res.status(500).send({
+              success: false,
+              message:
+                "The maximum allowed submissions have been completed. No further submissions are accepted at this time.",
+              statusCode: 500,
+            });
           }
         } else {
           res.status(500).send({
