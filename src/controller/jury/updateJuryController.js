@@ -40,9 +40,6 @@ exports.updateJuryDetailsController = async (req, res) => {
       isFirstTimeSignIn,
     } = req.body;
 
-    console.log("req", req.body);
-    console.log("is_profile_pic_update", is_profile_pic_updated);
-
     try {
       const currentTime = new Date().toISOString().slice(0, 10);
       const profilePic = req.files.profile_pic
@@ -62,7 +59,7 @@ exports.updateJuryDetailsController = async (req, res) => {
         const values = [contact_no];
         const contactUsResult = await pool.query(checkQuery, values);
 
-        console.log("checkquery", checkQuery);
+        // console.log("checkquery", checkQuery);
 
         if (contactUsResult.rows.length > 0) {
           return res.status(400).send({
@@ -120,7 +117,7 @@ exports.updateJuryDetailsController = async (req, res) => {
         // Fetch the current password hash from the database
         const fetchPasswordQuery = `SELECT password FROM jury WHERE id = ${jury_id}`;
         const currentPasswordHashResult = await pool.query(fetchPasswordQuery);
-        console.log("fetchPasswordQuery", fetchPasswordQuery);
+        // console.log("fetchPasswordQuery", fetchPasswordQuery);
         if (currentPasswordHashResult.rows.length > 0) {
           const currentPasswordHash =
             currentPasswordHashResult.rows[0].password;
@@ -155,13 +152,13 @@ exports.updateJuryDetailsController = async (req, res) => {
       if (about != undefined) {
         query += `, about='${about}'`;
       }
-      if (isFirstTimeSignIn != undefined && isFirstTimeSignIn === true) {
+      if (isFirstTimeSignIn != "undefined" && isFirstTimeSignIn === "true") {
         query += `, is_jury_password_updated=1`;
       }
 
       query += ` WHERE id = ${jury_id}`;
 
-      console.log("query", query);
+      // console.log("query", query);
       // Run the update query
       await pool.query(query);
 
@@ -170,7 +167,7 @@ exports.updateJuryDetailsController = async (req, res) => {
         const deleteQuery = `DELETE FROM jury_links WHERE jury_id = ${jury_id}`;
         await pool.query(deleteQuery);
 
-        console.log("deleteQuery", deleteQuery);
+        // console.log("deleteQuery", deleteQuery);
 
         if (links != undefined && !_.isEmpty(links)) {
           let linkQuery = `INSERT INTO jury_links(jury_id, link) VALUES `;

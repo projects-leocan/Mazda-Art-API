@@ -14,20 +14,21 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
   const reviewStar = starts === undefined || starts === "" ? "0" : starts;
 
   let juryFindQuery = `SELECT artwork_id FROM submission_admin_review WHERE artwork_id=${submission_id}`;
-
   const juryFindResult = await pool.query(juryFindQuery);
   let query;
   if (juryFindResult?.rows.length > 0) {
-    query = `UPDATE submission_admin_review SET status=${status}, star_assigned=${reviewStar}`;
-    if (comment != undefined && comment !== "") {
-      query += `, comment='${comment}'`;
-    }
+    const artComment = comment === "" || comment === undefined ? null : comment;
+    query = `UPDATE submission_admin_review SET status=${status}, comment=${
+      comment === "" ? `''` : `'${comment}'`
+    }, star_assigned=${reviewStar}`;
     query += ` WHERE artwork_id = ${submission_id}`;
   } else {
     query = `INSERT INTO submission_admin_review(
         artwork_id, admin_id, status, comment, star_assigned)
-        VALUES (${submission_id}, ${admin_id}, ${status}, '${comment}', '${starts}');`;
+        VALUES (${submission_id}, ${admin_id}, ${status}, '${comment}', '${reviewStar}');`;
   }
+
+  // console.log("query", query);
   pool.query(query, async (err, result) => {
     if (err) {
       // console.log("err", err);
@@ -55,6 +56,7 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
       const detailQuery = `SELECT * FROM submission_details WHERE artwork_id = ${submission_id}`;
       pool.query(detailQuery, (err, result) => {
         if (err) {
+          // console.log("error", err);
           return res.status(500).send({
             success: true,
             message: "Grant Status Updated Successfully. can not fetch detail",
