@@ -2,12 +2,20 @@ const pool = require("../../config/db");
 const { getUTCdate } = require("../../constants/getUTCdate");
 const _ = require("lodash");
 const { somethingWentWrong } = require("../../constants/messages");
+const {
+  getFileURLPreFixPath,
+} = require("../../constants/getFileURLPreFixPath");
+const { juryProfileImagePath } = require("../../constants/filePaths");
+const { response } = require("express");
 
-exports.getJuryDetails = async (jury_id, message, res) => {
+exports.getJuryDetails = async (jury_id, message, res, req) => {
   // const newQuery = `SELECT jury.id, jury.*, array_agg(jury_links.link) AS links FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id
   //  WHERE jury_id = ${jury_id} GROUP BY jury.id`;
   const newQuery = `SELECT jury.*, array_agg(jury_links.link) AS links FROM jury LEFT JOIN jury_links ON jury.id = jury_links.jury_id WHERE jury.id = ${jury_id} GROUP BY jury.id;`;
   // const newQuery = `SELECT * FROM jury WHERE id = ${jury_id}`; //1716444879455
+
+  const prePath = getFileURLPreFixPath(req);
+
   try {
     pool.query(newQuery, async (newErr, newResult) => {
       // console.log(`getJuryDetails newResult: ${JSON.stringify(newResult)}`);
@@ -56,14 +64,18 @@ exports.getJuryDetails = async (jury_id, message, res) => {
           ) {
             delete newResult.rows[0].links;
           }
+
+          console.log("response", newResult.rows[0]);
           const response = {
-            ...newResult.rows[0],
+          ...newResult.rows[0],
             dob: getUTCdate(newResult.rows[0].dob),
             assignGrants: juryGrantsResult.rows,
+            profile_pic: `${prePath}${juryProfileImagePath}${newResult.rows[0].profile_pic}`,
           };
           response?.assignGrants?.map((e) => {
             if (e.id === null) delete e.id;
           });
+
           return res.status(200).send({
             success: true,
             statusCode: 200,

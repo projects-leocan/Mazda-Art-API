@@ -10,6 +10,7 @@ module.exports = {
   artistGrantSubmissionFilesPath:
     storagePath + "artist_grant_submission_files/",
   artistKycDocumentsPath: storagePath + "artist_kyc_documents/",
+  juryProfileImagePath: storagePath + "jury_profile/",
 };
 
 // function getFileURLPreFixPath(req) {

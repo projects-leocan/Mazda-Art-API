@@ -446,13 +446,13 @@ module.exports = (app) => {
   router.post(
     "/addJury",
     validateAccessToken,
-    addJuryValidation,
+    // addJuryValidation,
     addJuryController
   );
   router.post(
     "/updateJury",
     validateAccessToken,
-    updateJuryValidation,
+    // updateJuryValidation,
     updateJuryDetailsController
   );
   router.get("/juryLogin", juryLoginValidation, juryLoginController);
