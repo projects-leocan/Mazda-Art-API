@@ -296,6 +296,9 @@ const {
 const {
   finalAggregateRatingsController,
 } = require("../controller/grant/finalAggregateRatingsController");
+const {
+  totalGrantController,
+} = require("../controller/grant/totalGrantController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -697,6 +700,8 @@ module.exports = (app) => {
   router.get("/getAllArtistDemo", getAllArtistDemoController);
 
   router.get("/finalAggregateRatings", finalAggregateRatingsController);
+
+  router.get("/totalGrantAmount", totalGrantController);
 
   router.get("/test", testController);
 

@@ -85,6 +85,7 @@ const multer = require("multer");
 const path = require("path");
 const { passwordHashing } = require("../../constants/passwordHashing");
 const { somethingWentWrong } = require("../../constants/messages");
+var lodash = require("lodash");
 
 // Set up multer for file storage
 const storage = multer.diskStorage({
@@ -137,9 +138,10 @@ exports.addArtistWithImageController = (req, res) => {
       social_media_profile_link,
       password,
       is_kyc_verified,
+      mocs,
     } = req.body;
 
-    // console.log("req body", req.body);
+    // console.log("req body", mocs);
 
     try {
       const hashedPassword = await passwordHashing(password);
@@ -168,7 +170,7 @@ exports.addArtistWithImageController = (req, res) => {
           RETURNING artist_id
         `;
 
-        console.log("query", query);
+        // console.log("query", query);
 
         // const values = [
         //     fname, lname, dob, gender, email, mobile_number, address1, address2,
@@ -178,6 +180,22 @@ exports.addArtistWithImageController = (req, res) => {
 
         const result = await client.query(query);
         const artistId = result.rows[0].artist_id;
+
+        if (!lodash.isEmpty(mocs)) {
+          // Parse the JSON string into an array of objects
+
+          const mocsArray = JSON.parse(mocs);
+
+          // Construct the values string for the INSERT query
+          let values = mocsArray
+            .map((e) => `(${artistId}, ${e.id})`)
+            .join(", ");
+          // Construct the INSERT query
+          let mocInsertQuery = `INSERT INTO artist_moc(artist_id, moc_id) VALUES ${values}`;
+
+          // Execute the INSERT query
+          const mocInsertResult = await pool.query(mocInsertQuery);
+        }
 
         if (artistPortfolio.length > 0) {
           const portfolioQuery = `

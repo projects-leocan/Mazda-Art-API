@@ -10,6 +10,8 @@ const { query } = require("express");
 
 exports.submitGrantController = async (req, res) => {
   // console.log(`req.body: ${JSON.stringify()}`)
+  const allowedFileExtensions = [".jpeg", ".jpg", ".png", ".psd", ".pdf"];
+
   try {
     var form = new formidable.IncomingForm();
     form.parse(req, async function (err, fields, files) {
@@ -21,7 +23,9 @@ exports.submitGrantController = async (req, res) => {
         art_width,
         art_description,
         art_file_extension,
+        mocs,
       } = fields;
+      console.log("req body", mocs);
 
       if (Object.keys(fields).length === 0) {
         res.status(500).send({
@@ -123,6 +127,8 @@ exports.submitGrantController = async (req, res) => {
               const query = `INSERT INTO submission_details(
                 artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description, status)
                 VALUES (${artist_id}, '${transactionId}', ${grant_id}, '${filename}', '${art_title}', ${art_height}, ${art_width}, '${art_description}', 'SUBMITTED') RETURNING id`;
+
+              console.log("qyert", query);
               pool.query(query, async (err, result) => {
                 // console.log(`insert error: ${err}`);
                 if (err) {
@@ -142,6 +148,21 @@ exports.submitGrantController = async (req, res) => {
                   //   res,
                   //   req
                   // );
+                  if (!lodash.isEmpty(mocs)) {
+                    // Parse the JSON string into an array of objects
+
+                    const mocsArray = JSON.parse(mocs);
+
+                    // Construct the values string for the INSERT query
+                    let values = mocsArray
+                      .map((e) => `(${artist_id}, ${submissionId}, ${e.id})`)
+                      .join(", ");
+                    // Construct the INSERT query
+                    let mocInsertQuery = `INSERT INTO artist_artwork_moc(artist_id, artwork_id, moc_id) VALUES ${values}`;
+
+                    // Execute the INSERT query
+                    const mocInsertResult = await pool.query(mocInsertQuery);
+                  }
                   res.status(200).send({
                     success: false,
                     message: "Artwork Submitted Successfully.",
