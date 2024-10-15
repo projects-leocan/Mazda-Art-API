@@ -52,7 +52,11 @@ exports.submitGrantController = async (req, res) => {
       // console.log(`date: ${JSON.stringify(date)}`);
       // console.log(`submission_end_date: ${JSON.stringify(submitGrantValidationResult.rows[0].submission_end_date)}`);
       // console.log(`con: ${submitGrantValidationResult.rows[0].submission_end_date < date}`);
-
+      console.log("total count", totalCount);
+      console.log(
+        "submitGrantValidationResult?.rows[0]?.max_allow_submision",
+        submitGrantValidationResult?.rows[0]?.max_allow_submision
+      );
       if (
         submitGrantValidationResult.rowCount === 0 ||
         lodash.isEmpty(submitGrantValidationResult.rows)
@@ -63,8 +67,12 @@ exports.submitGrantController = async (req, res) => {
           statusCode: 500,
         });
       } else if (
-        totalCount === submitGrantValidationResult?.rows[0]?.max_allow_submision
+        totalCount?.count ===
+        submitGrantValidationResult?.rows[0]?.max_allow_submision
       ) {
+        console.log(
+          "The maximum allowed submissions have been completed. No further submissions are accepted at this time."
+        );
         res.status(500).send({
           success: false,
           message:
@@ -79,6 +87,7 @@ exports.submitGrantController = async (req, res) => {
         //     submitGrantValidationResult.rows[0].submission_end_date < date
         //   }`
         // );
+        console.log("Grant Submission date is passed.");
         res.status(500).send({
           success: false,
           message: "Grant Submission date is passed.",
