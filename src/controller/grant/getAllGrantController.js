@@ -69,11 +69,11 @@ ORDER BY
     offset = (page_no - 1) * record_per_page;
     query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
   }
-  console.log("get all grant query", query);
+  console.log("get all grant query", artist_id);
   try {
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
-      // console.log(`result: ${JSON.stringify(result)}`);
+      // console.log(`result:`, result);
       if (err) {
         res.status(500).send({
           success: false,
@@ -94,6 +94,18 @@ ORDER BY
           const totalCount = submitGrantCountResult?.rows[0];
 
           const grantWinnerStatus = await pool.query(grantWinnerStatusQuery);
+
+          const currentDate = new Date();
+          const submissionEndDate = new Date(res.submission_end_date);
+
+          if (
+            ((artist_id === undefined || artist_id === "undefined") &&
+              submissionEndDate < currentDate) ||
+            (submissionEndDate < currentDate && res.artist_grant_status === 1)
+          ) {
+            return null; // filter out the grant
+          }
+
           return {
             ...res,
             grantWinnerStatus:
@@ -109,11 +121,14 @@ ORDER BY
         updatedResult.map((e) => {
           if (e.total_count != undefined) delete e.total_count;
         });
+
+        const filteredResult = await Promise.all(updatedResult);
+
         res.status(200).send({
           success: true,
           message: "Grants fetched successfully",
           total_count: result.rows[0]?.total_count,
-          data: await Promise.all(updatedResult),
+          data: filteredResult?.filter((results) => results !== null),
           statusCode: 200,
         });
       }
