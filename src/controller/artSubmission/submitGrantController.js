@@ -124,15 +124,21 @@ exports.submitGrantController = async (req, res) => {
               } catch (err) {
                 artImageUploadError = err;
               }
+
+              const description =
+                typeof art_description === "string"
+                  ? art_description.replace(/'/g, "''")
+                  : "";
+
               const query = `INSERT INTO submission_details(
                 artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description, status)
-                VALUES (${artist_id}, '${transactionId}', ${grant_id}, '${filename}', '${art_title}', ${art_height}, ${art_width}, '${art_description}', 'SUBMITTED') RETURNING id`;
+                VALUES (${artist_id}, '${transactionId}', ${grant_id}, '${filename}', '${art_title}', ${art_height}, ${art_width}, '${description}', 'SUBMITTED') RETURNING id`;
 
               console.log("qyert", query);
               pool.query(query, async (err, result) => {
                 // console.log(`insert error: ${err}`);
                 if (err) {
-                  // console.log(`insert error: ${err}`);
+                  console.log(`insert error: ${err}`);
                   // console.log(`insert result: ${result}`);
                   res.status(500).send({
                     success: false,
@@ -202,7 +208,7 @@ exports.submitGrantController = async (req, res) => {
       }
     });
   } catch (error) {
-    // console.log(`error: ${error}`);
+    console.log(`error: ${error}`);
     res.status(500).send({
       success: false,
       message: somethingWentWrong,

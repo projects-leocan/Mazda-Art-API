@@ -18,9 +18,13 @@ exports.getAllGrantController = async (req, res) => {
 
   let query =
     artist_id === undefined || artist_id === "undefined"
-      ? `SELECT grant_id, grant_uid, rank_1_price, rank_2_price, rank_3_price, no_of_nominations, venue, nominee_price, grand_amount, submission_end_date, application_fees, created_at, updated_at, (SELECT COUNT(*) AS total_count FROM grants) 
-	from grants 
-	ORDER By grant_id DESC`
+      ? `SELECT g.grant_id, g.grant_uid, g.rank_1_price, g.rank_2_price, g.rank_3_price, g.no_of_nominations, 
+g.venue, g.nominee_price, g.grand_amount, g.submission_end_date, g.application_fees, g.created_at, 
+g.updated_at, g.min_height, g.min_width, g.max_height, g.max_width, t.theme, m.medium_of_choice,
+(SELECT COUNT(*) AS total_count FROM grants) from grants g
+JOIN medium_of_choice AS m ON g."category_MOD" = m.id
+JOIN theme AS t ON g.theme_id = t.id
+ORDER By g.grant_id DESC`
       : `SELECT DISTINCT
   g.grant_id, 
   g.grant_uid, 
@@ -36,6 +40,12 @@ exports.getAllGrantController = async (req, res) => {
   g.application_fees, 
   g.created_at, 
   g.updated_at,
+  g.min_height,
+  g.min_width,
+   g.max_height,
+  g.max_width,
+  t.theme, 
+  m.medium_of_choice,
   sar.status as artwork_status,
   CASE 
     WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL AND sar.status = 1 THEN 4
@@ -46,6 +56,8 @@ exports.getAllGrantController = async (req, res) => {
   END AS artist_grant_status
 FROM 
   grants g
+  JOIN medium_of_choice AS m ON g."category_MOD" = m.id
+  JOIN theme AS t ON g.theme_id = t.id
   LEFT JOIN trasaction_detail td ON g.grant_id = td.grant_id AND td.artist_id = ${artist_id}
   LEFT JOIN submission_details sd ON g.grant_id = sd.grant_id AND sd.artist_id = ${artist_id}
   LEFT JOIN submission_admin_review sar ON sd.id = sar.artwork_id
@@ -57,7 +69,7 @@ ORDER BY
     offset = (page_no - 1) * record_per_page;
     query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
   }
-  // console.log("get all grant query", query);
+  console.log("get all grant query", query);
   try {
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
