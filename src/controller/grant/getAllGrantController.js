@@ -3,7 +3,7 @@ const _ = require("lodash");
 const { getUTCdate } = require("../../constants/getUTCdate");
 
 exports.getAllGrantController = async (req, res) => {
-  let { record_per_page, page_no, isAll, artist_id } = req.query;
+  let { record_per_page, page_no, isAll, artist_id, admin_id } = req.query;
 
   if (record_per_page == undefined) {
     record_per_page = 10;
@@ -98,12 +98,14 @@ ORDER BY
           const currentDate = new Date();
           const submissionEndDate = new Date(res.submission_end_date);
 
-          if (
-            ((artist_id === undefined || artist_id === "undefined") &&
-              submissionEndDate < currentDate) ||
-            (submissionEndDate < currentDate && res.artist_grant_status === 1)
-          ) {
-            return null; // filter out the grant
+          if (admin_id === undefined || admin_id === "undefined") {
+            if (
+              ((artist_id === undefined || artist_id === "undefined") &&
+                submissionEndDate < currentDate) ||
+              (submissionEndDate < currentDate && res.artist_grant_status === 1)
+            ) {
+              return null; // filter out the grant
+            }
           }
 
           return {
