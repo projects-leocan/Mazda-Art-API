@@ -1,6 +1,6 @@
 const pool = require("../../config/db");
 const { getUTCdate } = require("../../constants/getUTCdate");
-
+const lodash = require("lodash");
 exports.updateGrantController = async (req, res) => {
   let {
     grant_id,
@@ -28,9 +28,11 @@ exports.updateGrantController = async (req, res) => {
     nominee_price,
     grand_amount,
     is_flat_pyramid,
+    is_theme_update,
+    is_moc_update,
   } = req.body;
 
-  // console.log("req . body", req.body);
+  console.log("req . body", req.body);
 
   const currentTime = new Date().toISOString().slice(0, 10);
   let query = `UPDATE grants set `;
@@ -42,9 +44,9 @@ exports.updateGrantController = async (req, res) => {
   if (max_height != undefined) {
     query += `, max_height='${max_height}'`;
   }
-  if (category_id != undefined) {
-    query += `, "category_MOD"='${category_id}'`;
-  }
+  // if (category_id != undefined) {
+  //   query += `, "category_MOD"='${category_id}'`;
+  // }
   if (max_width != undefined) {
     query += `, max_width='${max_width}'`;
   }
@@ -57,9 +59,9 @@ exports.updateGrantController = async (req, res) => {
   if (venue !== undefined) {
     query += `, venue='${venue}'`;
   }
-  if (theme_id != undefined) {
-    query += `, theme_id='${theme_id}'`;
-  }
+  // if (theme_id != undefined) {
+  //   query += `, theme_id='${theme_id}'`;
+  // }
   if (app_fees != undefined) {
     query += `, application_fees='${app_fees}'`;
   }
@@ -112,6 +114,44 @@ exports.updateGrantController = async (req, res) => {
   }
   if (is_flat_pyramid != undefined) {
     query += `, is_flat_pyramid='${is_flat_pyramid}'`;
+  }
+
+  if (is_moc_update !== undefined) {
+    let deleteQuery = `DELETE FROM grant_moc WHERE grant_id = ${grant_id}`;
+    const deleteResult = await pool.query(deleteQuery);
+
+    if (!lodash.isEmpty(category_id)) {
+      // Parse the JSON string into an array of objects
+
+      const mocsArray = category_id;
+
+      // Construct the values string for the INSERT query
+      let values = mocsArray.map((e) => `(${grant_id}, ${e.value})`).join(", ");
+      // Construct the INSERT query
+      let mocInsertQuery = `INSERT INTO grant_moc(grant_id, moc_id) VALUES ${values}`;
+
+      // Execute the INSERT query
+      const mocInsertResult = await pool.query(mocInsertQuery);
+    }
+  }
+
+  if (is_theme_update !== undefined) {
+    let deleteQuery = `DELETE FROM grant_theme WHERE grant_id = ${grant_id}`;
+    const deleteResult = await pool.query(deleteQuery);
+
+    if (!lodash.isEmpty(theme_id)) {
+      // Parse the JSON string into an array of objects
+
+      const mocsArray = theme_id;
+
+      // Construct the values string for the INSERT query
+      let values = mocsArray.map((e) => `(${grant_id}, ${e.value})`).join(", ");
+      // Construct the INSERT query
+      let mocInsertQuery = `INSERT INTO grant_theme(grant_id, theme_id) VALUES ${values}`;
+
+      // Execute the INSERT query
+      const mocInsertResult = await pool.query(mocInsertQuery);
+    }
   }
 
   query += ` WHERE grant_id='${grant_id}'`;
