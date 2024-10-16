@@ -134,16 +134,13 @@ exports.submitGrantController = async (req, res) => {
                 artImageUploadError = err;
               }
 
-              const description =
-                typeof art_description === "string"
-                  ? art_description.replace(/'/g, "''")
-                  : "";
+              const description = art_description[0].replace(/'/g, "''");
 
               const query = `INSERT INTO submission_details(
                 artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description, status)
                 VALUES (${artist_id}, '${transactionId}', ${grant_id}, '${filename}', '${art_title}', ${art_height}, ${art_width}, '${description}', 'SUBMITTED') RETURNING id`;
 
-              console.log("qyert", query);
+              // console.log("qyert", query);descrip
               pool.query(query, async (err, result) => {
                 // console.log(`insert error: ${err}`);
                 if (err) {
