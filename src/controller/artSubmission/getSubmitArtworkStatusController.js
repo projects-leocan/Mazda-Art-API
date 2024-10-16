@@ -57,14 +57,25 @@ WHERE s.jury_id = j.id AND s.artwork_id = ${artwork_id} AND s.jury_id = ${jury_i
         const grant_id_result = await pool.query(grant_id_query);
         const grant_uid = grant_id_result.rows[0]?.grant_uid;
 
+        const total_rating = result?.rows?.length * 5;
+        // const obtainer_rating = sum(result?.rows?.)
+
+        const sumStatus = result.rows.reduce((sum, row) => {
+          // Convert `status` to a number, treating null as 0
+          return sum + Number(row.star_assigned || 0);
+        }, 0);
+
         result.rows.map((row) => {
           row.grant_uid = grant_uid;
         });
+
         res.status(200).send({
           success: true,
           message: "Get Artwork Status Successfully",
           statusCode: 200,
-          data: result.rows,
+          data: result?.rows,
+          total_rating: total_rating,
+          obtained_rating: sumStatus,
         });
       }
     });
