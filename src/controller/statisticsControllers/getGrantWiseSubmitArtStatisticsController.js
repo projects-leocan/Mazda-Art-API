@@ -76,24 +76,51 @@ const {
 
 exports.getGrantWiseSubmitArtStatisticsController = async (req, res) => {
   try {
-    const query = `
-      SELECT 
-        g.grant_uid,
-        COUNT(DISTINCT CASE WHEN td.trasaction_status = 'SUCCESS' THEN td.id ELSE NULL END) AS total_transaction,
-        COUNT(sd.*) AS total_art_submission,
-        COUNT(sd.*) FILTER (WHERE sd.status = '${rejected}') AS rejected,
-        COUNT(sd.*) FILTER (WHERE sd.status = '${short_listed}') AS short_listed,
-        COUNT(sd.*) FILTER (WHERE sd.status = '${scholarship_winner}') AS scholarship_winner,
-        COUNT(sd.*) FILTER (WHERE sd.status = '${grant_winner}') AS grant_winner,
-        COUNT(sd.*) FILTER (WHERE sd.status = '${nominated}') AS nominated
-      FROM 
-        submission_details sd
-      JOIN grants g ON sd.grant_id = g.grant_id
-      JOIN trasaction_detail td ON sd.grant_id = td.grant_id AND td.trasaction_status = 'SUCCESS'
-      GROUP BY 
-        g.grant_uid;
+    const query = `WITH transaction_counts AS (
+    SELECT
+        grant_id,
+        COUNT(DISTINCT id) AS total_transaction
+    FROM 
+        trasaction_detail
+    WHERE
+        trasaction_status = 'SUCCESS'
+    GROUP BY
+        grant_id
+),
+submission_status_counts AS (
+    SELECT
+        artwork_id,
+        COUNT(CASE WHEN status = '${rejected}' THEN 1 END) AS rejected,
+        COUNT(CASE WHEN status = '${short_listed}' THEN 1 END) AS short_listed,
+        COUNT(CASE WHEN status = '${scholarship_winner}' THEN 1 END) AS scholarship_winner,
+        COUNT(CASE WHEN status = '${grant_winner}' THEN 1 END) AS grant_winner,
+        COUNT(CASE WHEN status = '${nominated}' THEN 1 END) AS nominated
+    FROM 
+        submission_admin_review
+    GROUP BY 
+        artwork_id
+)
+SELECT 
+    g.grant_uid,
+    COALESCE(tc.total_transaction, 0) AS total_transaction,
+    COUNT(sd.id) AS total_art_submission,
+    COALESCE(SUM(ssc.rejected), 0) AS rejected,
+    COALESCE(SUM(ssc.short_listed), 0) AS short_listed,
+    COALESCE(SUM(ssc.scholarship_winner), 0) AS scholarship_winner,
+    COALESCE(SUM(ssc.grant_winner), 0) AS grant_winner,
+    COALESCE(SUM(ssc.nominated), 0) AS nominated
+FROM 
+    submission_details sd
+JOIN 
+    grants g ON sd.grant_id = g.grant_id
+LEFT JOIN 
+    transaction_counts tc ON sd.grant_id = tc.grant_id
+LEFT JOIN 
+    submission_status_counts ssc ON sd.id = ssc.artwork_id
+GROUP BY 
+    g.grant_uid, tc.total_transaction
     `;
-
+    // console.log("query", query);
     pool.query(query, (err, result) => {
       if (err) {
         // console.error(`Error: ${err}`);
@@ -104,7 +131,7 @@ exports.getGrantWiseSubmitArtStatisticsController = async (req, res) => {
         });
       } else {
         // Convert numeric data fields to integers, but keep grant_uid as a string
-        const convertedData = result.rows.map((entry) => {
+        const convertedData = result?.rows?.map((entry) => {
           const convertedEntry = {};
           for (const value in entry) {
             if (entry[value] === null) {
