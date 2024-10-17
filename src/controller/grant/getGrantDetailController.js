@@ -15,11 +15,11 @@ exports.getGrantDetailsController = async (req, res) => {
     LEFT JOIN grant_assign AS ga ON g.grant_id = ga.grant_id
     WHERE g.grant_id = ${grant_id}
     GROUP BY g.grant_id, g.submission_end_date;`;
-  console.log("qery", query);
+  // console.log("qery", query);
   try {
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
-      console.log(`result:`, result?.rows);
+      // console.log(`result:`, result?.rows);
       if (err) {
         res.status(500).send({
           success: false,

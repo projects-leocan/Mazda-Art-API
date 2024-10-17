@@ -214,7 +214,7 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
       WHERE artist.artist_id = $1
       GROUP BY artist.artist_id;
     `;
-
+    // console.log("query", query);
     const artistResult = await pool.query(query, [artist_id]);
 
     if (artistResult.rowCount === 0) {
@@ -247,7 +247,7 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
       if (artistData.profile_pic) {
         artistData.profile_pic = `${prePath}${artistProfileImagePath}${artistData.profile_pic}`;
       }
-
+      // console.log("artst data", artistData);
       const [mocs, grants, comments] = await Promise.all([
         !lodash.isEmpty(artistData.artist_moc) &&
         artistData.artist_moc[0] != null

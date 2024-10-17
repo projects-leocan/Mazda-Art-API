@@ -71,7 +71,7 @@ exports.updateGrantStatusController = async (req, res) => {
         artwork_id, jury_id, status, comment, star_assigned)
         VALUES (${submission_id}, ${jury_id}, ${status}, '${comment}', '${reviewStar}');`;
     }
-    console.log("query in update", query);
+    // console.log("query in update", query);
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);

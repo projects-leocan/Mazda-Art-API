@@ -34,7 +34,7 @@ exports.addJuryController = async (req, res) => {
       about,
       links,
     } = req.body;
-    console.log("req body", req.body);
+    // console.log("req body", req.body);
     try {
       const currentTime = new Date().toISOString().slice(0, 10);
       // const id = new Date().getTime();
@@ -47,7 +47,7 @@ exports.addJuryController = async (req, res) => {
 
       pool.query(checkQuery, values, async (checkErr, checkResult) => {
         if (checkErr) {
-          console.log("check err", checkErr);
+          // console.log("check err", checkErr);
           // Handle error from check query
           return res.status(500).send({
             success: false,
@@ -72,7 +72,7 @@ exports.addJuryController = async (req, res) => {
             VALUES ('${fullName}', '${email}', ${contact_no}, '${hashedPassword}', '${address}', '${designation}', '${DOB}', '${about}', '${profilePic}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING id`;
 
         pool.query(query, async (err, result) => {
-          console.log(`Error: ${err}`);
+          // console.log(`Error: ${err}`);
 
           // console.log(`query: ${query}`);
           // console.log(`result: ${JSON.stringify(result)}`);
@@ -86,7 +86,7 @@ exports.addJuryController = async (req, res) => {
                 statusCode: 500,
               });
             } else {
-              console.log(`err: ${err}`);
+              // console.log(`err: ${err}`);
               res.status(500).send({
                 success: false,
                 message: somethingWentWrong,
@@ -139,7 +139,7 @@ exports.addJuryController = async (req, res) => {
         });
       });
     } catch (error) {
-      console.log(`error: ${error}`);
+      // console.log(`error: ${error}`);
       return res.status(500).send({
         success: false,
         message: somethingWentWrong,

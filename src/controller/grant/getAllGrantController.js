@@ -132,12 +132,12 @@ ORDER BY
     query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
   }
 
-  console.log("query get all", query);
+  // console.log("query get all", query);
 
   try {
     pool.query(query, async (err, result) => {
-      console.log(`err: ${err}`);
-      console.log(`result:`, result);
+      // console.log(`err: ${err}`);
+      // console.log(`result:`, result);
       if (err) {
         res.status(500).send({
           success: false,
@@ -223,11 +223,6 @@ ORDER BY
 
         const filteredGrantResult = await fetchGrantsData(result.rows);
 
-        console.log(
-          "filtered result",
-          filteredResult?.filter((results) => results !== null)
-        );
-
         const appendCategoryAndTheme = (grantsArray, categoryThemeArray) => {
           const filteredData = grantsArray?.filter(
             (results) => results !== null
@@ -249,7 +244,6 @@ ORDER BY
           filteredGrantResult
         );
 
-        console.log("updatedAppendedResult", updatedAppendedResult);
         updatedAppendedResult?.map((res) => {
           delete res?.grant_moc, delete res?.grant_theme;
         });

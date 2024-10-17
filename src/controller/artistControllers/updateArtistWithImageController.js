@@ -157,6 +157,7 @@ exports.updateArtistWithImageController = (req, res) => {
       is_kyc_verified,
     } = req.body;
 
+    // console.log("mocs", mocs);
     try {
       const updatedAt = new Date().toISOString().slice(0, 10);
       const profilePic = req.files.profile_pic
@@ -221,6 +222,7 @@ exports.updateArtistWithImageController = (req, res) => {
           SET ${updateFields.join(", ")}
           WHERE artist_id=${artist_id}
         `;
+        // console.log("update query", updateQuery);
 
         await client.query(updateQuery);
 

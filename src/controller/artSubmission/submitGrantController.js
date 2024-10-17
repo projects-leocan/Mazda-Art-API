@@ -25,7 +25,7 @@ exports.submitGrantController = async (req, res) => {
         art_file_extension,
         mocs,
       } = fields;
-      console.log("req body", mocs);
+      // console.log("req body", mocs);
 
       if (Object.keys(fields).length === 0) {
         res.status(500).send({
@@ -52,11 +52,7 @@ exports.submitGrantController = async (req, res) => {
       // console.log(`date: ${JSON.stringify(date)}`);
       // console.log(`submission_end_date: ${JSON.stringify(submitGrantValidationResult.rows[0].submission_end_date)}`);
       // console.log(`con: ${submitGrantValidationResult.rows[0].submission_end_date < date}`);
-      console.log("total count", totalCount);
-      console.log(
-        "submitGrantValidationResult?.rows[0]?.max_allow_submision",
-        submitGrantValidationResult?.rows[0]?.max_allow_submision
-      );
+
       if (
         submitGrantValidationResult.rowCount === 0 ||
         lodash.isEmpty(submitGrantValidationResult.rows)

@@ -119,7 +119,7 @@ const upload = multer({ storage }).fields([
 exports.addArtistWithImageController = (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
-      console.log("err", err);
+      // console.log("err", err);
       return res.status(400).send({ error: err.message });
     }
 
@@ -140,8 +140,6 @@ exports.addArtistWithImageController = (req, res) => {
       is_kyc_verified,
       mocs,
     } = req.body;
-
-    // console.log("req body", mocs);
 
     try {
       const hashedPassword = await passwordHashing(password);

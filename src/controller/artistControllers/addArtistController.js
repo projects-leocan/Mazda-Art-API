@@ -184,7 +184,7 @@ exports.addArtistController = async (req, res) => {
       });
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     res.status(500).send({
       success: false,
       message: somethingWentWrong,
