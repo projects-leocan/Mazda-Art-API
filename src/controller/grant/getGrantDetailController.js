@@ -8,7 +8,7 @@ exports.getGrantDetailsController = async (req, res) => {
   let query = `SELECT g.*, 
         ARRAY_AGG(DISTINCT grant_moc.moc_id) AS grant_moc,
         ARRAY_AGG(DISTINCT grant_theme.theme_id) AS grant_theme, 
-        COALESCE(ARRAY_AGG(ga.jury_id) FILTER (WHERE ga.jury_id IS NOT NULL), '{}') AS jury_ids
+        COALESCE(ARRAY_AGG(DISTINCT ga.jury_id) FILTER (WHERE ga.jury_id IS NOT NULL), '{}') AS jury_ids
     FROM grants AS g
     LEFT JOIN grant_moc ON g.grant_id = grant_moc.grant_id
     LEFT JOIN grant_theme ON g.grant_id = grant_theme.grant_id

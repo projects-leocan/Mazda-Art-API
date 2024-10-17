@@ -180,12 +180,12 @@ exports.updateGrantController = async (req, res) => {
           } else {
             const final_response = {
               ...newResult.rows[0],
-              updated_at: getUTCdate(newResult.rows[0].updated_at),
+              updated_at: getUTCdate(newResult?.rows[0]?.updated_at),
               submission_end_date: getUTCdate(
-                newResult.rows[0].submission_end_date
+                newResult?.rows[0]?.submission_end_date
               ),
-              created_at: getUTCdate(newResult.rows[0].created_at),
-              created_at: getUTCdate(newResult.rows[0].created_at),
+              created_at: getUTCdate(newResult?.rows[0]?.created_at),
+              created_at: getUTCdate(newResult?.rows[0]?.created_at),
             };
 
             return res.status(200).send({

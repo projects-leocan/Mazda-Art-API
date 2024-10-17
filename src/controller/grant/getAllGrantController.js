@@ -18,13 +18,51 @@ exports.getAllGrantController = async (req, res) => {
 
   let query =
     artist_id === undefined || artist_id === "undefined"
-      ? `SELECT g.grant_id, g.grant_uid, g.rank_1_price, g.rank_2_price, g.rank_3_price, g.no_of_nominations, 
-g.venue, g.nominee_price, g.grand_amount, g.submission_end_date, g.application_fees, g.created_at, 
-g.updated_at, g.min_height, g.min_width, g.max_height, g.max_width, t.theme, m.medium_of_choice,
-(SELECT COUNT(*) AS total_count FROM grants) from grants g
-JOIN medium_of_choice AS m ON g."category_MOD" = m.id
-JOIN theme AS t ON g.theme_id = t.id
-ORDER By g.grant_id DESC`
+      ? `SELECT 
+  g.grant_id, 
+  g.grant_uid, 
+  g.rank_1_price, 
+  g.rank_2_price, 
+  g.rank_3_price, 
+  g.no_of_nominations,  
+  g.venue, 
+  g.nominee_price, 
+  g.for_each_amount,
+  g.grand_amount, 
+  g.submission_end_date, 
+  g.application_fees, 
+  g.created_at,  
+  g.updated_at, 
+  g.min_height, 
+  g.min_width, 
+  g.max_height, 
+  g.max_width, 
+  ARRAY_AGG(DISTINCT grant_moc.moc_id) AS grant_moc, 
+  ARRAY_AGG(DISTINCT grant_theme.theme_id) AS grant_theme,  
+  (SELECT COUNT(*) FROM grants) AS total_count
+FROM grants g 
+LEFT JOIN grant_moc ON g.grant_id = grant_moc.grant_id 
+LEFT JOIN grant_theme ON g.grant_id = grant_theme.grant_id 
+GROUP BY 
+  g.grant_id, 
+  g.grant_uid, 
+  g.rank_1_price, 
+  g.rank_2_price, 
+  g.rank_3_price, 
+  g.no_of_nominations,  
+  g.venue, 
+  g.nominee_price, 
+  g.for_each_amount,
+  g.grand_amount, 
+  g.submission_end_date, 
+  g.application_fees, 
+  g.created_at,  
+  g.updated_at, 
+  g.min_height, 
+  g.min_width, 
+  g.max_height, 
+  g.max_width
+ORDER BY g.grant_id DESC`
       : `SELECT DISTINCT
   g.grant_id, 
   g.grant_uid, 
@@ -35,6 +73,7 @@ ORDER By g.grant_id DESC`
   g.max_allow_submision,
   g.venue,
   g.nominee_price, 
+  g.for_each_amount,
   g.grand_amount, 
   g.submission_end_date, 
   g.application_fees, 
@@ -42,10 +81,10 @@ ORDER By g.grant_id DESC`
   g.updated_at,
   g.min_height,
   g.min_width,
-   g.max_height,
+  g.max_height,
   g.max_width,
-  t.theme, 
-  m.medium_of_choice,
+  ARRAY_AGG(DISTINCT grant_moc.moc_id) AS grant_moc, 
+  ARRAY_AGG(DISTINCT grant_theme.theme_id) AS grant_theme,  
   sar.status as artwork_status,
   CASE 
     WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL AND sar.status = 1 THEN 4
@@ -56,24 +95,49 @@ ORDER By g.grant_id DESC`
   END AS artist_grant_status
 FROM 
   grants g
-  JOIN medium_of_choice AS m ON g."category_MOD" = m.id
-  JOIN theme AS t ON g.theme_id = t.id
+  LEFT JOIN grant_moc ON g.grant_id = grant_moc.grant_id 
+  LEFT JOIN grant_theme ON g.grant_id = grant_theme.grant_id 
   LEFT JOIN trasaction_detail td ON g.grant_id = td.grant_id AND td.artist_id = ${artist_id}
   LEFT JOIN submission_details sd ON g.grant_id = sd.grant_id AND sd.artist_id = ${artist_id}
   LEFT JOIN submission_admin_review sar ON sd.id = sar.artwork_id
+GROUP BY 
+  g.grant_id, 
+  g.grant_uid, 
+  g.rank_1_price, 
+  g.rank_2_price, 
+  g.rank_3_price, 
+  g.no_of_nominations,
+  g.max_allow_submision,
+  g.venue,
+  g.for_each_amount,
+  g.nominee_price, 
+  g.grand_amount, 
+  g.submission_end_date, 
+  g.application_fees, 
+  g.created_at, 
+  g.updated_at,
+  g.min_height,
+  g.min_width,
+  g.max_height,
+  g.max_width,
+  sar.status,
+  td.artist_id,
+  sd.id
 ORDER BY 
-  g.grant_id DESC;
+  g.grant_id DESC
 `;
 
   if (isAll == undefined) {
     offset = (page_no - 1) * record_per_page;
     query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
   }
-  console.log("get all grant query", artist_id);
+
+  console.log("query get all", query);
+
   try {
     pool.query(query, async (err, result) => {
-      // console.log(`err: ${err}`);
-      // console.log(`result:`, result);
+      console.log(`err: ${err}`);
+      console.log(`result:`, result);
       if (err) {
         res.status(500).send({
           success: false,
@@ -126,11 +190,74 @@ ORDER BY
 
         const filteredResult = await Promise.all(updatedResult);
 
+        // const [grant_category, grant_themes] = await Promise.all([
+        //   !_.isEmpty(result?.rows[0]?.grant_moc) &&
+        //   result?.rows[0]?.grant_moc[0] != null
+        //     ? getMocData(result?.rows[0]?.grant_moc)
+        //     : [],
+        //   !_.isEmpty(result?.rows[0]?.grant_theme) &&
+        //   result?.rows[0]?.grant_theme[0] != null
+        //     ? getThemeData(result?.rows[0]?.grant_theme)
+        //     : [],
+        // ]);
+
+        const fetchGrantsData = async (grantsArray) => {
+          return await Promise.all(
+            grantsArray.map(async (grant) => {
+              const [grant_category, grant_themes] = await Promise.all([
+                !_.isEmpty(grant?.grant_moc) && grant?.grant_moc[0] != null
+                  ? getMocData(grant?.grant_moc)
+                  : [],
+                !_.isEmpty(grant?.grant_theme) && grant?.grant_theme[0] != null
+                  ? getThemeData(grant?.grant_theme)
+                  : [],
+              ]);
+
+              return {
+                grant_category,
+                grant_themes,
+              };
+            })
+          );
+        };
+
+        const filteredGrantResult = await fetchGrantsData(result.rows);
+
+        console.log(
+          "filtered result",
+          filteredResult?.filter((results) => results !== null)
+        );
+
+        const appendCategoryAndTheme = (grantsArray, categoryThemeArray) => {
+          const filteredData = grantsArray?.filter(
+            (results) => results !== null
+          );
+          return filteredData?.map((grant, index) => {
+            // Assuming the order of grantsArray and categoryThemeArray are the same
+            const matchingCategoryTheme = categoryThemeArray[index];
+
+            return {
+              ...grant, // Spread the original grant object
+              grant_category: matchingCategoryTheme?.grant_category || [], // Append grant_category
+              grant_themes: matchingCategoryTheme?.grant_themes || [], // Append grant_themes
+            };
+          });
+        };
+
+        const updatedAppendedResult = appendCategoryAndTheme(
+          filteredResult,
+          filteredGrantResult
+        );
+
+        console.log("updatedAppendedResult", updatedAppendedResult);
+        updatedAppendedResult?.map((res) => {
+          delete res?.grant_moc, delete res?.grant_theme;
+        });
         res.status(200).send({
           success: true,
           message: "Grants fetched successfully",
           total_count: result.rows[0]?.total_count,
-          data: filteredResult?.filter((results) => results !== null),
+          data: updatedAppendedResult,
           statusCode: 200,
         });
       }
@@ -143,4 +270,28 @@ ORDER BY
       statusCode: 500,
     });
   }
+};
+
+const getMocData = async (list) => {
+  return await Promise.all(
+    list.map(async (e) => {
+      const mocResult = await pool.query(
+        `SELECT id, medium_of_choice FROM medium_of_choice WHERE id = $1`,
+        [e]
+      );
+      return mocResult.rows[0];
+    })
+  );
+};
+
+const getThemeData = async (list) => {
+  return await Promise.all(
+    list.map(async (e) => {
+      const themeResult = await pool.query(
+        `SELECT id, theme FROM theme WHERE id = $1`,
+        [e]
+      );
+      return themeResult.rows[0];
+    })
+  );
 };
