@@ -33,6 +33,10 @@ exports.getAllArtistController = async (req, res) => {
       offset = (page_no - 1) * record_per_page;
       query += ` ORDER BY artist_id DESC LIMIT ${record_per_page} OFFSET ${offset}`;
     }
+    if (isAll === "true") {
+      query += ` ORDER BY artist_id DESC`;
+    }
+
     if (search === undefined && kyc !== undefined) {
       query += ` WHERE is_kyc_verified = '1' ORDER BY artist_id DESC`;
     }
