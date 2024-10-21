@@ -7,6 +7,8 @@ const { fileUpload } = require("../../utils/fileUpload");
 const formidable = require("formidable");
 const { getGrantSubmittedDetails } = require("./getSubmitGrantDetail");
 const { query } = require("express");
+const sgMail = require("@sendgrid/mail");
+require("dotenv").config();
 
 exports.submitGrantController = async (req, res) => {
   // console.log(`req.body: ${JSON.stringify()}`)
@@ -66,9 +68,9 @@ exports.submitGrantController = async (req, res) => {
         totalCount?.count ===
         submitGrantValidationResult?.rows[0]?.max_allow_submision
       ) {
-        console.log(
-          "The maximum allowed submissions have been completed. No further submissions are accepted at this time."
-        );
+        // console.log(
+        //   "The maximum allowed submissions have been completed. No further submissions are accepted at this time."
+        // );
         res.status(500).send({
           success: false,
           message:
@@ -83,7 +85,7 @@ exports.submitGrantController = async (req, res) => {
         //     submitGrantValidationResult.rows[0].submission_end_date < date
         //   }`
         // );
-        console.log("Grant Submission date is passed.");
+        // console.log("Grant Submission date is passed.");
         res.status(500).send({
           success: false,
           message: "Grant Submission date is passed.",
@@ -140,7 +142,7 @@ exports.submitGrantController = async (req, res) => {
               pool.query(query, async (err, result) => {
                 // console.log(`insert error: ${err}`);
                 if (err) {
-                  console.log(`insert error: ${err}`);
+                  // console.log(`insert error: ${err}`);
                   // console.log(`insert result: ${result}`);
                   res.status(500).send({
                     success: false,
@@ -176,6 +178,52 @@ exports.submitGrantController = async (req, res) => {
                     message: "Artwork Submitted Successfully.",
                     statusCode: 200,
                   });
+
+                  const grantUidQuery = `SELECT grant_uid from grants where grant_id=${grant_id}`;
+
+                  const artistInfoQuery = `SELECT fname, lname, email from artist where artist_id=${artist_id}`;
+
+                  const grantUidQueryExecute = await pool.query(grantUidQuery);
+                  const artistInfoQueryExecute = await pool.query(
+                    artistInfoQuery
+                  );
+
+                  const API_KEY = process.env.SENDGRID_API_KEY;
+
+                  sgMail.setApiKey(API_KEY);
+                  const message = {
+                    to: "shweta.leocan@gmail.com",
+                    from: {
+                      name: "Mazda Art",
+                      email: "bhavya.leocan@gmail.com",
+                    },
+                    // subject: "Artwork Submission Received - Mazda Art",
+                    // text: `Your artwork submission has been received!`,
+                    // html: `
+                    //   <h1>Thank You!</h1>
+                    //   <p>We are excited to inform you that your artwork submission has been successfully received by the Mazda Art team!</p>
+                    //   <p>Your creative expression is highly valued, and we can’t wait to review it. Whether you're looking to showcase your talent or gain exposure, Mazda Art is here to support you in every way.</p>
+                    //   <p>If you have any questions or need assistance, please don't hesitate to get in touch.</p>
+                    //   <p>We’re looking forward to seeing your contribution and sharing it with the world!</p>
+                    //   <br/>
+                    //   <p>Best regards,</p>
+                    //   <p><strong>Mazda Art Team</strong></p>
+                    // `,
+                    templateId: "d-157dcd2e235741d4ae38bc1461f60882",
+                    dynamicTemplateData: {
+                      grant_id: grantUidQueryExecute?.rows[0]?.grant_uid,
+                      name: `${artistInfoQueryExecute?.rows[0]?.fname} ${artistInfoQueryExecute?.rows[0]?.lname}`,
+                    },
+                  };
+
+                  sgMail
+                    .send(message)
+                    .then(() => {
+                      console.log("Email sent");
+                    })
+                    .catch((error) => {
+                      console.error("Error sending email:", error);
+                    });
                 }
               });
             } else {
@@ -192,7 +240,7 @@ exports.submitGrantController = async (req, res) => {
             //   res,
             //   req
             // );
-            console.log("error", err);
+            // console.log("error", err);
             res.status(500).send({
               success: false,
               message:
@@ -210,7 +258,7 @@ exports.submitGrantController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(`error: ${error}`);
+    // console.log(`error: ${error}`);
     res.status(500).send({
       success: false,
       message: somethingWentWrong,
