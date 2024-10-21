@@ -151,37 +151,26 @@ exports.verifyOtpController = async (req, res) => {
           delete result?.rows[0]?.updated_at;
           delete result?.rows[0]?.is_kyc_verified;
 
-          const API_KEY = process.env.SENDGRID_API_KEY;
+          // const API_KEY = process.env.SENDGRID_API_KEY;
 
-          sgMail.setApiKey(API_KEY);
-          const message = {
-            to: "shweta.leocan@gmail.com",
-            from: { name: "Mazda Art", email: "bhavya.leocan@gmail.com" },
-            // subject: "Welcome to Mazda Art!",
-            // text: `Dear ${result?.rows[0]?.fname} ${result?.rows[0]?.lname},\n\nWelcome to the Mazda Art community! We are thrilled to have you on board. We hope you enjoy being part of our journey and look forward to seeing the amazing creations you'll bring to life.\n\nIf you ever need assistance or just want to connect, feel free to reach out. Let's make art that inspires!\n\nWarm regards,\nMazda Art Team`,
-            // html: `
-            //   <h1>Welcome to Mazda Art, ${result?.rows[0]?.fname} ${result?.rows[0]?.lname}!</h1>
-            //   <p>We are absolutely delighted to have you join our artistic community! At Mazda Art, we believe in the power of creativity and expression, and we’re excited to see how you’ll contribute to our shared vision.</p>
-            //   <p>Whether you're looking for inspiration, collaboration, or simply want to explore, we're here to support your journey every step of the way. If you need any help or have any questions, don’t hesitate to reach out.</p>
-            //   <p>Let’s create something extraordinary together!</p>
-            //   <br/>
-            //   <p>Warm regards,</p>
-            //   <p><strong>Mazda Art Team</strong></p>
-            // `,
-            templateId: "d-fefb690939134bc485e443f5e8d3f3da",
-            dynamicTemplateData: {
-              name: `${result?.rows[0]?.fname} ${result?.rows[0]?.lname}`,
-            },
-          };
+          // sgMail.setApiKey(API_KEY);
+          // const message = {
+          //   to: "shweta.leocan@gmail.com",
+          //   from: { name: "Mazda Art", email: "bhavya.leocan@gmail.com" },
+          //   templateId: "d-fefb690939134bc485e443f5e8d3f3da",
+          //   dynamicTemplateData: {
+          //     name: `${result?.rows[0]?.fname} ${result?.rows[0]?.lname}`,
+          //   },
+          // };
 
-          sgMail
-            .send(message)
-            .then(() => {
-              console.log("Email sent");
-            })
-            .catch((error) => {
-              console.error("Error sending email:", error);
-            });
+          // sgMail
+          //   .send(message)
+          //   .then(() => {
+          //     console.log("Email sent");
+          //   })
+          //   .catch((error) => {
+          //     console.error("Error sending email:", error);
+          //   });
 
           res.status(200).json({
             success: true,
