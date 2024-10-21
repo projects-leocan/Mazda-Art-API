@@ -64,7 +64,7 @@ exports.addTransactionController = async (req, res) => {
 
         sgMail.setApiKey(API_KEY);
         const message = {
-          to: "shweta.leocan@gmail.com",
+          to: transaction_detail?.rows[0]?.email,
           from: { name: "Mazda Art", email: "bhavya.leocan@gmail.com" },
           // subject: "Payment Successful - Welcome to Mazda Art!",
           // text: `Your payment was successful!`,

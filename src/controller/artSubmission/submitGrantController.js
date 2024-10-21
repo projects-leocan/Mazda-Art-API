@@ -192,7 +192,7 @@ exports.submitGrantController = async (req, res) => {
 
                   sgMail.setApiKey(API_KEY);
                   const message = {
-                    to: "shweta.leocan@gmail.com",
+                    to: artistInfoQueryExecute?.rows[0]?.email,
                     from: {
                       name: "Mazda Art",
                       email: "bhavya.leocan@gmail.com",
