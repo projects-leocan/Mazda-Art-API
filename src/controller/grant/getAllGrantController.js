@@ -155,7 +155,7 @@ ORDER BY
           const submitGrantCountResult = await pool.query(
             submitGrantCountQuery
           );
-          const totalCount = submitGrantCountResult?.rows[0];
+          const totalCount = submitGrantCountResult?.rows[0]?.count;
 
           const grantWinnerStatus = await pool.query(grantWinnerStatusQuery);
 
@@ -187,7 +187,6 @@ ORDER BY
         updatedResult.map((e) => {
           if (e.total_count != undefined) delete e.total_count;
         });
-
         const filteredResult = await Promise.all(updatedResult);
 
         // const [grant_category, grant_themes] = await Promise.all([
@@ -247,6 +246,7 @@ ORDER BY
         updatedAppendedResult?.map((res) => {
           delete res?.grant_moc, delete res?.grant_theme;
         });
+
         res.status(200).send({
           success: true,
           message: "Grants fetched successfully",
