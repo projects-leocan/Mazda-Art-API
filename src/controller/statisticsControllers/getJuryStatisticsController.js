@@ -16,11 +16,10 @@ exports.getJuryStatisticsController = async (req, res) => {
   const { admin_id } = req.query;
   try {
     const query = `SELECT id, full_name from jury`;
-    console.log("query", query);
 
     pool.query(query, async (err, result) => {
-      console.log(`result:`, result);
-      console.log(`error: ${err}`);
+      // console.log(`result:`, result);
+      // console.log(`error: ${err}`);
       if (err) {
         return res.status(500).send({
           success: false,
@@ -38,14 +37,12 @@ exports.getJuryStatisticsController = async (req, res) => {
         } else {
           const getJuryStats = await Promise.all(
             result.rows.map(async (e) => {
-              console.log("e", e);
               const juryStatsQuery = `SELECT
                         (SELECT Count(*) from grant_assign where jury_id = ${e.id}) as total_grant_assign,
                         (SELECT Count(*) from submission_review_details where jury_id = ${e.id} AND (status = ${submitted} OR status = ${in_review} )) as total_grant_pending,
                         (SELECT Count(*) from submission_review_details where jury_id = ${e.id} AND (status = ${rejected} OR status = ${grant_winner} OR status = ${nominated})) as total_grant_completed`;
               const juryStats = await pool.query(juryStatsQuery);
-              console.log("jurystates query", juryStatsQuery);
-              console.log("juryStats", juryStats);
+
               return {
                 ...juryStats.rows[0],
                 jury_id: e.id,
