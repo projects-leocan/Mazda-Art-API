@@ -1,16 +1,19 @@
 # Mazda-art-API
+
 Mazda Art apis.
 
 ---
+
 ## Requirements
 
 For development, you will only need Node.js and a node global package, Yarn, installed in your environement.
 
 ### Node
+
 - #### Node installation on Windows
 
   Just go on [official Node.js website](https://nodejs.org/) and download the installer.
-Also, be sure to have `git` available in your PATH, `npm` might need it (You can find git [here](https://git-scm.com/)).
+  Also, be sure to have `git` available in your PATH, `npm` might need it (You can find git [here](https://git-scm.com/)).
 
 - #### Node installation on Ubuntu
 
@@ -35,8 +38,10 @@ If you need to update `npm`, you can make it using `npm`! Cool right? After runn
     $ npm install npm -g
 
 ###
+
 ### Yarn installation
-  After installing node, this project will need yarn too, so just run the following command.
+
+After installing node, this project will need yarn too, so just run the following command.
 
       $ npm install -g yarn
 
@@ -65,45 +70,55 @@ Open `a/nice/path/to/a.file` then edit it with your settings. You will need:
     $ yarn build
 
 ## Install Postman for Debugging
+
 Install Postman (https://www.getpostman.com/). Signing up for an account is not necessary, you can go straight to the app.
 
 ### Importing the collection
-In the top left corner is an *import* button. Either drag the `Altinn.postman_collection.json` file from `postman-examples/Collection` into the window or click *choose files* and select it.
+
+In the top left corner is an _import_ button. Either drag the `Altinn.postman_collection.json` file from `postman-examples/Collection` into the window or click _choose files_ and select it.
 
 ### Importing the environments
-In the top right corner there is a button with a cog wheel called *manage environments*. Click it, then click the *import* button, then click *choose files*. Select all the json-files in `postman-examples/environments/` and click *open*.
+
+In the top right corner there is a button with a cog wheel called _manage environments_. Click it, then click the _import_ button, then click _choose files_. Select all the json-files in `postman-examples/environments/` and click _open_.
 
 For more information, go to https://altinn.github.io/docs/api/rest/
 
 ### Using enterprise certificate authentication
-When using [authentication with enterprise certificates](https://altinn.github.io/docs/api/rest/kom-i-gang/) (link in norwegian only), you must configure a [client certificate in Postman](https://learning.getpostman.com/docs/postman/sending-api-requests/certificates/). For testing in dev environment without TLS-termination, you must supply the certificate in Base64 PEM format (without BEGIN/END headers) in a HTTP header named `X-ENV-SSL_CLIENT_CERTIFICATE` for authorization to take place. 
+
+When using [authentication with enterprise certificates](https://altinn.github.io/docs/api/rest/kom-i-gang/) (link in norwegian only), you must configure a [client certificate in Postman](https://learning.getpostman.com/docs/postman/sending-api-requests/certificates/). For testing in dev environment without TLS-termination, you must supply the certificate in Base64 PEM format (without BEGIN/END headers) in a HTTP header named `X-ENV-SSL_CLIENT_CERTIFICATE` for authorization to take place.
 
 For all non-dev environments, all requests must include the query parameter `ForceEIAuthentication` in order for TLS client authentication to take place. This is already included in all service owner operations.
 
 ### Using Bearer token authentication
+
 When using [authentication with Maskinporten](https://altinn.github.io/docs/api/rest/kom-i-gang/) (link in norwegian only), you must configure the requests in postman for [Bearer token](https://learning.postman.com/docs/sending-requests/authorization/#bearer-token).
 This can also be combined with the [MaskinportenTokenGenerator](https://github.com/Altinn/MaskinportenTokenGenerator) utility, which can be used to retrieve and set the bearer token on the request through a [pre-request script](https://github.com/Altinn/MaskinportenTokenGenerator#postman-integration).
 
 ## Postgres Database configuration
+
 PostgreSQL Installation Guide
 Prerequisites
 Before you begin, ensure you have the following:
 
 # Administrative access to your system.
+
 An internet connection to download PostgreSQL packages.
 Installation
 Windows
 Download PostgreSQL Installer:
 
 # Visit the PostgreSQL download page.
+
 Download the installer for your version of Windows.
 Run the Installer:
 
 # Open the downloaded installer file.
+
 Follow the prompts to complete the installation. You will be asked to set a password for the PostgreSQL superuser (postgres).
 Environment Variables (Optional):
 
 # Add the PostgreSQL bin directory to your PATH environment variable to use psql and other PostgreSQL tools from the command line.
+
 macOS
 Using Homebrew:
 
@@ -138,6 +153,7 @@ pg_ctl -D /usr/local/var/postgres start
 ```
 
 # Linux
+
 Ubuntu/Debian
 Add PostgreSQL APT Repository:
 
@@ -187,7 +203,6 @@ sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-$(
 sudo yum install -y epel-release yum-utils
 ```
 
-
 Install PostgreSQL:
 
 Run the following command to install PostgreSQL:
@@ -203,6 +218,7 @@ Initialize the database:
 ```
 sudo /usr/pgsql-13/bin/postgresql-13-setup initdb
 ```
+
 Start the PostgreSQL service:
 
 ```
@@ -210,6 +226,7 @@ sudo systemctl start postgresql-13
 ```
 
 ## Basic Usage
+
 Accessing PostgreSQL
 Open PostgreSQL Command Line:
 
@@ -230,9 +247,10 @@ Connect to the New Database:
 ```
 
 Run the following command to connect to your new database:
+
 ```
 \c mydatabase
-````
+```
 
 # Create a New Table:
 
@@ -245,16 +263,17 @@ CREATE TABLE mytable (
 );
 ```
 
-
 # Insert Data into the Table:
 
 Run the following SQL command to insert data:
+
 ```
 INSERT INTO mytable (name) VALUES ('Alice'), ('Bob');
 Query the Table:
 ```
 
 Run the following SQL command to query the table:
+
 ```
 SELECT * FROM mytable;
 Additional Resources
@@ -346,7 +365,7 @@ Check that you have the pg_stat_statements extension installed
 If you dnn't obtain any result, then issue the following command:
 
 ```
-postgres=# CREATE EXTENSION pg_stat_statements; 
+postgres=# CREATE EXTENSION pg_stat_statements;
 postgres=# ALTER SYSTEM
           SET shared_preload_libraries = 'pg_stat_statements';
 ```
@@ -356,39 +375,39 @@ Then, restart the server
 You can get the top ten highest workloads on your server side by executing the following:
 
 ```
-postgres=# SELECT calls, total_time, query FROM pg_stat_statements 
+postgres=# SELECT calls, total_time, query FROM pg_stat_statements
            ORDER BY total_time DESC LIMIT 10;
 ```
 
 There are many additional columns that are useful in tracking down further information about particular entries
 
 ```
-postgres=# \d pg_stat_statements 
-          View "public.pg_stat_statements" 
-       Column        |       Type       | Modifiers  
----------------------+------------------+----------- 
- userid              | oid              |  
- dbid                | oid              |  
- queryid             | bigint           |  
- query               | text             |  
- calls               | bigint           |  
- total_time          | double precision |  
- min_time            | double precision |  
- max_time            | double precision |  
- mean_time           | double precision |  
- stddev_time         | double precision |  
- rows                | bigint           |  
- shared_blks_hit     | bigint           |  
- shared_blks_read    | bigint           |  
- shared_blks_dirtied | bigint           |  
- shared_blks_written | bigint           |  
- local_blks_hit      | bigint           |  
- local_blks_read     | bigint           |  
- local_blks_dirtied  | bigint           |  
- local_blks_written  | bigint           |  
- temp_blks_read      | bigint           |  
- temp_blks_written   | bigint           |  
- blk_read_time       | double precision |  
+postgres=# \d pg_stat_statements
+          View "public.pg_stat_statements"
+       Column        |       Type       | Modifiers
+---------------------+------------------+-----------
+ userid              | oid              |
+ dbid                | oid              |
+ queryid             | bigint           |
+ query               | text             |
+ calls               | bigint           |
+ total_time          | double precision |
+ min_time            | double precision |
+ max_time            | double precision |
+ mean_time           | double precision |
+ stddev_time         | double precision |
+ rows                | bigint           |
+ shared_blks_hit     | bigint           |
+ shared_blks_read    | bigint           |
+ shared_blks_dirtied | bigint           |
+ shared_blks_written | bigint           |
+ local_blks_hit      | bigint           |
+ local_blks_read     | bigint           |
+ local_blks_dirtied  | bigint           |
+ local_blks_written  | bigint           |
+ temp_blks_read      | bigint           |
+ temp_blks_written   | bigint           |
+ blk_read_time       | double precision |
  blk_write_time      | double precision |
 ```
 
@@ -455,7 +474,6 @@ $ psql -U <dbuser> -d <dbname> -c "DROP SCHEMA IF EXISTS public CASCADE; CREATE 
 $ psql -d <dbname> -U <dbuser> -f <filename>.sql
 ```
 
-
 ### 13. Select random records
 
 ```
@@ -494,7 +512,6 @@ SHOW hba_file;
 SHOW config_file;
 ```
 
-
 ### 16. How to reload config settings without restarting database
 
 ```
@@ -509,13 +526,11 @@ Alternatively, you can use SQL
 SELECT pg_reload_conf();
 ```
 
-
 ### 17. Select bytea column data as string
 
 ```
 SELECT convert_from(decode(<bytea_column>, 'escape'), 'UTF-8') FROM <table_name>;
 ```
-
 
 ### 18. How to determine the PostgreSQL and PostGIS versions
 
@@ -560,7 +575,7 @@ CREATE ROLE myuser WITH LOGIN ENCRYPTED PASSWORD 'somepassword' CREATEDB;
 CREATE USER myuser WITH SUPERUSER CREATEDB LOGIN ENCRYPTED PASSWORD 'somepassword';
 ```
 
-> If `CREATEDB` is specified, the created user will be allowed to create their own databases. 
+> If `CREATEDB` is specified, the created user will be allowed to create their own databases.
 > Using `NOCREATEDB` will deny the user the ability to create databases. If not specified, `NOCREATEDB` is the default
 
 ### 20. Change PostgreSQL User Password
@@ -677,7 +692,7 @@ SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='my_s
 ```
 postgres=# \dx
                  List of installed extensions
-  Name   | Version |   Schema   |         Description          
+  Name   | Version |   Schema   |         Description
 ---------+---------+------------+------------------------------
  plpgsql | 1.0     | pg_catalog | PL/pgSQL procedural language
  postgis | 2.4.4   | postgis    | PostGIS geometry, geography, and raster spatial types and functions
@@ -689,7 +704,7 @@ To get more details,
 ```
 postgres=# \dx+ plpgsql
       Objects in extension "plpgsql"
-            Object Description             
+            Object Description
 -------------------------------------------
  function plpgsql_call_handler()
  function plpgsql_inline_handler(internal)
@@ -771,7 +786,7 @@ WITH TEMPLATE <name-of-db-to-be-copied>
 OWNER <db-owner>;
 ```
 
-If the database to be copied is being accessed by any user, all connections to it may have to be terminated before 
+If the database to be copied is being accessed by any user, all connections to it may have to be terminated before
 you can create a copy of that database. You can achieve this with:
 
 ```
@@ -813,7 +828,7 @@ ALTER DATABASE <current-db-name> RENAME TO <new-db-name>;
 ### 35. Get a user's privileges
 
 ```
-SELECT rolname, rolsuper, rolcreaterole, rolcreatedb FROM pg_roles WHERE rolname = '<role>'; 
+SELECT rolname, rolsuper, rolcreaterole, rolcreatedb FROM pg_roles WHERE rolname = '<role>';
 ```
 
 ### 36. Get the list of all tables in the database and their sizes
@@ -832,3 +847,28 @@ WHERE
 ORDER BY
   pg_total_relation_size(C.oid) DESC;
 ```
+
+## Payment Integration Steps
+
+1. **Customer Initiates Payment**: The customer clicks the "Pay" button on the frontend.
+2. **Create Order on Backend**: The backend API creates an order using Razorpay’s `createOrder` API.
+3. **Send Order ID to Frontend**: The backend returns the generated `order_id` to the frontend.
+4. **Customer Fills Razorpay Checkout Form**: The customer enters their payment details using Razorpay’s prefilled form.
+5. **Razorpay Verifies Payment Details**: Razorpay checks the payment information.
+6. **Payment Successful**: If the payment is successful, Razorpay sends the `payment_id` and `signature` to the frontend.
+7. **Send Payment Response to Backend**: The frontend sends the `order_id`, `payment_id`, and `signature` to the backend.
+8. **Backend Verifies Payment Signature**: The backend verifies the payment by checking the signature using Razorpay’s API.
+9. **Payment Confirmed**: Once verified, the payment is confirmed, and the customer receives a confirmation message.
+
+## OTP Verification Steps
+
+10. **Generate OTP**: When the customer initiates a payment or signs up, the backend generates a One-Time Password (OTP).
+11. **Send OTP via SMS**: The backend uses Twilio’s API to send the OTP to the customer’s mobile number.
+12. **Customer Enters OTP**: The customer receives the OTP and enters it on the frontend.
+13. **Verify OTP**: The frontend sends the entered OTP to the backend for verification.
+14. **Backend Confirms OTP**: The backend verifies the OTP and confirms the customer's identity.
+
+## Email Notification Steps
+
+15. **Send Confirmation Email**: After the payment is confirmed, the backend uses SendGrid’s API to send a confirmation email to the customer.
+16. **Email Notification**: The customer receives an email notification with the payment details and confirmation.
