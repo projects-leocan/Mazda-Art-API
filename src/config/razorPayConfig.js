@@ -1,6 +1,6 @@
 const Razorpay = require("razorpay");
 
 module.exports = {
-  'key_id': "YOUR_KEY_ID",
-  'key_secret': "YOUR_KEY_SECRET",
+  'key_id': rzp_test_Yr7EjcTwzkfKkn,
+  'key_secret': cPUFzCOM0NE1kwlLdAEzGy0M,
 };
