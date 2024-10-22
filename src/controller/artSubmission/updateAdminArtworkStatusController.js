@@ -116,7 +116,7 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
           } `;
 
           const message = {
-            to: artistNameQueryExecute?.rows[0]?.lname,
+            to: artistNameQueryExecute?.rows[0]?.email,
             from: {
               name: "Mazda Art",
               email: "bhavya.leocan@gmail.com",
