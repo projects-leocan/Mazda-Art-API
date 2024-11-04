@@ -1,5 +1,6 @@
 const pool = require("../../config/db");
 const { passwordHashing } = require("../../constants/passwordHashing");
+const bcrypt = require("bcrypt");
 
 exports.updateAdminController = async (req, res) => {
   const {
@@ -42,8 +43,31 @@ exports.updateAdminController = async (req, res) => {
     query += `, admin_address='${admin_address}'`;
   }
   if (admin_password != undefined && admin_password != "") {
-    const hashedPassword = await passwordHashing(admin_password);
-    query += `, admin_password='${hashedPassword}'`;
+    const fetchPasswordQuery = `SELECT admin_password FROM admin WHERE admin_id = ${admin_id}`;
+    const currentPasswordHashResult = await pool.query(fetchPasswordQuery);
+    // console.log("fetchPasswordQuery", fetchPasswordQuery);
+    if (currentPasswordHashResult.rows.length > 0) {
+      const currentPasswordHash =
+        currentPasswordHashResult.rows[0].admin_password;
+      const isSamePassword = await bcrypt.compare(
+        admin_password,
+        currentPasswordHash
+      );
+
+      if (isSamePassword) {
+        return res.status(400).send({
+          success: false,
+          message: "You cannot set the current password as the new password.",
+          statusCode: 400,
+        });
+      } else {
+        // Hash the new password
+        // const hashedPassword = await passwordHashing(password);
+        // query += `, password='${hashedPassword}'`;
+        const hashedPassword = await passwordHashing(admin_password);
+        query += `, admin_password='${hashedPassword}'`;
+      }
+    }
   }
   query += ` WHERE admin_id=${admin_id}`;
   // console.log("query: ", query);

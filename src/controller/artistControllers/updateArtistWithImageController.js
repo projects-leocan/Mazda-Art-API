@@ -250,8 +250,15 @@ exports.updateArtistWithImageController = (req, res) => {
         });
       } catch (error) {
         await client.query("ROLLBACK");
-        // console.error(error);
-        res.status(500).send({ success: false, message: somethingWentWrong });
+        if (error.detail === `Key (email)=(${email}) already exists.`) {
+          res.status(500).send({
+            success: false,
+            message: `${email} is already exists.`,
+            statusCode: 500,
+          });
+        } else {
+          res.status(500).send({ success: false, message: somethingWentWrong });
+        }
       } finally {
         client.release();
       }

@@ -1,16 +1,25 @@
 const pool = require("../../config/db");
 
 exports.finalAggregateRatingsController = async (req, res) => {
-  let { grant_id } = req.query;
+  let { grant_id, artwork_id } = req.query;
+  // console.log("req ", req.query);
 
   if (grant_id !== undefined) {
-    let query = `SELECT j.id, j.full_name FROM jury j, grant_assign g, grants ga WHERE j.id = g.jury_id AND ga.grant_id = g.grant_id AND g.grant_id = ${grant_id}`;
+    let query = `SELECT jd.*, sd.*, jury.full_name, submission_details.art_title FROM 
+    (SELECT jury_id FROM grant_assign WHERE grant_id=${grant_id}) AS jd
+    LEFT JOIN (SELECT * FROM submission_review_details WHERE artwork_id = ${artwork_id}) AS sd
+    ON sd.jury_id = jd.jury_id
+    LEFT JOIN jury
+    ON jury.id = jd.jury_id
+    LEFT JOIN submission_details
+    ON submission_details.id = sd.artwork_id;`;
 
     pool.query(query, async (err, result) => {
-      console.log("query", query);
-      console.log("result", result);
+      // console.log("query", query);
+      // console.log("result", result);
 
       if (err) {
+        // console.log("err in final ", err);
         res.status(500).send({
           success: false,
           message: err,
