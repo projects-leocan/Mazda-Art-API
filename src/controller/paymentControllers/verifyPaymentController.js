@@ -18,6 +18,7 @@ exports.verifyPaymentController = async (req, res) => {
       artist_id,
       grant_id,
       transaction_amount,
+      payment_init_date,
     } = req.body;
 
     const instance = new Razorpay({
@@ -34,9 +35,10 @@ exports.verifyPaymentController = async (req, res) => {
     if (signature === expectedSignature) {
       const query = `INSERT INTO trasaction_detail(
         artist_id, grant_id, trasaction_id, payment_init_date, trasaction_status, trasaction_amount, payment_success_date, order_id, signature)
-        VALUES (${artist_id}, ${grant_id}, '${payment_id}', CURRENT_TIMESTAMP, 'SUCCESS', '${transaction_amount}', CURRENT_TIMESTAMP + INTERVAL '30 seconds', '${order_id}', '${signature}') RETURNING id, trasaction_id`;
+        VALUES (${artist_id}, ${grant_id}, '${payment_id}', '${payment_init_date}', 'SUCCESS', '${transaction_amount}', CURRENT_TIMESTAMP, '${order_id}', '${signature}') RETURNING id, trasaction_id`;
 
       pool.query(query, async (error, result) => {
+        // console.log("error", error);
         if (error) {
           return res.status(500).send({
             success: false,
