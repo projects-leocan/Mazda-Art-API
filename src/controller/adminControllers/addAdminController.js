@@ -34,7 +34,6 @@ exports.addAdminController = async (req, res) => {
       hashedPassword,
       admin_contact,
       admin_address,
-      CURRENT_TIMESTAMP,
     ];
 
     const checkQuery = `SELECT * FROM admin WHERE admin_contact = $1`;
@@ -43,6 +42,7 @@ exports.addAdminController = async (req, res) => {
     pool.query(checkQuery, values, async (checkErr, checkResult) => {
       if (checkErr) {
         // Handle error from check query
+        // console.log("check err", checkErr);
         return res.status(500).send({
           success: false,
           message: somethingWentWrong,
@@ -59,7 +59,8 @@ exports.addAdminController = async (req, res) => {
         });
       }
 
-      const query = `INSERT INTO admin (admin_name, admin_email, admin_password, admin_contact, admin_address, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING admin_id`;
+      const query = `INSERT INTO admin (admin_name, admin_email, admin_password, admin_contact, admin_address, created_at) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP) RETURNING admin_id`;
+
       pool.query(query, data, async (err, result) => {
         // console.log(`err: ${err}`);
         // console.log(`result: ${JSON.stringify(result)}`);
@@ -68,6 +69,8 @@ exports.addAdminController = async (req, res) => {
           if (
             err.detail === `Key (admin_email)=(${admin_email}) already exists.`
           ) {
+            // console.log("check err", err);
+
             res.status(500).send({
               success: false,
               message:
@@ -86,6 +89,8 @@ exports.addAdminController = async (req, res) => {
           const newQuery = `SELECT * FROM admin WHERE admin_id = ${result.rows[0]?.admin_id}`;
           pool.query(newQuery, async (newErr, newResult) => {
             if (newErr) {
+              // console.log("newErr", newErr);
+
               res.status(500).send({
                 success: false,
                 message: "Something went wrong",
@@ -104,6 +109,7 @@ exports.addAdminController = async (req, res) => {
       });
     });
   } catch (error) {
+    // console.log("error", error);
     res.status(500).send({
       success: false,
       message: "Something went wrong",
