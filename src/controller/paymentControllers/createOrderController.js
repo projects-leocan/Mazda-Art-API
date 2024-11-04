@@ -16,6 +16,8 @@ exports.createOrderController = async (req, res) => {
     };
 
     const order = await instance.orders.create(option);
+    // const order = await instance.escrow.create(option);
+
     res.json({
       success: true,
       order_id: order.id,
@@ -23,7 +25,7 @@ exports.createOrderController = async (req, res) => {
       amount: order.amount,
     });
   } catch (error) {
-    // console.log("error", error);
+    console.log("error", error);
     res.status(500).json({ message: error });
   }
 };
