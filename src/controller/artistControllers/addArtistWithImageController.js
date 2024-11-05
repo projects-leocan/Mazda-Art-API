@@ -217,7 +217,10 @@ exports.addArtistWithImageController = (req, res) => {
         sgMail.setApiKey(API_KEY);
         const message = {
           to: email,
-          from: { name: "Mazda Art", email: "bhavya.leocan@gmail.com" },
+          from: {
+            name: process.env.SENDGRID_EMAIL_NAME,
+            email: process.env.FROM_EMAIL,
+          },
           // subject: "Welcome to Mazda Art!",
           // text: `Dear ${result?.rows[0]?.fname} ${result?.rows[0]?.lname},\n\nWelcome to the Mazda Art community! We are thrilled to have you on board. We hope you enjoy being part of our journey and look forward to seeing the amazing creations you'll bring to life.\n\nIf you ever need assistance or just want to connect, feel free to reach out. Let's make art that inspires!\n\nWarm regards,\nMazda Art Team`,
           // html: `
@@ -229,7 +232,7 @@ exports.addArtistWithImageController = (req, res) => {
           //   <p>Warm regards,</p>
           //   <p><strong>Mazda Art Team</strong></p>
           // `,
-          templateId: "d-fefb690939134bc485e443f5e8d3f3da",
+          templateId: process.env.WELCOME_TEMPLATE_ID,
           dynamicTemplateData: {
             name: `${fname} ${lname}`,
           },

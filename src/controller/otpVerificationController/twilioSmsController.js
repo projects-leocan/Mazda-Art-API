@@ -2,14 +2,14 @@ const twilio = require("twilio");
 const twilioConfig = require("../../config/twilioConfig");
 const pool = require("../../config/db");
 const { somethingWentWrong } = require("../../constants/messages");
+require("dotenv").config();
 
-const accountSid = twilioConfig.TWILIO_ACCOUNT_SID;
-const authToken = twilioConfig.TWILIO_AUTH_TOKEN;
-const twilioPhoneNumber = twilioConfig.TWILIO_PHONE_NUMBER;
-const twilioServiceId = twilioConfig.TWILIO_SERVICE_SID;
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
+const twilioServiceId = process.env.TWILIO_SERVICE_SID;
 
 const client = twilio(accountSid, authToken);
-require("dotenv").config();
 
 exports.sendOtpController = async (req, res) => {
   const { phoneNumber } = req.body;
@@ -59,6 +59,7 @@ exports.sendOtpController = async (req, res) => {
   //     });
   //   });
   const findArtistQuery = `SELECT * FROM artist WHERE mobile_number = '${phoneNumber}'`;
+  console.log("find query", findArtistQuery);
   pool.query(findArtistQuery, async (error, result) => {
     if (result.rows.length === 0) {
       res.status(404).send({

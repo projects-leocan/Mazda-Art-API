@@ -84,8 +84,11 @@ exports.verifyPaymentController = async (req, res) => {
             sgMail.setApiKey(API_KEY);
             const message = {
               to: transaction_detail?.rows[0]?.email,
-              from: { name: "Mazda Art", email: "bhavya.leocan@gmail.com" },
-              templateId: "d-e9afaa56d98149908a661a31c6eeb5e8",
+              from: {
+                name: process.env.SENDGRID_EMAIL_NAME,
+                email: process.env.FROM_EMAIL,
+              },
+              templateId: process.env.PAYMENT_TEMPLATE_ID,
               dynamicTemplateData: {
                 name: `${transaction_detail?.rows[0]?.fname} ${transaction_detail?.rows[0]?.lname}`,
                 grant_id: transaction_detail?.rows[0]?.grant_uid,

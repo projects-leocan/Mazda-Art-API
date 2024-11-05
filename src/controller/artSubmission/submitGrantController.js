@@ -194,8 +194,8 @@ exports.submitGrantController = async (req, res) => {
                   const message = {
                     to: artistInfoQueryExecute?.rows[0]?.email,
                     from: {
-                      name: "Mazda Art",
-                      email: "bhavya.leocan@gmail.com",
+                      name: process.env.SENDGRID_EMAIL_NAME,
+                      email: process.env.FROM_EMAIL,
                     },
                     // subject: "Artwork Submission Received - Mazda Art",
                     // text: `Your artwork submission has been received!`,
@@ -209,7 +209,7 @@ exports.submitGrantController = async (req, res) => {
                     //   <p>Best regards,</p>
                     //   <p><strong>Mazda Art Team</strong></p>
                     // `,
-                    templateId: "d-157dcd2e235741d4ae38bc1461f60882",
+                    templateId: process.env.ARTWORK_SUBMIT_TEMPLATE_ID,
                     dynamicTemplateData: {
                       grant_id: grantUidQueryExecute?.rows[0]?.grant_uid,
                       name: `${artistInfoQueryExecute?.rows[0]?.fname} ${artistInfoQueryExecute?.rows[0]?.lname}`,

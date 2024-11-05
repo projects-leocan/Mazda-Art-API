@@ -118,8 +118,8 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
           const message = {
             to: artistNameQueryExecute?.rows[0]?.email,
             from: {
-              name: "Mazda Art",
-              email: "bhavya.leocan@gmail.com",
+              name: process.env.SENDGRID_EMAIL_NAME,
+              email: process.env.FROM_EMAIL,
             },
             // subject: `Artwork Submission Status Update: ${
             //   status === "1"
@@ -181,7 +181,7 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
             //   <p>Best regards,</p>
             //   <p><strong>Mazda Art Team</strong></p>
             // `,
-            templateId: "d-c1ccd4a2619744a5a7b3b8be4cdda9a5",
+            templateId: process.env.ARTWORK_STATUS_CHANGE_TEMPLATE_ID,
             dynamicTemplateData: {
               status: artwork_status,
               name: `${artistNameQueryExecute?.rows[0]?.fname} ${artistNameQueryExecute?.rows[0]?.lname}`,
