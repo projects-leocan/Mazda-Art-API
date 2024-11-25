@@ -10,7 +10,7 @@ exports.getGrantJuryMappingDetailsController = async (req, res) => {
   let { grant_id, admin_id } = req.query;
 
   try {
-    let query = `SELECT j.id, j.full_name, j.email, j.contact_no, j.designation, ga.grant_uid,ga.created_at as grant_created_at, g.created_at as jury_onboard_date, g.grant_id, g.created_at FROM jury j, grant_assign g, grants ga
+    let query = `SELECT g.id as grant_map_id, j.id, j.full_name, j.email, j.contact_no, j.designation, ga.grant_uid,ga.created_at as grant_created_at, g.created_at as jury_onboard_date, g.grant_id, g.created_at FROM jury j, grant_assign g, grants ga
 WHERE j.id = g.jury_id AND ga.grant_id = g.grant_id AND g.grant_id = ${grant_id}`;
 
     pool.query(query, async (err, result) => {

@@ -299,6 +299,9 @@ const {
 const {
   totalGrantController,
 } = require("../controller/grant/totalGrantController");
+const {
+  unmapGrantToJuryController,
+} = require("../controller/grantMapping/unmapGrantToJuryController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -702,6 +705,8 @@ module.exports = (app) => {
   router.get("/finalAggregateRatings", finalAggregateRatingsController);
 
   router.get("/totalGrantAmount", totalGrantController);
+
+  router.post("/unmapGrant", unmapGrantToJuryController);
 
   router.get("/test", testController);
 

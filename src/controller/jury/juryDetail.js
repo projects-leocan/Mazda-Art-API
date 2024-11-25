@@ -65,9 +65,9 @@ exports.getJuryDetails = async (jury_id, message, res, req) => {
             delete newResult.rows[0].links;
           }
 
-          console.log("response", newResult.rows[0]);
+          // console.log("response", newResult.rows[0]);
           const response = {
-          ...newResult.rows[0],
+            ...newResult.rows[0],
             dob: getUTCdate(newResult.rows[0].dob),
             assignGrants: juryGrantsResult.rows,
             profile_pic: `${prePath}${juryProfileImagePath}${newResult.rows[0].profile_pic}`,
