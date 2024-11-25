@@ -70,12 +70,13 @@ exports.addGrantController = async (req, res) => {
   try {
     await pool.query(query, async (err, result) => {
       if (err) {
-        // console.log("new rr", err);
+        console.log("new rr", err);
         // console.log("result rows", result?.rows);
 
         res.status(500).send({
           success: false,
-          message: "Something went wrong",
+          // message: "Something went wrong",
+          message: err,
           statusCode: 500,
         });
       } else {
@@ -151,10 +152,11 @@ exports.addGrantController = async (req, res) => {
     //   //   }
     //   // });
   } catch (error) {
-    // console.log(`error: ${error}`);
+    console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
-      message: somethingWentWrong,
+      // message: somethingWentWrong,
+      message: error,
       statusCode: 500,
     });
   }
