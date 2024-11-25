@@ -254,13 +254,21 @@ exports.addArtistWithImageController = (req, res) => {
         });
       } catch (error) {
         await client.query("ROLLBACK");
-        // console.error(error);
-        res.status(500).send({ success: false, message: somethingWentWrong });
+        console.error("rollback", error);
+        if (error.detail === `Key (email)=(${email}) already exists.`) {
+          res.status(500).send({
+            success: false,
+            message: `${email} is already exists.`,
+            statusCode: 500,
+          });
+        } else {
+          res.status(500).send({ success: false, message: somethingWentWrong });
+        }
       } finally {
         client.release();
       }
     } catch (error) {
-      // console.error(error);
+      console.error("catch", error);
       res.status(500).send({ success: false, message: somethingWentWrong });
     }
   });
