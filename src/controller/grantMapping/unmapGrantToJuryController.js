@@ -11,7 +11,7 @@ exports.unmapGrantToJuryController = async (req, res) => {
         message: "Please provide grant mapping id",
       });
     } else {
-      const query = `DELETE FROM grant_assign WHERE issd = ${grant_map_id}`;
+      const query = `DELETE FROM grant_assign WHERE id = ${grant_map_id}`;
       pool.query(query, async (err, result) => {
         if (err) {
           //   console.log("err", err);
