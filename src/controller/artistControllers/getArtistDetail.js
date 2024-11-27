@@ -282,7 +282,6 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
           +finalResult.grants[0].grant_id,
         ]);
       }
-
       return res.status(200).send({
         success: true,
         message: message,
@@ -315,8 +314,20 @@ const getGrantsData = async (artist_id, req) => {
   // }
   try {
     // Fetch submitted grant data
+    // const submitted_grant_data = await pool.query(
+    //   `SELECT * FROM submission_details WHERE artist_id=${artist_id}`
+    // );
+
     const submitted_grant_data = await pool.query(
-      `SELECT * FROM submission_details WHERE artist_id=${artist_id}`
+      `SELECT sd.*, sar.status AS admin_review_status 
+        FROM 
+            submission_details sd
+        JOIN 
+            submission_admin_review sar 
+        ON 
+            sd.id = sar.artwork_id 
+        WHERE 
+            sd.artist_id = ${artist_id};`
     );
 
     if (!lodash.isEmpty(submitted_grant_data.rows)) {
@@ -332,7 +343,6 @@ const getGrantsData = async (artist_id, req) => {
         const grantData = await pool.query(
           `SELECT grant_uid FROM grants WHERE grant_id=${e.grant_id}`
         );
-
         // Check if grantData has rows and assign grant_uid
         if (!lodash.isEmpty(grantData.rows)) {
           e.grant_uid = grantData.rows[0].grant_uid; // Append the grant_uid to the current row
