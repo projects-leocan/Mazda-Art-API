@@ -22,7 +22,7 @@ exports.getAllArtistController = async (req, res) => {
       page_no = 1;
     }
     // let query = `SELECT artist_id, fname, lname, dob, gender, email, COUNT(*) OVER() AS totalArtist FROM artist Order by artist_id`;
-    let query = `SELECT artist_id, fname, lname, dob, gender, email, profile_pic, artist_portfolio, created_at, COUNT(*) OVER() AS totalArtist FROM artist`;
+    let query = `SELECT artist_id, fname, lname, dob, gender, email, mobile_number, social_media_profile_link, profile_pic, artist_portfolio, created_at, COUNT(*) OVER() AS totalArtist FROM artist`;
 
     // if (isAll) {
     //   console.log("is All ---");
