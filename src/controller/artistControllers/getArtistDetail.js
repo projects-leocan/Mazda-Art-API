@@ -226,6 +226,7 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
     } else {
       const artistPortfolioImageQuery = `SELECT artist_portfolio FROM artist_portfolio WHERE artist_id = $1`;
       const artistConversionDateQuery = `SELECT MIN(payment_success_date) AS conversion FROM trasaction_detail WHERE artist_id = $1;`;
+      const adminDetailQuery = `SELECT * FROM admin WHERE admin_id=${artistResult?.rows[0]?.last_updated_by}`;
 
       const artistPortfolioImage = await pool.query(artistPortfolioImageQuery, [
         artist_id,
@@ -235,12 +236,15 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
         artist_id,
       ]);
 
+      const adminDetail = await pool.query(adminDetailQuery);
+
       const prePath = getFileURLPreFixPath(req);
       const artistData = artistResult.rows[0];
 
       if (artistPortfolioImage.rows[0]?.artist_portfolio) {
         artistData.artist_portfolio = `${prePath}${artistPortFoliaImagePath}${artistPortfolioImage.rows[0].artist_portfolio}`;
       }
+      artistData.last_updated_by = adminDetail?.rows[0]?.admin_name;
       artistData.artist_portfolios = artistPortfolioImage.rows.map((row) => {
         return `${prePath}${artistPortFoliaImagePath}${row.artist_portfolio}`;
       });
