@@ -4,7 +4,10 @@ const { somethingWentWrong } = require("../../constants/messages");
 const { getTransactionDetails } = require("./getTransactionDetails");
 
 exports.getAllTransactionsController = async (req, res) => {
-  let { admin_id, jury_id, record_per_page, page_no, isAll } = req.query;
+  let { admin_id, jury_id, record_per_page, page_no, isAll, status } =
+    req.query;
+
+  // console.log("status", status);
 
   try {
     if (record_per_page == undefined) {
@@ -38,32 +41,54 @@ exports.getAllTransactionsController = async (req, res) => {
     //     td.payment_success_date DESC
     // `;
 
-    let query = `SELECT 
-      (SELECT COUNT(*) FROM trasaction_detail) AS total_count, 
-      td.*, 
-      g.grant_uid, 
-      a.fname, 
-      a.lname, 
-      a.email,
-      a.mobile_number,
-      a.dob, 
-      a.gender,
-      (SELECT sd.submited_time 
-       FROM submission_details sd 
-       WHERE sd.transaction_id::bigint = td.id) AS submission_date_time
-FROM 
+    let query = `SELECT`;
+
+    if (status === "undefined" || status === "isAll") {
+      console.log("status inside", status);
+      query += ` (SELECT COUNT(*) FROM trasaction_detail) AS total_count,`;
+    } else {
+      query += ` (SELECT COUNT(*) FROM trasaction_detail WHERE trasaction_status = ${
+        status === "success" ? "'SUCCESS'" : "'FAILED'"
+      } ) AS total_count,`;
+    }
+
+    query += ` td.*, 
+    g.grant_uid, 
+    a.fname, 
+    a.lname, 
+    a.email,
+    a.mobile_number,
+    a.dob, 
+    a.gender,
+    (SELECT sd.submited_time 
+     FROM submission_details sd 
+     WHERE sd.transaction_id::bigint = td.id) AS submission_date_time`;
+
+    query += ` FROM 
       trasaction_detail td
 JOIN 
       artist a ON td.artist_id = a.artist_id
 JOIN 
       grants g ON td.grant_id = g.grant_id
-ORDER BY 
+`;
+
+    if (status === "success") {
+      query += ` AND td.trasaction_status = 'SUCCESS'`;
+    }
+
+    if (status === "failed") {
+      query += `AND td.trasaction_status = 'FAILED'`;
+    }
+
+    query += ` ORDER BY 
       td.payment_success_date DESC`;
 
     if (isAll == undefined) {
       offset = (page_no - 1) * record_per_page;
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
+
+    console.log("query", query);
 
     pool.query(query, async (err, result) => {
       if (err) {
