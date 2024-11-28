@@ -155,6 +155,7 @@ exports.updateArtistWithImageController = (req, res) => {
       is_moc_update,
       mocs,
       is_kyc_verified,
+      admin_id,
     } = req.body;
 
     try {
@@ -217,6 +218,7 @@ exports.updateArtistWithImageController = (req, res) => {
         }
 
         updateFields.push(`updated_at=CURRENT_TIMESTAMP`);
+        updateFields.push(`last_updated_by='${admin_id}'`);
 
         const updateQuery = `
           UPDATE artist
