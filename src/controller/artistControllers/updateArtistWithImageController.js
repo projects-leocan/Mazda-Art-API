@@ -157,7 +157,6 @@ exports.updateArtistWithImageController = (req, res) => {
       is_kyc_verified,
     } = req.body;
 
-    // console.log("mocs", mocs);
     try {
       const updatedAt = new Date().toISOString().slice(0, 10);
       const profilePic = req.files.profile_pic
@@ -166,6 +165,8 @@ exports.updateArtistWithImageController = (req, res) => {
       const artistPortfolio = req.files.artist_portfolio
         ? req.files.artist_portfolio.map((file) => file.filename)
         : [];
+
+      // console.log("artistPortfolio", req.files.artist_portfolio);
 
       const client = await pool.connect();
 
@@ -227,18 +228,29 @@ exports.updateArtistWithImageController = (req, res) => {
         await client.query(updateQuery);
 
         if (is_portfolio_updated === "true") {
-          const deletePortfolioQuery = `
-            DELETE FROM artist_portfolio WHERE artist_id=${artist_id}
-          `;
-          await client.query(deletePortfolioQuery);
+          // const deletePortfolioQuery = `
+          //   DELETE FROM artist_portfolio WHERE artist_id=${artist_id}
+          // `;
+          // await client.query(deletePortfolioQuery);
+
+          const filteredData = req.files?.artist_portfolio?.filter(
+            (item) => item.mimetype !== "application/octet-stream"
+          );
+
+          const filteredFileData = filteredData
+            ? filteredData.map((file) => file.filename)
+            : [];
+          // console.log("artistPortfolio", artistPortfolio);
+
+          // console.log("filtered data", filteredData);
 
           const portfolioQuery = `
             INSERT INTO artist_portfolio (artist_id, artist_portfolio)
-            VALUES ${artistPortfolio
+            VALUES ${filteredFileData
               .map((_, i) => `($1, $${i + 2})`)
               .join(", ")}
           `;
-          const portfolioValues = [artist_id, ...artistPortfolio];
+          const portfolioValues = [artist_id, ...filteredFileData];
 
           await client.query(portfolioQuery, portfolioValues);
         }
