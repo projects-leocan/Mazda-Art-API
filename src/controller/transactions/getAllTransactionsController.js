@@ -17,24 +17,49 @@ exports.getAllTransactionsController = async (req, res) => {
     // let query = `SELECT (SELECT COUNT(*) FROM trasaction_detail) AS total_count, td.*, a.fname, a.lname, a.dob, a.gender
     //     FROM trasaction_detail as td
     //     JOIN artist a ON td.artist_id = a.artist_id order by td.payment_success_date DESC`;
-    let query = `
-    SELECT 
+    //   let query = `
+    //   SELECT
+    //     (SELECT COUNT(*) FROM trasaction_detail) AS total_count,
+    //     td.*,
+    //     g.grant_uid,
+    //     a.fname,
+    //     a.lname,
+    //     a.email,
+    //     a.mobile_number,
+    //     a.dob,
+    //     a.gender
+    //   FROM
+    //     trasaction_detail td
+    //   JOIN
+    //     artist a ON td.artist_id = a.artist_id
+    //   JOIN
+    //     grants g ON td.grant_id = g.grant_id
+    //   ORDER BY
+    //     td.payment_success_date DESC
+    // `;
+
+    let query = `SELECT 
       (SELECT COUNT(*) FROM trasaction_detail) AS total_count, 
       td.*, 
       g.grant_uid, 
       a.fname, 
       a.lname, 
+      a.email,
+      a.mobile_number,
       a.dob, 
-      a.gender
-    FROM 
+      a.gender,
+      (SELECT sd.submited_time 
+       FROM submission_details sd 
+       WHERE sd.transaction_id::bigint = td.id) AS submission_date_time
+FROM 
       trasaction_detail td
-    JOIN 
+JOIN 
       artist a ON td.artist_id = a.artist_id
-    JOIN 
+JOIN 
       grants g ON td.grant_id = g.grant_id
-    ORDER BY 
-      td.payment_success_date DESC
-  `;
+ORDER BY 
+      td.payment_success_date DESC`;
+
     if (isAll == undefined) {
       offset = (page_no - 1) * record_per_page;
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
