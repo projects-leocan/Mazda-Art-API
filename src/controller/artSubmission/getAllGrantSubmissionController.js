@@ -75,16 +75,17 @@ ORDER BY sd.submited_time DESC`
           // order by g.grant_id DESC
           // `;
           `SELECT 
-    (SELECT COUNT(*) FROM submission_details) AS total_count, 
+    (SELECT COUNT(*) FROM submission_details WHERE 
+    grant_id IN (SELECT grant_id FROM grant_assign WHERE jury_id = ${jury_id})) AS total_count, 
     g.grant_uid, 
     sd.id as artwork_id, 
     sd.art_title, 
     sd.height, 
+    sd.art_description,
     sd.width, 
     sd.jury_id,
     sd.submited_time, 
-    srd.status,
-    td.trasaction_id, 
+    srd.status
 FROM 
     submission_details sd
 JOIN 
