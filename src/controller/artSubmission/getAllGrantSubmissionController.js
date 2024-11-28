@@ -19,10 +19,12 @@ exports.getAllGrantSubmissionController = async (req, res) => {
     let query =
       jury_id === undefined
         ? status === "undefined" || status === undefined
-          ? `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.id as artwork_id, sd.artist_id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status, a.fname, a.lname, a.dob, a.gender
+          ? `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, sd.id as artwork_id, sd.artist_id, sd.grant_id, sd.submited_time, sd.art_file, sd.art_title, sd.art_description, sd.height, sd.width, sd.status, td.trasaction_id, a.*
         FROM submission_details as sd
         JOIN grants g ON sd.grant_id = g.grant_id
-        JOIN artist a ON sd.artist_id = a.artist_id order by sd.submited_time DESC`
+        JOIN artist a ON sd.artist_id = a.artist_id 
+        JOIN trasaction_detail AS td ON sd.transaction_id::bigint = td.id
+        order by sd.submited_time DESC`
           : `SELECT (SELECT COUNT(*) 
         FROM submission_details sd
         JOIN submission_admin_review sar ON sd.id = sar.artwork_id
@@ -31,12 +33,14 @@ exports.getAllGrantSubmissionController = async (req, res) => {
         WHERE sar.status = ${status}) AS total_count, 
        sar.artwork_id, sd.art_description, sd.art_file, sd.art_title, 
        sd.artist_id, sd.height, sd.width, sd.submited_time, 
-       sar.status, g.grant_id, g.grant_uid, 
-       a.fname, a.lname, a.dob, a.gender
+       sar.status, g.grant_id, g.grant_uid, td.trasaction_id, 
+       a.*
 FROM submission_details sd
 JOIN submission_admin_review sar ON sd.id = sar.artwork_id
 JOIN grants g ON sd.grant_id = g.grant_id
 JOIN artist a ON sd.artist_id = a.artist_id
+JOIN 
+    trasaction_detail AS td ON sd.transaction_id::bigint = td.id
 WHERE sar.status = ${status}
 ORDER BY sd.submited_time DESC`
         : //           `SELECT (SELECT COUNT(*) FROM submission_details) AS total_count, g.grant_uid, g.grant_id, sd.id as artwork_id, sd.art_title, sd.height, sd.width, sd.submited_time, srd.status
@@ -79,7 +83,8 @@ ORDER BY sd.submited_time DESC`
     sd.width, 
     sd.jury_id,
     sd.submited_time, 
-    srd.status
+    srd.status,
+    td.trasaction_id, 
 FROM 
     submission_details sd
 JOIN 
