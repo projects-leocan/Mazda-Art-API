@@ -54,6 +54,7 @@ exports.getAllTransactionsController = async (req, res) => {
 
     query += ` td.*, 
     g.grant_uid, 
+    g.submission_end_date,
     a.fname, 
     a.lname, 
     a.email,
