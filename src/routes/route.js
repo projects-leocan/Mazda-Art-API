@@ -61,6 +61,14 @@ const {
   getArtistDetailsController,
 } = require("../controller/artistControllers/getArtistDetailsController");
 
+const {
+  deleteJuryController,
+} = require("../controller/jury/deleteJuryController");
+
+const {
+  deleteGrantController,
+} = require("../controller/grant/deleteGrantController");
+
 //theme
 const {
   addThemeController,
@@ -682,6 +690,10 @@ module.exports = (app) => {
     validateAccessToken,
     getAdminRoleByIdController
   );
+
+  router.post("/deleteGrant", deleteGrantController);
+
+  router.post("/deleteJury", deleteJuryController);
 
   // OTP Verification
 
