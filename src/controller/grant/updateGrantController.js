@@ -30,9 +30,22 @@ exports.updateGrantController = async (req, res) => {
     is_flat_pyramid,
     is_theme_update,
     is_moc_update,
+    eligibilityCriteria,
+    juryRules,
+    juryCriteria,
   } = req.body;
 
   // console.log("req . body", req.body);
+
+  const jury_criteria = juryCriteria
+    ?.replace(/\+/g, "") // Remove all '+' signs
+    .replace(/\n/g, "\\n"); // Replace actual newlines with '\n'
+
+  const jury_rules = juryRules?.replace(/\+/g, "").replace(/\n/g, "\\n");
+
+  const eligibility_criteria = eligibilityCriteria
+    ?.replace(/\+/g, "")
+    .replace(/\n/g, "\\n");
 
   const currentTime = new Date().toISOString().slice(0, 10);
   let query = `UPDATE grants set `;
@@ -112,6 +125,19 @@ exports.updateGrantController = async (req, res) => {
   if (grand_amount != undefined) {
     query += `, grand_amount='${grand_amount}'`;
   }
+
+  if (eligibilityCriteria !== undefined) {
+    query += `, eligibility_criteria='${eligibility_criteria}'`;
+  }
+
+  if (juryRules !== undefined) {
+    query += `, jury_rules='${jury_rules}'`;
+  }
+
+  if (juryCriteria !== undefined) {
+    query += `, jury_criteria='${jury_criteria}'`;
+  }
+
   if (is_flat_pyramid != undefined) {
     query += `, is_flat_pyramid='${is_flat_pyramid}'`;
   }
