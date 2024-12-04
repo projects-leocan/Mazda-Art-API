@@ -29,6 +29,10 @@ exports.addGrantController = async (req, res) => {
     submission_evaluation_start,
     submission_evaluation_end,
     result_date,
+    // submissions,
+    eligibilityCriteria,
+    juryRules,
+    juryCriteria,
   } = req.body;
 
   // console.log("reqbody", req.body);
@@ -37,6 +41,15 @@ exports.addGrantController = async (req, res) => {
   if (is_flat_pyramid != undefined && is_flat_pyramid === 1) {
     flat_pyramid = 1;
   }
+  const jury_criteria = juryCriteria
+    ?.replace(/\+/g, "") // Remove all '+' signs
+    .replace(/\n/g, "\\n"); // Replace actual newlines with '\n'
+
+  const jury_rules = juryRules?.replace(/\+/g, "").replace(/\n/g, "\\n");
+
+  const eligibility_criteria = eligibilityCriteria
+    ?.replace(/\+/g, "")
+    .replace(/\n/g, "\\n");
 
   const generateGrantUid = async () => {
     try {
@@ -60,9 +73,14 @@ exports.addGrantController = async (req, res) => {
 
   const currentTime = new Date().toISOString().slice(0, 10);
 
-  const query = `INSERT INTO grants ("grant_uid", created_by, max_height, max_width, min_height, min_width, venue, application_fees, submission_end_date, submission_evaluation_start, submission_evaluation_end, result_date, max_allow_submision, 
-	no_of_awards,know_more, no_of_nominations, for_each_amount, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, created_at, updated_by, updated_at, is_flat_pyramid) VALUES ('${grant_uid}', ${admin_id}, ${max_height}, ${max_width}, ${min_height}, ${min_width}, '${venue}', ${app_fees}, '${submission_end_date}', '${submission_evaluation_start}', '${submission_evaluation_end}', '${result_date}', ${max_allow_submision}, 
-    ${no_of_awards}, '${knowMore}', ${no_of_nominations}, ${for_each_amount}, ${rank_1_price}, ${rank_2_price}, ${rank_3_price}, ${nominee_price}, ${grand_amount}, CURRENT_TIMESTAMP, 
+  // const query = `INSERT INTO grants ("grant_uid", created_by, max_height, max_width, min_height, min_width, venue, application_fees, submission_end_date, submission_evaluation_start, submission_evaluation_end, result_date, max_allow_submision,
+  // no_of_awards,know_more, no_of_nominations, for_each_amount, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, created_at, updated_by, updated_at, is_flat_pyramid) VALUES ('${grant_uid}', ${admin_id}, ${max_height}, ${max_width}, ${min_height}, ${min_width}, '${venue}', ${app_fees}, '${submission_end_date}', '${submission_evaluation_start}', '${submission_evaluation_end}', '${result_date}', ${max_allow_submision},
+  //   ${no_of_awards}, '${knowMore}', ${no_of_nominations}, ${for_each_amount}, ${rank_1_price}, ${rank_2_price}, ${rank_3_price}, ${nominee_price}, ${grand_amount}, CURRENT_TIMESTAMP,
+  //   ${admin_id}, CURRENT_TIMESTAMP, ${flat_pyramid}) RETURNING grant_id`;
+
+  const query = `INSERT INTO grants ("grant_uid", created_by, max_height, max_width, min_height, min_width, venue, application_fees, submission_end_date, submission_evaluation_start, submission_evaluation_end, result_date, max_allow_submision,
+  no_of_awards,know_more, no_of_nominations, for_each_amount, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, eligibility_criteria, jury_rules, jury_criteria, created_at, updated_by, updated_at, is_flat_pyramid) VALUES ('${grant_uid}', ${admin_id}, ${max_height}, ${max_width}, ${min_height}, ${min_width}, '${venue}', ${app_fees}, '${submission_end_date}', '${submission_evaluation_start}', '${submission_evaluation_end}', '${result_date}', ${max_allow_submision}, 
+    ${no_of_awards}, '${knowMore}', ${no_of_nominations}, ${for_each_amount}, ${rank_1_price}, ${rank_2_price}, ${rank_3_price}, ${nominee_price}, ${grand_amount}, '${eligibility_criteria}', '${jury_rules}', '${jury_criteria}', CURRENT_TIMESTAMP,
     ${admin_id}, CURRENT_TIMESTAMP, ${flat_pyramid}) RETURNING grant_id`;
 
   // console.log("query", query);
@@ -70,7 +88,7 @@ exports.addGrantController = async (req, res) => {
   try {
     await pool.query(query, async (err, result) => {
       if (err) {
-        console.log("new rr", err);
+        // console.log("new rr", err);
         // console.log("result rows", result?.rows);
 
         res.status(500).send({
@@ -112,6 +130,27 @@ exports.addGrantController = async (req, res) => {
           // Execute the INSERT query
           const mocInsertResult = await pool.query(mocInsertQuery);
         }
+
+        // if (!lodash.isEmpty(submissions)) {
+        //   // Parse the JSON string into an array of objects
+
+        //   const submissionsArray = submissions;
+
+        //   // Construct the values string for the INSERT query
+        //   let values = submissionsArray
+        //     .map(
+        //       (e) =>
+        //         `(${result?.rows[0]?.grant_id}, ${e.no_of_submission}, ${e.app_fee})`
+        //     )
+        //     .join(", ");
+        //   // Construct the INSERT query
+        //   let insertQuery = `INSERT INTO total_artwork_submission(grant_id, no_of_submission, application_fee) VALUES ${values}`;
+        //   // console.log("insertQuery", insertQuery);
+
+        //   // Execute the INSERT query
+        //   const mocInsertResult = await pool.query(insertQuery);
+        // }
+
         return res.status(200).send({
           success: true,
           message: "Grant Added Successfully",
