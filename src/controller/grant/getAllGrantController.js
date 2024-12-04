@@ -37,6 +37,8 @@ exports.getAllGrantController = async (req, res) => {
   g.min_width, 
   g.max_height, 
   g.max_width, 
+  g.is_flat_pyramid,
+  g.no_of_awards,
   ARRAY_AGG(DISTINCT grant_moc.moc_id) AS grant_moc, 
   ARRAY_AGG(DISTINCT grant_theme.theme_id) AS grant_theme,  
   (SELECT COUNT(*) FROM grants) AS total_count
@@ -83,6 +85,8 @@ ORDER BY g.grant_id DESC`
   g.min_width,
   g.max_height,
   g.max_width,
+  g.is_flat_pyramid,
+  g.no_of_awards,
   ARRAY_AGG(DISTINCT grant_moc.moc_id) AS grant_moc, 
   ARRAY_AGG(DISTINCT grant_theme.theme_id) AS grant_theme,  
   sar.status as artwork_status,
