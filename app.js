@@ -13,6 +13,7 @@ var corsOptions = {
     "http://157.173.220.57:8000/",
     "http://localhost:4000",
     "http://157.173.220.57:4000",
+    "http://mazdaartfoundation.org",
   ],
 };
 
