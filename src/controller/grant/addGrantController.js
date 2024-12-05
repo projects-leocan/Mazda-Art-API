@@ -32,6 +32,7 @@ exports.addGrantController = async (req, res) => {
     eligibilityCriteria,
     juryRules,
     juryCriteria,
+    awards,
   } = req.body;
 
   // console.log("reqbody", req.body);
@@ -92,8 +93,8 @@ exports.addGrantController = async (req, res) => {
 
         res.status(500).send({
           success: false,
-          // message: "Something went wrong",
-          message: err,
+          message: "Something went wrong",
+          // message: err,
           statusCode: 500,
         });
       } else {
@@ -149,6 +150,22 @@ exports.addGrantController = async (req, res) => {
         //   // Execute the INSERT query
         //   const mocInsertResult = await pool.query(insertQuery);
         // }
+
+        if (!lodash.isEmpty(awards)) {
+          const awardsArray = awards;
+
+          let values = awardsArray
+            .map(
+              (e) =>
+                `(${result?.rows[0]?.grant_id}, ${e.award_id}, '${e.title}')`
+            )
+            .join(", ");
+
+          let awardInsertQuery = `INSERT INTO grant_awards(grant_id, award_id, title) VALUES ${values}`;
+
+          // Execute the INSERT query
+          const awardInsertResult = await pool.query(awardInsertQuery);
+        }
 
         return res.status(200).send({
           success: true,
