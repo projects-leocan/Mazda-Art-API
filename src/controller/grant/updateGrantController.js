@@ -29,9 +29,11 @@ exports.updateGrantController = async (req, res) => {
     is_flat_pyramid,
     is_theme_update,
     is_moc_update,
+    is_awards_update,
     eligibilityCriteria,
     juryRules,
     juryCriteria,
+    awards,
   } = req.body;
 
   // console.log("req . body", req.body);
@@ -174,6 +176,23 @@ exports.updateGrantController = async (req, res) => {
 
       // Execute the INSERT query
       const mocInsertResult = await pool.query(mocInsertQuery);
+    }
+  }
+
+  if (is_awards_update !== undefined) {
+    let deleteQuery = `DELETE FROM grant_awards WHERE grant_id = ${grant_id}`;
+    const deleteResult = await pool.query(deleteQuery);
+    if (!lodash.isEmpty(awards)) {
+      const awardsArray = awards;
+
+      let values = awardsArray
+        .map((e) => `(${grant_id}, ${e.award_id}, '${e.title}')`)
+        .join(", ");
+
+      let awardInsertQuery = `INSERT INTO grant_awards(grant_id, award_id, title) VALUES ${values}`;
+
+      // Execute the INSERT query
+      const awardInsertResult = await pool.query(awardInsertQuery);
     }
   }
 
