@@ -12,12 +12,12 @@ exports.updateGrantController = async (req, res) => {
     min_width,
     venue,
     theme_id,
-    app_fees,
+    // app_fees,
     submission_end_date,
     result_date,
     submission_evaluation_start,
     submission_evaluation_end,
-    max_allow_submision,
+    // max_allow_submision,
     no_of_awards,
     no_of_nominations,
     for_each_amount,
@@ -78,9 +78,9 @@ exports.updateGrantController = async (req, res) => {
   // if (theme_id != undefined) {
   //   query += `, theme_id='${theme_id}'`;
   // }
-  if (app_fees != undefined) {
-    query += `, application_fees='${app_fees}'`;
-  }
+  // if (app_fees != undefined) {
+  //   query += `, application_fees='${app_fees}'`;
+  // }
   if (submission_end_date != undefined) {
     query += `, submission_end_date='${submission_end_date}'`;
   }
@@ -93,9 +93,9 @@ exports.updateGrantController = async (req, res) => {
   if (result_date !== undefined) {
     query += `, result_date='${result_date}'`;
   }
-  if (max_allow_submision != undefined) {
-    query += `, max_allow_submision='${max_allow_submision}'`;
-  }
+  // if (max_allow_submision != undefined) {
+  //   query += `, max_allow_submision='${max_allow_submision}'`;
+  // }
   if (no_of_awards != undefined) {
     query += `, no_of_awards='${no_of_awards}'`;
   }
