@@ -252,13 +252,14 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
         artistData.profile_pic = `${prePath}${artistProfileImagePath}${artistData.profile_pic}`;
       }
       // console.log("artst data", artistData);
-      const [mocs, grants, comments] = await Promise.all([
+      const [mocs, grants, comments, transactions] = await Promise.all([
         !lodash.isEmpty(artistData.artist_moc) &&
         artistData.artist_moc[0] != null
           ? getMocData(artistData.artist_moc)
           : [],
         getGrantsData(artist_id, req),
         getArtistComments(artist_id),
+        getTransactionData(artist_id),
       ]);
 
       delete artistData.artist_moc;
@@ -268,6 +269,7 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
         mocs,
         grants,
         comments,
+        transactions,
         conversionDate: artistConversionDate?.rows[0]?.conversion,
       };
 
@@ -278,7 +280,7 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
         return transaction ? { ...grant, transaction } : grant;
       });
 
-      delete finalResult.transactions;
+      // delete finalResult.transactions;
 
       if (finalResult.grants.length > 0) {
         const grantQuery = `SELECT grant_uid FROM grants WHERE grant_id = $1`;
@@ -381,6 +383,13 @@ const getMocData = async (list) => {
       return mocResult.rows[0];
     })
   );
+};
+
+const getTransactionData = async (artist_id) => {
+  const transactionResultQuery = await pool.query(
+    `SELECT trasaction_id, trasaction_amount, trasaction_status,payment_init_date,payment_success_date,no_of_submission FROM trasaction_detail WHERE artist_id=${artist_id}`
+  );
+  return transactionResultQuery.rows;
 };
 
 const getArtistComments = async (artist_id) => {
