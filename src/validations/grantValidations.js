@@ -94,12 +94,12 @@ exports.addGrantValidation = (req, res, next) => {
   //     message: "Invalid max allow submission can not be empty",
   //   });
   // }
-  if (no_of_awards === undefined || no_of_awards === "") {
-    return res.status(500).send({
-      success: false,
-      message: "Invalid no of awards can not be empty",
-    });
-  }
+  // if (no_of_awards === undefined || no_of_awards === "") {
+  //   return res.status(500).send({
+  //     success: false,
+  //     message: "Invalid no of awards can not be empty",
+  //   });
+  // }
   if (no_of_nominations === undefined || no_of_nominations === "") {
     return res.status(500).send({
       success: false,
