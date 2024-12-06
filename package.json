@@ -21,6 +21,7 @@
     "express": "^4.19.2",
     "formidable": "^3.5.1",
     "fs": "^0.0.1-security",
+    "https": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mock-aws-s3": "^4.0.2",

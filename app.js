@@ -1,9 +1,22 @@
 const express = require("express");
 const cors = require("cors");
+const https = require("https");
+const fs = require("fs");
 
 const app = express();
 const port = 8080;
 // const port = 8081;
+
+const privateKey = fs.readFileSync(
+  "/etc/letsencrypt/live/mazdaartfoundation.org/privkey.pem",
+  "utf8"
+);
+const certificate = fs.readFileSync(
+  "/etc/letsencrypt/live/mazdaartfoundation.org/fullchain.pem",
+  "utf8"
+);
+
+const credentials = { key: privateKey, cert: certificate };
 
 var corsOptions = {
   origin: [
@@ -40,6 +53,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`hello Server is running on port ${port}.`);
+// app.listen(port, () => {
+//   console.log(`hello Server is running on port ${port}.`);
+// });
+
+https.createServer(credentials, app).listen(port, () => {
+  console.log(`Secure server is running on https://localhost:${port}`);
 });
