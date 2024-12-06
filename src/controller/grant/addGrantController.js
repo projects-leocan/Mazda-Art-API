@@ -35,6 +35,8 @@ exports.addGrantController = async (req, res) => {
     awards,
   } = req.body;
 
+  const currentYear = new Date()?.getFullYear();
+
   let flat_pyramid = 0;
   if (is_flat_pyramid != undefined && is_flat_pyramid === 1) {
     flat_pyramid = 1;
@@ -51,19 +53,37 @@ exports.addGrantController = async (req, res) => {
 
   const generateGrantUid = async () => {
     try {
-      // const result = await pool.query(`SELECT max(grant_id) as id FROM grants`);
+      const currentYear = new Date().getFullYear();
+
+      // Fetch the latest grant UID
       const result = await pool.query(
         `SELECT grant_uid FROM grants WHERE grant_id = (SELECT MAX(grant_id) FROM grants);`
       );
-      let latestUid = result.rows[0]?.grant_uid || "HAF-SGA-0000A-2024";
-      let latestNumber = parseInt(latestUid.split("-")[2], 10);
 
-      let newNumber = latestNumber + 1;
-      let newUid = `HAF-SGA-${newNumber}A-2024`; // Adjusted formatting
+      // Determine the starting point
+      let latestUid = result.rows[0]?.grant_uid || `MAF-GRT-0A-${currentYear}`;
+      const [prefix, sequenceSuffix, year] = latestUid.split("-");
+
+      // Extract sequence number and suffix
+      let latestNumber = parseInt(latestUid.split("-")[2], 10);
+      const latestSuffix = sequenceSuffix.slice(-1); // Get last character
+
+      // Generate next suffix
+      const nextSuffix = String.fromCharCode(
+        latestSuffix.charCodeAt(0) + 1 > 90
+          ? 65
+          : latestSuffix.charCodeAt(0) + 1 // Roll back to 'A' if > 'Z'
+      );
+      // Increment sequence
+      const newNumber = +latestNumber + 1;
+
+      // Create the new UID with the updated year
+      const newUid = `MAF-GRT-${+newNumber}${nextSuffix}-${currentYear}`;
+
       return newUid;
     } catch (err) {
-      // console.error("Error generating grant_uid:", err);
-      throw new Error(somethingWentWrong);
+      console.error("Error generating grant_uid:", err);
+      throw new Error("Something went wrong while generating grant UID.");
     }
   };
 
@@ -77,7 +97,7 @@ exports.addGrantController = async (req, res) => {
   //   ${admin_id}, CURRENT_TIMESTAMP, ${flat_pyramid}) RETURNING grant_id`;
 
   const query = `INSERT INTO grants ("grant_uid", created_by, max_height, max_width, min_height, min_width, venue, application_fees, submission_end_date, submission_evaluation_start, submission_evaluation_end, result_date, max_allow_submision,
-  no_of_awards, no_of_nominations, for_each_amount, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, eligibility_criteria, jury_rules, jury_criteria, created_at, updated_by, updated_at, is_flat_pyramid) VALUES ('${grant_uid}', ${admin_id}, ${max_height}, ${max_width}, ${min_height}, ${min_width}, '${venue}', ${app_fees}, '${submission_end_date}', '${submission_evaluation_start}', '${submission_evaluation_end}', '${result_date}', ${max_allow_submision}, 
+  no_of_awards, no_of_nominations, for_each_amount, rank_1_price, rank_2_price, rank_3_price, nominee_price, grand_amount, eligibility_criteria, jury_rules, jury_criteria, created_at, updated_by, updated_at, is_flat_pyramid) VALUES ('${grant_uid}', ${admin_id}, ${max_height}, ${max_width}, ${min_height}, ${min_width}, '${venue}', 0, '${submission_end_date}', '${submission_evaluation_start}', '${submission_evaluation_end}', '${result_date}', 0, 
     ${no_of_awards}, ${no_of_nominations}, ${for_each_amount}, ${rank_1_price}, ${rank_2_price}, ${rank_3_price}, ${nominee_price}, ${grand_amount}, '${eligibility_criteria}', '${jury_rules}', '${jury_criteria}', CURRENT_TIMESTAMP,
     ${admin_id}, CURRENT_TIMESTAMP, ${flat_pyramid}) RETURNING grant_id`;
 
