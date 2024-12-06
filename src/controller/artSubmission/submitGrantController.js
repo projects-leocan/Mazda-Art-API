@@ -89,19 +89,6 @@ exports.submitGrantController = async (req, res) => {
           statusCode: 500,
         });
       } else if (
-        totalCount?.count ===
-        submitGrantValidationResult?.rows[0]?.max_allow_submision
-      ) {
-        // console.log(
-        //   "The maximum allowed submissions have been completed. No further submissions are accepted at this time."
-        // );
-        res.status(500).send({
-          success: false,
-          message:
-            "The maximum allowed submissions have been completed. No further submissions are accepted at this time.",
-          statusCode: 500,
-        });
-      } else if (
         submitGrantValidationResult.rows[0].submission_end_date < date
       ) {
         // console.log(
@@ -289,11 +276,10 @@ exports.submitGrantController = async (req, res) => {
             //   res,
             //   req
             // );
-            console.log("error", err);
+            // console.log("error", err);
             res.status(500).send({
               success: false,
-              message:
-                "The maximum allowed submissions have been completed. No further submissions are accepted at this time.",
+              message: "Something went wrong",
               statusCode: 500,
             });
           }
