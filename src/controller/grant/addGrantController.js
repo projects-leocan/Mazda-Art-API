@@ -15,7 +15,7 @@ exports.addGrantController = async (req, res) => {
     theme_id,
     app_fees,
     submission_end_date,
-    // max_allow_submision,
+    max_allow_submision,
     no_of_awards,
     no_of_nominations,
     for_each_amount,
