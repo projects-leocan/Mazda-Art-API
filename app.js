@@ -27,7 +27,7 @@ var corsOptions = {
     "http://localhost:4000",
     "http://157.173.220.57:4000",
     "https://mazdaartfoundation.org",
-    "http://mazdaartfoundation.org:3000",
+    "https://mazdaartfoundation.org:3000",
   ],
 };
 
