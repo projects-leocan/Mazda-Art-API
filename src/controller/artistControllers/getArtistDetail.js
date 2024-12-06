@@ -326,7 +326,7 @@ const getGrantsData = async (artist_id, req) => {
       `SELECT sd.*, sar.status AS admin_review_status 
         FROM 
             submission_details sd
-        JOIN 
+        LEFT JOIN 
             submission_admin_review sar 
         ON 
             sd.id = sar.artwork_id 
