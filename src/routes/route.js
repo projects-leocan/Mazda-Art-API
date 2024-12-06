@@ -310,6 +310,9 @@ const {
 const {
   unmapGrantToJuryController,
 } = require("../controller/grantMapping/unmapGrantToJuryController");
+const {
+  getNumberOfSubmissionController,
+} = require("../controller/artSubmission/getNumerOfSubmissionController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -537,6 +540,13 @@ module.exports = (app) => {
     getTransactionDetailValidation,
     getTransactionController
   );
+
+  router.get(
+    "/getNumberOfSubmission",
+    validateAccessToken,
+    getNumberOfSubmissionController
+  );
+
   router.post(
     "/updateTransaction",
     validateAccessToken,
