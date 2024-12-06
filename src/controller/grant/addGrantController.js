@@ -28,14 +28,12 @@ exports.addGrantController = async (req, res) => {
     submission_evaluation_start,
     submission_evaluation_end,
     result_date,
-    // submissions,
+    submissions,
     eligibilityCriteria,
     juryRules,
     juryCriteria,
     awards,
   } = req.body;
-
-  // console.log("reqbody", req.body);
 
   let flat_pyramid = 0;
   if (is_flat_pyramid != undefined && is_flat_pyramid === 1) {
@@ -131,25 +129,25 @@ exports.addGrantController = async (req, res) => {
           const mocInsertResult = await pool.query(mocInsertQuery);
         }
 
-        // if (!lodash.isEmpty(submissions)) {
-        //   // Parse the JSON string into an array of objects
+        if (!lodash.isEmpty(submissions)) {
+          // Parse the JSON string into an array of objects
 
-        //   const submissionsArray = submissions;
+          const submissionsArray = submissions;
 
-        //   // Construct the values string for the INSERT query
-        //   let values = submissionsArray
-        //     .map(
-        //       (e) =>
-        //         `(${result?.rows[0]?.grant_id}, ${e.no_of_submission}, ${e.app_fee})`
-        //     )
-        //     .join(", ");
-        //   // Construct the INSERT query
-        //   let insertQuery = `INSERT INTO total_artwork_submission(grant_id, no_of_submission, application_fee) VALUES ${values}`;
-        //   // console.log("insertQuery", insertQuery);
+          // Construct the values string for the INSERT query
+          let values = submissionsArray
+            .map(
+              (e) =>
+                `(${result?.rows[0]?.grant_id}, ${e.no_of_submission}, ${e.application_fee})`
+            )
+            .join(", ");
+          // Construct the INSERT query
+          let insertQuery = `INSERT INTO total_artwork_submission(grant_id, no_of_submission, application_fee) VALUES ${values}`;
+          // console.log("insertQuery", insertQuery);
 
-        //   // Execute the INSERT query
-        //   const mocInsertResult = await pool.query(insertQuery);
-        // }
+          // Execute the INSERT query
+          const mocInsertResult = await pool.query(insertQuery);
+        }
 
         if (!lodash.isEmpty(awards)) {
           const awardsArray = awards;

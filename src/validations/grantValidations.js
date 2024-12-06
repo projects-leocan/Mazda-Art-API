@@ -76,24 +76,24 @@ exports.addGrantValidation = (req, res, next) => {
       message: "Invalid theme id can not be empty",
     });
   }
-  if (app_fees === undefined || app_fees === "") {
-    return res.status(500).send({
-      success: false,
-      message: "Invalid app fees can not be empty",
-    });
-  }
+  // if (app_fees === undefined || app_fees === "") {
+  //   return res.status(500).send({
+  //     success: false,
+  //     message: "Invalid app fees can not be empty",
+  //   });
+  // }
   if (submission_end_date === undefined || submission_end_date === "") {
     return res.status(500).send({
       success: false,
       message: "Invalid submission end date can not be empty",
     });
   }
-  if (max_allow_submision === undefined || max_allow_submision === "") {
-    return res.status(500).send({
-      success: false,
-      message: "Invalid max allow submission can not be empty",
-    });
-  }
+  // if (max_allow_submision === undefined || max_allow_submision === "") {
+  //   return res.status(500).send({
+  //     success: false,
+  //     message: "Invalid max allow submission can not be empty",
+  //   });
+  // }
   if (no_of_awards === undefined || no_of_awards === "") {
     return res.status(500).send({
       success: false,

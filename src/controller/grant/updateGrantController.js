@@ -30,10 +30,12 @@ exports.updateGrantController = async (req, res) => {
     is_theme_update,
     is_moc_update,
     is_awards_update,
+    is_submission_update,
     eligibilityCriteria,
     juryRules,
     juryCriteria,
     awards,
+    submissions,
   } = req.body;
 
   // console.log("req . body", req.body);
@@ -176,6 +178,24 @@ exports.updateGrantController = async (req, res) => {
 
       // Execute the INSERT query
       const mocInsertResult = await pool.query(mocInsertQuery);
+    }
+  }
+  if (is_submission_update !== undefined) {
+    let deleteQuery = `DELETE FROM total_artwork_submission WHERE grant_id = ${grant_id}`;
+    const deleteResult = await pool.query(deleteQuery);
+
+    if (!lodash.isEmpty(submissions)) {
+      const submissionsArray = submissions;
+
+      let values = submissionsArray
+        .map(
+          (e) => `(${grant_id}, ${e.no_of_submission}, ${e.application_fee})`
+        )
+        .join(", ");
+      let insertQuery = `INSERT INTO total_artwork_submission(grant_id, no_of_submission, application_fee) VALUES ${values}`;
+      console.log("insertQuery", insertQuery);
+
+      const mocInsertResult = await pool.query(insertQuery);
     }
   }
 

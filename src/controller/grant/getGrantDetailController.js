@@ -5,30 +5,17 @@ const { getUTCdate } = require("../../constants/getUTCdate");
 exports.getGrantDetailsController = async (req, res) => {
   let { grant_id } = req.query;
 
-  // let query = `SELECT g.*,
-  //       ARRAY_AGG(DISTINCT grant_moc.moc_id) AS grant_moc,
-  //       ARRAY_AGG(DISTINCT grant_theme.theme_id) AS grant_theme,
-  //       ARRAY_AGG(DISTINCT grant_awards.id) AS grant_awards,
-  //       ARRAY_AGG(DISTINCT total_artwork_submission.id) AS submissions,
-  //       COALESCE(ARRAY_AGG(DISTINCT ga.jury_id) FILTER (WHERE ga.jury_id IS NOT NULL), '{}') AS jury_ids
-  //   FROM grants AS g
-  //   LEFT JOIN grant_moc ON g.grant_id = grant_moc.grant_id
-  //   LEFT JOIN grant_theme ON g.grant_id = grant_theme.grant_id
-  //   LEFT JOIN grant_awards ON g.grant_id = grant_awards.grant_id
-  //   LEFT JOIN total_artwork_submission ON g.grant_id = total_artwork_submission.grant_id
-  //   LEFT JOIN grant_assign AS ga ON g.grant_id = ga.grant_id
-  //   WHERE g.grant_id = ${grant_id}
-  //   GROUP BY g.grant_id, g.submission_end_date;`;
-
   let query = `SELECT g.*, 
         ARRAY_AGG(DISTINCT grant_moc.moc_id) AS grant_moc,
         ARRAY_AGG(DISTINCT grant_theme.theme_id) AS grant_theme, 
         ARRAY_AGG(DISTINCT grant_awards.id) AS grant_awards, 
+        ARRAY_AGG(DISTINCT total_artwork_submission.id) AS submissions,
         COALESCE(ARRAY_AGG(DISTINCT ga.jury_id) FILTER (WHERE ga.jury_id IS NOT NULL), '{}') AS jury_ids
     FROM grants AS g
     LEFT JOIN grant_moc ON g.grant_id = grant_moc.grant_id
     LEFT JOIN grant_theme ON g.grant_id = grant_theme.grant_id
     LEFT JOIN grant_awards ON g.grant_id = grant_awards.grant_id
+    LEFT JOIN total_artwork_submission ON g.grant_id = total_artwork_submission.grant_id
     LEFT JOIN grant_assign AS ga ON g.grant_id = ga.grant_id
     WHERE g.grant_id = ${grant_id}
     GROUP BY g.grant_id, g.submission_end_date;`;
@@ -38,8 +25,6 @@ exports.getGrantDetailsController = async (req, res) => {
     pool.query(query, async (err, result) => {
       // console.log(`err: ${err}`);
       // console.log(`result:`, result?.rows);
-      // console.log("result wors", result?.rows[0]);
-
       if (err) {
         res.status(500).send({
           success: false,
@@ -87,9 +72,9 @@ exports.getGrantDetailsController = async (req, res) => {
             submission_end_date: getUTCdate(result.rows[0].submission_end_date),
             created_at: getUTCdate(result.rows[0].created_at),
             juryList: await getJuryDetails(result.rows[0].jury_ids),
-            // submissions: await getTotalSubmissionDetails(
-            //   result.rows[0]?.submissions
-            // ),
+            submissions: await getTotalSubmissionDetails(
+              result.rows[0]?.submissions
+            ),
             created_by: await getAdminDetails(result.rows[0].created_by),
             grant_category,
             grant_themes,
@@ -141,24 +126,24 @@ const getJuryDetails = async (juryIds) => {
   }
 };
 
-// const getTotalSubmissionDetails = async (submissionIds) => {
-//   // console.log(`juryData: ${JSON.stringify(juryIds)}`);
-//   // console.log("Submission is", submissionIds);
-//   if (!_.isEmpty(submissionIds) || submissionIds === null) {
-//     const submissionData = await Promise.all(
-//       submissionIds.map(async (e) => {
-//         const result = await pool.query(
-//           `SELECT * FROM total_artwork_submission WHERE id = ${e}`
-//         );
-//         return result.rows[0];
-//       })
-//     );
+const getTotalSubmissionDetails = async (submissionIds) => {
+  // console.log(`juryData: ${JSON.stringify(juryIds)}`);
+  // console.log("Submission is", submissionIds);
+  if (!_.isEmpty(submissionIds) || submissionIds === null) {
+    const submissionData = await Promise.all(
+      submissionIds.map(async (e) => {
+        const result = await pool.query(
+          `SELECT * FROM total_artwork_submission WHERE id = ${e}`
+        );
+        return result.rows[0];
+      })
+    );
 
-//     return submissionData.filter((submission) => submission !== undefined);
-//   } else {
-//     return [];
-//   }
-// };
+    return submissionData.filter((submission) => submission !== undefined);
+  } else {
+    return [];
+  }
+};
 
 const getAdminDetails = async (admin_id) => {
   // console.log(`juryData: ${JSON.stringify(juryIds)}`);

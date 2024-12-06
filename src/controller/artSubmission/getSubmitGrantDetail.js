@@ -67,10 +67,10 @@ exports.getGrantSubmittedDetails = async (
                 grant_id: submissionDetailResult.rows[0].grant_uid,
                 grantId: submissionDetailResult.rows[0].grant_id,
                 transactionDetail: transactionResultData,
-                art_file:
-                  prePath +
-                  artistGrantSubmissionFilesPath +
-                  submissionDetailResult.rows[0].art_file,
+                // art_file:
+                //   prePath +
+                //   artistGrantSubmissionFilesPath +
+                //   submissionDetailResult.rows[0].art_file,
               };
 
               const artistEmailQuery = `SELECT email, fname, lname FROM artist WHERE artist_id=${finalResponse.artist_id}`;
@@ -93,6 +93,20 @@ exports.getGrantSubmittedDetails = async (
                   artist_email: artistEmailQueryResult?.rows[0]?.email,
                 };
               }
+              const artistPortfolioImageQuery = `SELECT art_file FROM artist_artwork_submission WHERE artist_id = ${submissionDetailResult.rows[0].artist_id} and grant_id= ${submissionDetailResult.rows[0].grant_id}`;
+              const artistPortfolioImage = await pool.query(
+                artistPortfolioImageQuery
+              );
+
+              if (artistPortfolioImage.rows[0]?.art_file) {
+                finalResponse.art_files = `${prePath}${artistGrantSubmissionFilesPath}${artistPortfolioImage.rows[0].art_file}`;
+              }
+
+              finalResponse.art_files = artistPortfolioImage.rows.map(
+                (row, index) => {
+                  return `${prePath}${artistGrantSubmissionFilesPath}${artistPortfolioImage.rows[index].art_file}`;
+                }
+              );
 
               if (jury_id !== undefined) {
                 // delete finalResponse.artist_id;
@@ -128,6 +142,7 @@ exports.getGrantSubmittedDetails = async (
                   artistGrantSubmissionFilesPath +
                   submissionDetailResult.rows[0].art_file,
               };
+
               const artistEmailQuery = `SELECT email FROM artist WHERE artist_id=${finalResponse.artist_id}`;
               const artistEmailQueryResult = await pool.query(artistEmailQuery);
               finalResponse = {
@@ -145,6 +160,7 @@ exports.getGrantSubmittedDetails = async (
                 delete finalResponse.jury_id;
               }
               delete finalResponse.grant_uid;
+              delete finalResponse.art_file;
               res.status(200).send({
                 success: true,
                 message: message,

@@ -8,15 +8,35 @@ const formidable = require("formidable");
 const { getGrantSubmittedDetails } = require("./getSubmitGrantDetail");
 const { query } = require("express");
 const sgMail = require("@sendgrid/mail");
+const multer = require("multer");
 require("dotenv").config();
+const path = require("path");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    if (file.fieldname === "art_files") {
+      cb(null, "src/files/artist_grant_submission_files/");
+    }
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage }).fields([
+  { name: "art_files", maxCount: 100 },
+]);
 
 exports.submitGrantController = async (req, res) => {
   // console.log(`req.body: ${JSON.stringify()}`)
-  const allowedFileExtensions = [".jpeg", ".jpg", ".png", ".psd", ".pdf"];
-
-  try {
-    var form = new formidable.IncomingForm();
-    form.parse(req, async function (err, fields, files) {
+  upload(req, res, async (err) => {
+    const allowedFileExtensions = [".jpeg", ".jpg", ".png", ".psd", ".pdf"];
+    if (err) {
+      return res.status(400).send({ error: err.message });
+    }
+    try {
+      var form = new formidable.IncomingForm();
+      // form.parse(req, async function (err, fields, files) {
       let {
         artist_id,
         grant_id,
@@ -26,16 +46,20 @@ exports.submitGrantController = async (req, res) => {
         art_description,
         art_file_extension,
         mocs,
-      } = fields;
-      // console.log("req body", mocs);
+        no_of_submission,
+      } = req.body;
+      // console.log("req body", fields);
+      // console.log("req body files", files);
 
-      if (Object.keys(fields).length === 0) {
-        res.status(500).send({
-          success: false,
-          message: "Pass data in body",
-          statusCode: 500,
-        });
-      }
+      // if (Object.keys(fields).length === 0) {
+      //   res.status(500).send({
+      //     success: false,
+      //     message: "Pass data in body",
+      //     statusCode: 500,
+      //   });
+      // }
+      const client = await pool.connect();
+
       const submitGrantValidationQuery = `SELECT * FROM grants WHERE grant_id = ${grant_id}`;
       const submitGrantValidationResult = await pool.query(
         submitGrantValidationQuery
@@ -114,125 +138,150 @@ exports.submitGrantController = async (req, res) => {
             const transactionId = transactionResult.rows[0].id;
 
             // file upload for grant
-            const artFile = files["art_file"];
+            // const artFile = files["art_file"];
+            const artFiles = req.files.art_files
+              ? req.files.art_files.map((file) => file.filename)
+              : [];
+
             let artImageUploadError;
-            if (artFile != undefined) {
-              const artImagePath = artFile[0].filepath;
-              const filename =
-                artist_id +
-                "_" +
-                grant_id +
-                "_" +
-                Date.now() +
-                `.${art_file_extension}`;
-              const artFolderPath = artistGrantSubmissionFilesPath + filename;
-              try {
-                fileUpload(artImagePath, artFolderPath);
-              } catch (err) {
-                artImageUploadError = err;
-              }
+            // if (artFile != undefined) {
+            // const artImagePath = artFile[0].filepath;
+            // const filename =
+            //   artist_id +
+            //   "_" +
+            //   grant_id +
+            //   "_" +
+            //   Date.now() +
+            //   `.${art_file_extension}`;
+            // const artFolderPath = artistGrantSubmissionFilesPath + filename;
+            // try {
+            //   fileUpload(artImagePath, artFolderPath);
+            // } catch (err) {
+            //   artImageUploadError = err;
+            // }
 
-              const description = art_description[0].replace(/'/g, "''");
+            const description = art_description[0].replace(/'/g, "''");
 
-              const query = `INSERT INTO submission_details(
-                artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description, status)
-                VALUES (${artist_id}, '${transactionId}', ${grant_id}, '${filename}', '${art_title}', ${art_height}, ${art_width}, '${description}', 'SUBMITTED') RETURNING id`;
+            const query = `INSERT INTO submission_details(
+                  artist_id, transaction_id, grant_id, art_title, height, width, art_description, status, no_of_submission)
+                  VALUES (${artist_id}, '${transactionId}', ${grant_id}, '${art_title}', ${art_height}, ${art_width}, '${description}', 'SUBMITTED', ${no_of_submission}) RETURNING id`;
 
-              // console.log("qyert", query);descrip
-              pool.query(query, async (err, result) => {
-                // console.log(`insert error: ${err}`);
-                if (err) {
-                  // console.log(`insert error: ${err}`);
-                  // console.log(`insert result: ${result}`);
-                  res.status(500).send({
-                    success: false,
-                    message: somethingWentWrong,
-                    statusCode: 500,
-                  });
-                } else {
-                  const submissionId = result.rows[0].id;
-                  // console.log(`submit req: ${JSON.stringify(req)}`)
-                  // await getGrantSubmittedDetails(
-                  //   submissionId,
-                  //   "Grant submitted Successfully.",
-                  //   res,
-                  //   req
-                  // );
-                  if (!lodash.isEmpty(mocs)) {
-                    // Parse the JSON string into an array of objects
+            console.log("qyert", query);
+            pool.query(query, async (err, result) => {
+              console.log(`insert error: ${err}`);
+              if (err) {
+                console.log(`insert error: ${err}`);
+                // console.log(`insert result: ${result}`);
+                res.status(500).send({
+                  success: false,
+                  message: somethingWentWrong,
+                  statusCode: 500,
+                });
+              } else {
+                const submissionId = result.rows[0].id;
+                // console.log(`submit req: ${JSON.stringify(req)}`)
+                // await getGrantSubmittedDetails(
+                //   submissionId,
+                //   "Grant submitted Successfully.",
+                //   res,
+                //   req
+                // );
+                if (!lodash.isEmpty(mocs)) {
+                  // Parse the JSON string into an array of objects
 
-                    const mocsArray = JSON.parse(mocs);
+                  const mocsArray = JSON.parse(mocs);
 
-                    // Construct the values string for the INSERT query
-                    let values = mocsArray
-                      .map((e) => `(${artist_id}, ${submissionId}, ${e.id})`)
-                      .join(", ");
-                    // Construct the INSERT query
-                    let mocInsertQuery = `INSERT INTO artist_artwork_moc(artist_id, artwork_id, moc_id) VALUES ${values}`;
+                  // Construct the values string for the INSERT query
+                  let values = mocsArray
+                    .map((e) => `(${artist_id}, ${submissionId}, ${e.id})`)
+                    .join(", ");
+                  // Construct the INSERT query
+                  let mocInsertQuery = `INSERT INTO artist_artwork_moc(artist_id, artwork_id, moc_id) VALUES ${values}`;
 
-                    // Execute the INSERT query
-                    const mocInsertResult = await pool.query(mocInsertQuery);
-                  }
-                  res.status(200).send({
-                    success: false,
-                    message: "Artwork Submitted Successfully.",
-                    statusCode: 200,
-                  });
-
-                  const grantUidQuery = `SELECT grant_uid from grants where grant_id=${grant_id}`;
-
-                  const artistInfoQuery = `SELECT fname, lname, email from artist where artist_id=${artist_id}`;
-
-                  const grantUidQueryExecute = await pool.query(grantUidQuery);
-                  const artistInfoQueryExecute = await pool.query(
-                    artistInfoQuery
-                  );
-
-                  const API_KEY = process.env.SENDGRID_API_KEY;
-
-                  sgMail.setApiKey(API_KEY);
-                  const message = {
-                    to: artistInfoQueryExecute?.rows[0]?.email,
-                    from: {
-                      name: process.env.SENDGRID_EMAIL_NAME,
-                      email: process.env.FROM_EMAIL,
-                    },
-                    // subject: "Artwork Submission Received - Mazda Art",
-                    // text: `Your artwork submission has been received!`,
-                    // html: `
-                    //   <h1>Thank You!</h1>
-                    //   <p>We are excited to inform you that your artwork submission has been successfully received by the Mazda Art team!</p>
-                    //   <p>Your creative expression is highly valued, and we can’t wait to review it. Whether you're looking to showcase your talent or gain exposure, Mazda Art is here to support you in every way.</p>
-                    //   <p>If you have any questions or need assistance, please don't hesitate to get in touch.</p>
-                    //   <p>We’re looking forward to seeing your contribution and sharing it with the world!</p>
-                    //   <br/>
-                    //   <p>Best regards,</p>
-                    //   <p><strong>Mazda Art Team</strong></p>
-                    // `,
-                    templateId: process.env.ARTWORK_SUBMIT_TEMPLATE_ID,
-                    dynamicTemplateData: {
-                      grant_id: grantUidQueryExecute?.rows[0]?.grant_uid,
-                      name: `${artistInfoQueryExecute?.rows[0]?.fname} ${artistInfoQueryExecute?.rows[0]?.lname}`,
-                    },
-                  };
-
-                  sgMail
-                    .send(message)
-                    .then(() => {
-                      console.log("Email sent");
-                    })
-                    .catch((error) => {
-                      console.error("Error sending email:", error);
-                    });
+                  // Execute the INSERT query
+                  const mocInsertResult = await pool.query(mocInsertQuery);
                 }
-              });
-            } else {
-              res.status(500).send({
-                success: false,
-                message: "Please add art file.",
-                statusCode: 500,
-              });
-            }
+
+                if (artFiles.length > 0) {
+                  const portfolioQuery = `
+                    INSERT INTO artist_artwork_submission (artwork_id, grant_id, artist_id, art_file)
+                    VALUES ${artFiles
+                      .map(
+                        (_, i) =>
+                          `(${submissionId}, ${grant_id}, ${artist_id}, $${
+                            i + 1
+                          })`
+                      )
+                      .join(", ")}
+                  `;
+                  const portfolioValues = [...artFiles];
+
+                  await pool.query(portfolioQuery, portfolioValues);
+
+                  console.log("portfolioQuery", portfolioQuery);
+                }
+
+                res.status(200).send({
+                  success: false,
+                  message: "Artwork Submitted Successfully.",
+                  statusCode: 200,
+                });
+
+                const grantUidQuery = `SELECT grant_uid from grants where grant_id=${grant_id}`;
+
+                const artistInfoQuery = `SELECT fname, lname, email from artist where artist_id=${artist_id}`;
+
+                const grantUidQueryExecute = await pool.query(grantUidQuery);
+                const artistInfoQueryExecute = await pool.query(
+                  artistInfoQuery
+                );
+
+                const API_KEY = process.env.SENDGRID_API_KEY;
+
+                sgMail.setApiKey(API_KEY);
+                const message = {
+                  to: artistInfoQueryExecute?.rows[0]?.email,
+                  from: {
+                    name: process.env.SENDGRID_EMAIL_NAME,
+                    email: process.env.FROM_EMAIL,
+                  },
+                  // subject: "Artwork Submission Received - Mazda Art",
+                  // text: `Your artwork submission has been received!`,
+                  // html: `
+                  //   <h1>Thank You!</h1>
+                  //   <p>We are excited to inform you that your artwork submission has been successfully received by the Mazda Art team!</p>
+                  //   <p>Your creative expression is highly valued, and we can’t wait to review it. Whether you're looking to showcase your talent or gain exposure, Mazda Art is here to support you in every way.</p>
+                  //   <p>If you have any questions or need assistance, please don't hesitate to get in touch.</p>
+                  //   <p>We’re looking forward to seeing your contribution and sharing it with the world!</p>
+                  //   <br/>
+                  //   <p>Best regards,</p>
+                  //   <p><strong>Mazda Art Team</strong></p>
+                  // `,
+                  templateId: process.env.ARTWORK_SUBMIT_TEMPLATE_ID,
+                  dynamicTemplateData: {
+                    grant_id: grantUidQueryExecute?.rows[0]?.grant_uid,
+                    name: `${artistInfoQueryExecute?.rows[0]?.fname} ${artistInfoQueryExecute?.rows[0]?.lname}`,
+                  },
+                };
+
+                sgMail
+                  .send(message)
+                  .then(() => {
+                    console.log("Email sent");
+                  })
+                  .catch((error) => {
+                    console.error("Error sending email:", error);
+                  });
+              }
+            });
+            // }
+            // else {
+            //   res.status(500).send({
+            //     success: false,
+            //     message: "Please add art file.",
+            //     statusCode: 500,
+            //   });
+            // }
           } else {
             // await getGrantSubmittedDetails(
             //   grantAlreadySubmittedResult.rows[0].id,
@@ -240,7 +289,7 @@ exports.submitGrantController = async (req, res) => {
             //   res,
             //   req
             // );
-            // console.log("error", err);
+            console.log("error", err);
             res.status(500).send({
               success: false,
               message:
@@ -256,13 +305,14 @@ exports.submitGrantController = async (req, res) => {
           });
         }
       }
-    });
-  } catch (error) {
-    // console.log(`error: ${error}`);
-    res.status(500).send({
-      success: false,
-      message: somethingWentWrong,
-      statusCode: 500,
-    });
-  }
+      // });
+    } catch (error) {
+      console.log(`error: ${error}`);
+      res.status(500).send({
+        success: false,
+        message: somethingWentWrong,
+        statusCode: 500,
+      });
+    }
+  });
 };
