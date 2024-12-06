@@ -1,24 +1,9 @@
 const express = require("express");
 const cors = require("cors");
-const fs = require("fs");
 
 const app = express();
-// const port = 8080;
+const port = 8080;
 // const port = 8081;
-
-const port = 443; // HTTPS default port
-
-// Load SSL credentials
-const privateKey = fs.readFileSync(
-  "/etc/letsencrypt/live/mazdaartfoundation.org/privkey.pem",
-  "utf8"
-);
-const certificate = fs.readFileSync(
-  "/etc/letsencrypt/live/mazdaartfoundation.org/fullchain.pem",
-  "utf8"
-);
-
-const credentials = { key: privateKey, cert: certificate };
 
 var corsOptions = {
   origin: [
@@ -29,7 +14,7 @@ var corsOptions = {
     "http://localhost:4000",
     "http://157.173.220.57:4000",
     "https://mazdaartfoundation.org",
-    "https://mazdaartfoundation.org:3000",
+    "http://mazdaartfoundation.org:3000",
   ],
 };
 
@@ -55,10 +40,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// app.listen(port, () => {
-//   console.log(`hello Server is running on port ${port}.`);
-// });
-
-https.createServer(credentials, app).listen(port, () => {
-  console.log(`Secure server is running on https://localhost:${port}`);
+app.listen(port, () => {
+  console.log(`hello Server is running on port ${port}.`);
 });
