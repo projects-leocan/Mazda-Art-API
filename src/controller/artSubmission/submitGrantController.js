@@ -147,17 +147,17 @@ exports.submitGrantController = async (req, res) => {
             //   artImageUploadError = err;
             // }
 
-            const description = art_description[0].replace(/'/g, "''");
+            const description = art_description.replace(/'/g, "''");
 
             const query = `INSERT INTO submission_details(
                   artist_id, transaction_id, grant_id, art_title, height, width, art_description, status, no_of_submission)
                   VALUES (${artist_id}, '${transactionId}', ${grant_id}, '${art_title}', ${art_height}, ${art_width}, '${description}', 'SUBMITTED', ${no_of_submission}) RETURNING id`;
 
-            console.log("qyert", query);
+            // console.log("qyert", query);
             pool.query(query, async (err, result) => {
-              console.log(`insert error: ${err}`);
+              // console.log(`insert error: ${err}`);
               if (err) {
-                console.log(`insert error: ${err}`);
+                // console.log(`insert error: ${err}`);
                 // console.log(`insert result: ${result}`);
                 res.status(500).send({
                   success: false,
@@ -205,7 +205,7 @@ exports.submitGrantController = async (req, res) => {
 
                   await pool.query(portfolioQuery, portfolioValues);
 
-                  console.log("portfolioQuery", portfolioQuery);
+                  // console.log("portfolioQuery", portfolioQuery);
                 }
 
                 res.status(200).send({
@@ -293,7 +293,7 @@ exports.submitGrantController = async (req, res) => {
       }
       // });
     } catch (error) {
-      console.log(`error: ${error}`);
+      // console.log(`error: ${error}`);
       res.status(500).send({
         success: false,
         message: somethingWentWrong,
