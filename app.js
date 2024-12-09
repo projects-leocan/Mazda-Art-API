@@ -27,7 +27,9 @@ var corsOptions = {
     "http://localhost:4000",
     "http://157.173.220.57:4000",
     "https://mazdaartfoundation.org",
+    "https://www.mazdaartfoundation.org/",
     "https://mazdaartfoundation.org:3000",
+    "https://www.mazdaartfoundation.org:3000/",
   ],
 };
 
@@ -56,6 +58,8 @@ app.use((err, req, res, next) => {
 // app.listen(port, () => {
 //   console.log(`hello Server is running on port ${port}.`);
 // });
+
+// Uncomment this for SSL enable
 
 https.createServer(credentials, app).listen(port, () => {
   console.log(`Secure server is running on https://localhost:${port}`);
