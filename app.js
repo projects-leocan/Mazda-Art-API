@@ -29,6 +29,7 @@ var corsOptions = {
     "https://mazdaartfoundation.org",
     "https://www.mazdaartfoundation.org",
     "https://mazdaartfoundation.org:3000",
+    "http://mazdaartfoundation.org:3000",
     "https://www.mazdaartfoundation.org:3000",
   ],
 };
