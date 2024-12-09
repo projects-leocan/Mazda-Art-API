@@ -66,7 +66,7 @@ exports.addGrantController = async (req, res) => {
 
       // Extract sequence number and suffix
       let latestNumber = parseInt(latestUid.split("-")[2], 10);
-      const latestSuffix = sequenceSuffix.slice(-1); // Get last character
+      const latestSuffix = year.slice(-1); // Get last character
 
       // Generate next suffix
       const nextSuffix = String.fromCharCode(
