@@ -19,6 +19,7 @@ exports.verifyPaymentController = async (req, res) => {
       grant_id,
       transaction_amount,
       payment_init_date,
+      no_of_submission,
     } = req.body;
 
     const instance = new Razorpay({
@@ -37,8 +38,8 @@ exports.verifyPaymentController = async (req, res) => {
       // console.log("payment statys", paymentDetails.status);
       if (paymentDetails.status === "captured") {
         const query = `INSERT INTO trasaction_detail(
-        artist_id, grant_id, trasaction_id, payment_init_date, trasaction_status, trasaction_amount, payment_success_date, order_id, signature)
-        VALUES (${artist_id}, ${grant_id}, '${payment_id}', '${payment_init_date}', 'SUCCESS', '${transaction_amount}', CURRENT_TIMESTAMP, '${order_id}', '${signature}') RETURNING id, trasaction_id`;
+        artist_id, grant_id, trasaction_id, payment_init_date, trasaction_status, trasaction_amount, payment_success_date, order_id, signature, no_of_submission)
+        VALUES (${artist_id}, ${grant_id}, '${payment_id}', '${payment_init_date}', 'SUCCESS', '${transaction_amount}', CURRENT_TIMESTAMP, '${order_id}', '${signature}', ${no_of_submission}) RETURNING id, trasaction_id`;
 
         pool.query(query, async (error, result) => {
           // console.log("error", error);
