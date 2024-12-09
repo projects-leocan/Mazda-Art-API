@@ -333,7 +333,7 @@ const getGrantsData = async (artist_id, req) => {
         ON 
             sd.id = sar.artwork_id 
         WHERE 
-            sd.artist_id = ${artist_id};`
+            sd.artist_id = ${artist_id} ORDER BY sd.id DESC;`
     );
 
     if (!lodash.isEmpty(submitted_grant_data.rows)) {
@@ -387,7 +387,7 @@ const getMocData = async (list) => {
 
 const getTransactionData = async (artist_id) => {
   const transactionResultQuery = await pool.query(
-    `SELECT trasaction_id, trasaction_amount, trasaction_status,payment_init_date,payment_success_date,no_of_submission FROM trasaction_detail WHERE artist_id=${artist_id}`
+    `SELECT trasaction_id, trasaction_amount, trasaction_status,payment_init_date,payment_success_date,no_of_submission FROM trasaction_detail WHERE artist_id=${artist_id} ORDER BY trasaction_id DESC`
   );
   return transactionResultQuery.rows;
 };
