@@ -8,6 +8,7 @@ const {
 const sgMail = require("@sendgrid/mail");
 const pool = require("../../config/db");
 const Razorpay = require("razorpay");
+const { sendEmail } = require("../emailControllers/sendEmailController");
 
 exports.verifyPaymentController = async (req, res) => {
   try {
@@ -83,31 +84,37 @@ exports.verifyPaymentController = async (req, res) => {
 
               const transaction_detail = await pool.query(query);
 
-              const API_KEY = process.env.SENDGRID_API_KEY;
+              // const API_KEY = process.env.SENDGRID_API_KEY;
 
-              sgMail.setApiKey(API_KEY);
-              const message = {
-                to: transaction_detail?.rows[0]?.email,
-                from: {
-                  name: process.env.SENDGRID_EMAIL_NAME,
-                  email: process.env.FROM_EMAIL,
-                },
-                templateId: process.env.PAYMENT_TEMPLATE_ID,
-                dynamicTemplateData: {
-                  name: `${transaction_detail?.rows[0]?.fname} ${transaction_detail?.rows[0]?.lname}`,
-                  grant_id: transaction_detail?.rows[0]?.grant_uid,
-                  transaction_id: transaction_detail?.rows[0]?.trasaction_id,
-                },
-              };
+              // sgMail.setApiKey(API_KEY);
+              // const message = {
+              //   to: transaction_detail?.rows[0]?.email,
+              //   from: {
+              //     name: process.env.SENDGRID_EMAIL_NAME,
+              //     email: process.env.FROM_EMAIL,
+              //   },
+              //   templateId: process.env.PAYMENT_TEMPLATE_ID,
+              //   dynamicTemplateData: {
+              //     name: `${transaction_detail?.rows[0]?.fname} ${transaction_detail?.rows[0]?.lname}`,
+              //     grant_id: transaction_detail?.rows[0]?.grant_uid,
+              //     transaction_id: transaction_detail?.rows[0]?.trasaction_id,
+              //   },
+              // };
 
-              await sgMail
-                .send(message)
-                .then(() => {
-                  console.log("Email sent");
-                })
-                .catch((error) => {
-                  console.error("Error sending email:", error);
-                });
+              // await sgMail
+              //   .send(message)
+              //   .then(() => {
+              //     console.log("Email sent");
+              //   })
+              //   .catch((error) => {
+              //     console.error("Error sending email:", error);
+              //   });
+
+              sendEmail(transaction_detail?.rows[0]?.email, "3", {
+                name: `${transaction_detail?.rows[0]?.fname} ${transaction_detail?.rows[0]?.lname}`,
+                grant_id: transaction_detail?.rows[0]?.grant_uid,
+                transaction_id: transaction_detail?.rows[0]?.trasaction_id,
+              });
 
               // Send a success response only once after all operations are complete
               // return res

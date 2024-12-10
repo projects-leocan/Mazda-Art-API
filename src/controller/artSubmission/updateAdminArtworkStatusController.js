@@ -3,11 +3,12 @@ const pool = require("../../config/db");
 const lodash = require("lodash");
 const { somethingWentWrong } = require("../../constants/messages");
 const { artistGrantSubmissionFilesPath } = require("../../constants/filePaths");
-const { sendEmail } = require("../../constants/sendEmail");
+// const { sendEmail } = require("../../constants/sendEmail");
 const {
   getFileURLPreFixPath,
 } = require("../../constants/getFileURLPreFixPath");
 const sgMail = require("@sendgrid/mail");
+const { sendEmail } = require("../emailControllers/sendEmailController");
 require("dotenv").config();
 
 exports.updateAdminArtworkStatusController = async (req, res) => {
@@ -88,9 +89,9 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
           const artistNameQuery = `SELECT fname, lname, email FROM artist WHERE artist_id=${artist_id}`;
           const artistNameQueryExecute = await pool.query(artistNameQuery);
 
-          const API_KEY = process.env.SENDGRID_API_KEY;
+          // const API_KEY = process.env.SENDGRID_API_KEY;
 
-          sgMail.setApiKey(API_KEY);
+          // sgMail.setApiKey(API_KEY);
           const artwork_status = `${
             status === "1"
               ? "Submitted"
@@ -115,88 +116,20 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
               : `Your artwork which is ${art_title} is currently under review by our team. We appreciate your patience during this process and will notify you as soon as we have an update regarding its progress.`
           } `;
 
-          const message = {
-            to: artistNameQueryExecute?.rows[0]?.email,
-            from: {
-              name: process.env.SENDGRID_EMAIL_NAME,
-              email: process.env.FROM_EMAIL,
-            },
-            // subject: `Artwork Submission Status Update: ${
-            //   status === "1"
-            //     ? "Submitted"
-            //     : status === "5"
-            //     ? "Grant Winner"
-            //     : status === "3"
-            //     ? "Nominated"
-            //     : status === "4"
-            //     ? "Disqualify"
-            //     : "In Review"
-            // }`, // Dynamic subject based on status
-            // html: `
-            //   <h1>Status Update: ${
-            //     status === "1"
-            //       ? "Submitted"
-            //       : status === "5"
-            //       ? "Grant Winner"
-            //       : status === "3"
-            //       ? "Nominated"
-            //       : status === "4"
-            //       ? "Disqualify"
-            //       : "In Review"
-            //   }</h1> <!-- Dynamic status -->
-            //   <p>Hello !!</p>
-            //   <p>We wanted to update you regarding your artwork submission. Your current submission status is <strong>${
-            //     status === "1"
-            //       ? "Submitted"
-            //       : status === "5"
-            //       ? "Grant Winner"
-            //       : status === "3"
-            //       ? "Nominated"
-            //       : status === "4"
-            //       ? "Disqualify"
-            //       : "In Review"
-            //   }</strong>.</p> <!-- Dynamic status -->
+          // sgMail
+          //   .send(message)
+          //   .then(() => {
+          //     console.log("Email sent");
+          //   })
+          //   .catch((error) => {
+          //     console.error("Error sending email:", error);
+          //   });
 
-            //   ${
-            //     status === "5"
-            //       ? `
-            //   <p>Congratulations! Your artwork has been selected as a grant winner. We are thrilled to offer you this recognition for your exceptional creativity and contribution.</p>
-            //   <p>Our team will reach out soon with the next steps to proceed.</p>
-            //   `
-            //       : status === "3"
-            //       ? `
-            //   <p>We are pleased to inform you that your artwork has been nominated for further consideration. This is an exciting step toward potential selection, and we’re eager to see where your journey takes you!</p>
-            //   `
-            //       : status === "4"
-            //       ? `
-            //   <p>We are sorry to inform you that your artwork has been rejected for further consideration.</p>
-            //   `
-            //       : `
-            //   <p>Your artwork is currently under review by our team. We will notify you as soon as there is an update on its progress.</p>
-            //   `
-            //   }
-
-            //   <p>If you have any questions or need assistance, feel free to reach out to us.</p>
-            //   <br/>
-            //   <p>Best regards,</p>
-            //   <p><strong>Mazda Art Team</strong></p>
-            // `,
-            templateId: process.env.ARTWORK_STATUS_CHANGE_TEMPLATE_ID,
-            dynamicTemplateData: {
-              status: artwork_status,
-              name: `${artistNameQueryExecute?.rows[0]?.fname} ${artistNameQueryExecute?.rows[0]?.lname}`,
-              info: info,
-            },
-          };
-
-          sgMail
-            .send(message)
-            .then(() => {
-              console.log("Email sent");
-            })
-            .catch((error) => {
-              console.error("Error sending email:", error);
-            });
+          sendEmail(artistNameQueryExecute?.rows[0]?.email, "4", {
+            // status: artwork_status,
+            name: `${artistNameQueryExecute?.rows[0]?.fname} ${artistNameQueryExecute?.rows[0]?.lname}`,
+            info: info,
+          });
 
           return res.status(200).send({
             success: true,

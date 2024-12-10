@@ -11,6 +11,7 @@ const sgMail = require("@sendgrid/mail");
 const multer = require("multer");
 require("dotenv").config();
 const path = require("path");
+const { sendEmail } = require("../emailControllers/sendEmailController");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -223,42 +224,36 @@ exports.submitGrantController = async (req, res) => {
                   artistInfoQuery
                 );
 
-                const API_KEY = process.env.SENDGRID_API_KEY;
+                // const API_KEY = process.env.SENDGRID_API_KEY;
 
-                sgMail.setApiKey(API_KEY);
-                const message = {
-                  to: artistInfoQueryExecute?.rows[0]?.email,
-                  from: {
-                    name: process.env.SENDGRID_EMAIL_NAME,
-                    email: process.env.FROM_EMAIL,
-                  },
-                  // subject: "Artwork Submission Received - Mazda Art",
-                  // text: `Your artwork submission has been received!`,
-                  // html: `
-                  //   <h1>Thank You!</h1>
-                  //   <p>We are excited to inform you that your artwork submission has been successfully received by the Mazda Art team!</p>
-                  //   <p>Your creative expression is highly valued, and we can’t wait to review it. Whether you're looking to showcase your talent or gain exposure, Mazda Art is here to support you in every way.</p>
-                  //   <p>If you have any questions or need assistance, please don't hesitate to get in touch.</p>
-                  //   <p>We’re looking forward to seeing your contribution and sharing it with the world!</p>
-                  //   <br/>
-                  //   <p>Best regards,</p>
-                  //   <p><strong>Mazda Art Team</strong></p>
-                  // `,
-                  templateId: process.env.ARTWORK_SUBMIT_TEMPLATE_ID,
-                  dynamicTemplateData: {
-                    grant_id: grantUidQueryExecute?.rows[0]?.grant_uid,
-                    name: `${artistInfoQueryExecute?.rows[0]?.fname} ${artistInfoQueryExecute?.rows[0]?.lname}`,
-                  },
-                };
+                // sgMail.setApiKey(API_KEY);
+                // const message = {
+                //   to: artistInfoQueryExecute?.rows[0]?.email,
+                //   from: {
+                //     name: process.env.SENDGRID_EMAIL_NAME,
+                //     email: process.env.FROM_EMAIL,
+                //   },
 
-                sgMail
-                  .send(message)
-                  .then(() => {
-                    console.log("Email sent");
-                  })
-                  .catch((error) => {
-                    console.error("Error sending email:", error);
-                  });
+                //   templateId: process.env.ARTWORK_SUBMIT_TEMPLATE_ID,
+                //   dynamicTemplateData: {
+                //     grant_id: grantUidQueryExecute?.rows[0]?.grant_uid,
+                //     name: `${artistInfoQueryExecute?.rows[0]?.fname} ${artistInfoQueryExecute?.rows[0]?.lname}`,
+                //   },
+                // };
+
+                // sgMail
+                //   .send(message)
+                //   .then(() => {
+                //     console.log("Email sent");
+                //   })
+                //   .catch((error) => {
+                //     console.error("Error sending email:", error);
+                //   });
+
+                sendEmail(artistInfoQueryExecute?.rows[0]?.email, "2", {
+                  grant_id: grantUidQueryExecute?.rows[0]?.grant_uid,
+                  name: `${artistInfoQueryExecute?.rows[0]?.fname} ${artistInfoQueryExecute?.rows[0]?.lname}`,
+                });
               }
             });
             // }
