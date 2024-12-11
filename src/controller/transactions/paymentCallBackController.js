@@ -120,7 +120,9 @@ exports.paymentCallBackController = async (req, res) => {
           //   data: payuResponse,
           // });
 
-          return res.redirect("http://localhost:4000/grantsAndScholarship");
+          return res.redirect(
+            "https://mazdaartfoundation.org/grantsAndScholarship"
+          );
         } else {
           // console.log("Payment failed:", payuResponse);
           // return res.status(400).json({
@@ -129,7 +131,7 @@ exports.paymentCallBackController = async (req, res) => {
           //   data: payuResponse,
           // });
           return res.redirect(
-            `http://localhost:4000/payment?id=${productinfo}`
+            `https://mazdaartfoundation.org/payment?id=${productinfo}`
           );
         }
       }
