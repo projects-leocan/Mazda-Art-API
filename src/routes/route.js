@@ -313,6 +313,12 @@ const {
 const {
   getNumberOfSubmissionController,
 } = require("../controller/artSubmission/getNumerOfSubmissionController");
+const {
+  generateHashController,
+} = require("../controller/transactions/generateHashController");
+const {
+  paymentCallBackController,
+} = require("../controller/transactions/paymentCallBackController");
 
 module.exports = (app) => {
   // Flow router.type(endpoint, tokenVerify, apiValidations, APIController)
@@ -729,6 +735,8 @@ module.exports = (app) => {
   router.get("/totalGrantAmount", totalGrantController);
 
   router.post("/unmapGrant", unmapGrantToJuryController);
+  router.post("/generateHash", generateHashController);
+  router.post("/paymentCallback", paymentCallBackController);
 
   router.get("/test", testController);
 
