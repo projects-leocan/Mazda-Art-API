@@ -60,11 +60,11 @@ exports.paymentCallBackController = async (req, res) => {
           statusCode: 500,
         });
       } else {
-        const transactionDetails = await getTransactionDetails(
-          result.rows[0].id,
-          "Payment Successful!",
-          res
-        );
+        // const transactionDetails = await getTransactionDetails(
+        //   result.rows[0].id,
+        //   "Payment Successful!",
+        //   res
+        // );
 
         const query = `SELECT
             td.*,
@@ -107,24 +107,30 @@ exports.paymentCallBackController = async (req, res) => {
 
         // Send response after all operations are complete
         if (status === "success") {
-          console.log("Payment success:", payuResponse);
+          // console.log("Payment success:", payuResponse);
+
           sendEmail(transaction_detail?.rows[0]?.email, "3", {
             name: `${transaction_detail?.rows[0]?.fname} ${transaction_detail?.rows[0]?.lname}`,
             grant_id: transaction_detail?.rows[0]?.grant_uid,
             transaction_id: transaction_detail?.rows[0]?.trasaction_id,
           });
-          return res.status(200).json({
-            success: true,
-            message: "Payment was successful.",
-            data: payuResponse,
-          });
+          // return res.status(200).json({
+          //   success: true,
+          //   message: "Payment was successful.",
+          //   data: payuResponse,
+          // });
+
+          return res.redirect("http://localhost:4000/grantsAndScholarship");
         } else {
-          console.log("Payment failed:", payuResponse);
-          return res.status(400).json({
-            success: false,
-            message: "Payment failed.",
-            data: payuResponse,
-          });
+          // console.log("Payment failed:", payuResponse);
+          // return res.status(400).json({
+          //   success: false,
+          //   message: "Payment failed.",
+          //   data: payuResponse,
+          // });
+          return res.redirect(
+            `http://localhost:4000/payment?id=${productinfo}`
+          );
         }
       }
     });
@@ -136,7 +142,7 @@ exports.paymentCallBackController = async (req, res) => {
     //     : "localhost:4000/grantsAndScholarship"
     // );
   } catch (error) {
-    console.error("Error handling payment callback:", error);
+    // console.error("Error handling payment callback:", error);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error." });
