@@ -5,11 +5,13 @@ const {
   getTransactionDetails,
 } = require("../transactions/getTransactionDetails");
 const { somethingWentWrong } = require("../../constants/messages");
+const { sendEmail } = require("../emailControllers/sendEmailController");
 
 exports.paymentCallBackController = async (req, res) => {
-  console.log("req ", req);
+  // console.log("req ", req);
   try {
     const payuResponse = req.body;
+    const { artist } = req.query;
 
     // Extract necessary parameters from response
     const {
@@ -23,10 +25,12 @@ exports.paymentCallBackController = async (req, res) => {
       status,
       hash,
     } = payuResponse; // PayU sends these fields in the response
+
+    // console.log("req", req);
     const MERCHANT_KEY = process.env.PAYU_API_KEY;
     const MERCHANT_SALT = process.env.PAYU_SALT;
 
-    console.log("payuresponse", payuResponse);
+    // console.log("payuresponse", payuResponse);
 
     // Construct the hash string for validation
     const hashString = `${MERCHANT_SALT}|${status}|||||||||||${email}|${firstname}|${productinfo}|${amount}|${txnid}|${MERCHANT_KEY}`;
@@ -43,10 +47,13 @@ exports.paymentCallBackController = async (req, res) => {
 
     const query = `INSERT INTO trasaction_detail(
             artist_id, grant_id, trasaction_id, payment_init_date, trasaction_status, trasaction_amount, payment_success_date)
-            VALUES (${artist_id}, ${id}, '${txnid}', CURRENT_TIMESTAMP, '${status}', '${amount}', CURRENT_TIMESTAMP) RETURNING id, trasaction_id`;
+            VALUES (${artist}, ${productinfo}, '${txnid}', CURRENT_TIMESTAMP, '${status}', ${amount}, CURRENT_TIMESTAMP) RETURNING id, trasaction_id`;
+
+    // console.log("query", query);
 
     pool.query(query, async (error, result) => {
       if (error) {
+        // console.log("error", error);
         return res.status(500).send({
           success: false,
           message: somethingWentWrong,
@@ -74,33 +81,38 @@ exports.paymentCallBackController = async (req, res) => {
 
         const API_KEY = process.env.SENDGRID_API_KEY;
 
-        sgMail.setApiKey(API_KEY);
-        const message = {
-          to: transaction_detail?.rows[0]?.email,
-          from: {
-            name: process.env.SENDGRID_EMAIL_NAME,
-            email: process.env.FROM_EMAIL,
-          },
-          templateId: "d-e9afaa56d98149908a661a31c6eeb5e8",
-          dynamicTemplateData: {
-            name: `${transaction_detail?.rows[0]?.fname} ${transaction_detail?.rows[0]?.lname}`,
-            grant_id: transaction_detail?.rows[0]?.grant_uid,
-            transaction_id: transaction_detail?.rows[0]?.trasaction_id,
-          },
-        };
+        // sgMail.setApiKey(API_KEY);
+        // const message = {
+        //   to: transaction_detail?.rows[0]?.email,
+        //   from: {
+        //     name: process.env.SENDGRID_EMAIL_NAME,
+        //     email: process.env.FROM_EMAIL,
+        //   },
+        //   templateId: "d-e9afaa56d98149908a661a31c6eeb5e8",
+        //   dynamicTemplateData: {
+        //     name: `${transaction_detail?.rows[0]?.fname} ${transaction_detail?.rows[0]?.lname}`,
+        //     grant_id: transaction_detail?.rows[0]?.grant_uid,
+        //     transaction_id: transaction_detail?.rows[0]?.trasaction_id,
+        //   },
+        // };
 
-        sgMail
-          .send(message)
-          .then(() => {
-            console.log("Email sent");
-          })
-          .catch((error) => {
-            console.error("Error sending email:", error);
-          });
+        // sgMail
+        //   .send(message)
+        //   .then(() => {
+        //     console.log("Email sent");
+        //   })
+        //   .catch((error) => {
+        //     console.error("Error sending email:", error);
+        //   });
 
         // Send response after all operations are complete
         if (status === "success") {
           console.log("Payment success:", payuResponse);
+          sendEmail(transaction_detail?.rows[0]?.email, "3", {
+            name: `${transaction_detail?.rows[0]?.fname} ${transaction_detail?.rows[0]?.lname}`,
+            grant_id: transaction_detail?.rows[0]?.grant_uid,
+            transaction_id: transaction_detail?.rows[0]?.trasaction_id,
+          });
           return res.status(200).json({
             success: true,
             message: "Payment was successful.",
