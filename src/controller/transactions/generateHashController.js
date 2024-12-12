@@ -6,12 +6,12 @@ exports.generateHashController = async (req, res) => {
     const MERCHANT_KEY = process.env.PAYU_API_KEY;
     const MERCHANT_SALT = process.env.PAYU_SALT;
 
-    console.log("merchant key", MERCHANT_KEY);
-    console.log("merchant salt", MERCHANT_SALT);
+    // console.log("merchant key", MERCHANT_KEY);
+    // console.log("merchant salt", MERCHANT_SALT);
 
     const { amount, productInfo, customerName, email, phone, surl, furl } =
       req.body;
-    console.log("req body", req.body);
+    // console.log("req body", req.body);
     // Validate input
     if (!amount || !productInfo || !customerName || !email || !phone) {
       return res.status(400).json({
@@ -39,7 +39,7 @@ exports.generateHashController = async (req, res) => {
       // disableRetry: "true",
     };
 
-    console.log("payuData", payuData);
+    // console.log("payuData", payuData);
 
     res.status(200).json({
       success: true,
@@ -48,7 +48,7 @@ exports.generateHashController = async (req, res) => {
       data: payuData,
     });
   } catch (error) {
-    console.error("Error generating hash:", error);
+    // console.error("Error generating hash:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error.",

@@ -47,7 +47,9 @@ exports.paymentCallBackController = async (req, res) => {
 
     const query = `INSERT INTO trasaction_detail(
             artist_id, grant_id, trasaction_id, payment_init_date, trasaction_status, trasaction_amount, payment_success_date)
-            VALUES (${artist}, ${productinfo}, '${txnid}', CURRENT_TIMESTAMP, '${status}', ${amount}, CURRENT_TIMESTAMP) RETURNING id, trasaction_id`;
+            VALUES (${artist}, ${productinfo}, '${txnid}', CURRENT_TIMESTAMP, '${
+      status === "success" ? "SUCCESS" : "FAILED"
+    }', ${amount}, CURRENT_TIMESTAMP) RETURNING id, trasaction_id`;
 
     // console.log("query", query);
 
@@ -122,9 +124,11 @@ exports.paymentCallBackController = async (req, res) => {
           //   data: payuResponse,
           // });
           return res.redirect(
-            "https://mazdaartfoundation.org/grantsAndScholarship"
+            "https://mazdaartfoundation.org/grantsAndScholarship?status=success"
           );
-          // return res.redirect("http://localhost:4000/grantsAndScholarship");
+          // return res.redirect(
+          //   "http://localhost:4000/grantsAndScholarship?status=success"
+          // );
         } else {
           // console.log("Payment failed:", payuResponse);
           // return res.status(400).json({
@@ -133,10 +137,10 @@ exports.paymentCallBackController = async (req, res) => {
           //   data: payuResponse,
           // });
           return res.redirect(
-            `https://mazdaartfoundation.org/payment?id=${productinfo}`
+            `https://mazdaartfoundation.org/payment?id=${productinfo}&status=failed`
           );
           // return res.redirect(
-          //   `http://localhost:4000/payment?id=${productinfo}`
+          //   `http://localhost:4000/payment?id=${productinfo}&status=failed`
           // );
         }
       }
