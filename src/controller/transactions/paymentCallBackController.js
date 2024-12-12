@@ -24,6 +24,7 @@ exports.paymentCallBackController = async (req, res) => {
       email,
       status,
       hash,
+      udf1,
     } = payuResponse; // PayU sends these fields in the response
 
     // console.log("req", req);
@@ -33,7 +34,7 @@ exports.paymentCallBackController = async (req, res) => {
     // console.log("payuresponse", payuResponse);
 
     // Construct the hash string for validation
-    const hashString = `${MERCHANT_SALT}|${status}|||||||||||${email}|${firstname}|${productinfo}|${amount}|${txnid}|${MERCHANT_KEY}`;
+    const hashString = `${MERCHANT_SALT}|${status}||||||||||${udf1}|${email}|${firstname}|${productinfo}|${amount}|${txnid}|${MERCHANT_KEY}`;
     const generatedHash = crypto
       .createHash("sha512")
       .update(hashString)
@@ -46,10 +47,10 @@ exports.paymentCallBackController = async (req, res) => {
     }
 
     const query = `INSERT INTO trasaction_detail(
-            artist_id, grant_id, trasaction_id, payment_init_date, trasaction_status, trasaction_amount, payment_success_date)
+            artist_id, grant_id, trasaction_id, payment_init_date, trasaction_status, trasaction_amount, payment_success_date, no_of_submission)
             VALUES (${artist}, ${productinfo}, '${txnid}', CURRENT_TIMESTAMP, '${
       status === "success" ? "SUCCESS" : "FAILED"
-    }', ${amount}, CURRENT_TIMESTAMP) RETURNING id, trasaction_id`;
+    }', ${amount}, CURRENT_TIMESTAMP, ${udf1}) RETURNING id, trasaction_id`;
 
     // console.log("query", query);
 

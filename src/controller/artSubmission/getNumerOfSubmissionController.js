@@ -15,7 +15,7 @@ exports.getNumberOfSubmissionController = async (req, res) => {
         statusCode: 400,
       });
     } else {
-      const query = `SELECT no_of_submission FROM trasaction_detail WHERE artist_id=${artist_id} AND grant_id=${grant_id}`;
+      const query = `SELECT no_of_submission FROM trasaction_detail WHERE artist_id=${artist_id} AND grant_id=${grant_id} AND trasaction_status = 'SUCCESS'`;
 
       console.log("query", query);
 

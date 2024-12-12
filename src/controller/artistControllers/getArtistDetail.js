@@ -387,7 +387,24 @@ const getMocData = async (list) => {
 
 const getTransactionData = async (artist_id) => {
   const transactionResultQuery = await pool.query(
-    `SELECT trasaction_id, trasaction_amount, trasaction_status,payment_init_date,payment_success_date,no_of_submission FROM trasaction_detail WHERE artist_id=${artist_id} ORDER BY trasaction_id DESC`
+    `SELECT 
+  td.trasaction_id, 
+  td.trasaction_amount, 
+  td.trasaction_status, 
+  td.payment_init_date, 
+  td.payment_success_date, 
+  td.no_of_submission, 
+  g.grant_uid
+FROM 
+  trasaction_detail td
+JOIN 
+  grants g 
+  ON g.grant_id = td.grant_id
+WHERE 
+  td.artist_id = ${artist_id}
+ORDER BY 
+  td.trasaction_id DESC;
+`
   );
   return transactionResultQuery.rows;
 };

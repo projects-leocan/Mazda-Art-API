@@ -9,9 +9,18 @@ exports.generateHashController = async (req, res) => {
     // console.log("merchant key", MERCHANT_KEY);
     // console.log("merchant salt", MERCHANT_SALT);
 
-    const { amount, productInfo, customerName, email, phone, surl, furl } =
-      req.body;
-    // console.log("req body", req.body);
+    const {
+      amount,
+      productInfo,
+      customerName,
+      email,
+      phone,
+      surl,
+      furl,
+      udf1,
+      address1,
+    } = req.body;
+    console.log("req body", req.body);
     // Validate input
     if (!amount || !productInfo || !customerName || !email || !phone) {
       return res.status(400).json({
@@ -21,7 +30,7 @@ exports.generateHashController = async (req, res) => {
     }
 
     const txnid = `txn_${Math.random().toString(36).substr(2, 9)}`;
-    const hashString = `${MERCHANT_KEY}|${txnid}|${amount.toString()}|${productInfo}|${customerName}|${email}|||||||||||${MERCHANT_SALT}`;
+    const hashString = `${MERCHANT_KEY}|${txnid}|${amount.toString()}|${productInfo}|${customerName}|${email}|${udf1}||||||||||${MERCHANT_SALT}`;
     const hash = crypto.createHash("sha512").update(hashString).digest("hex");
 
     const payuData = {
@@ -35,6 +44,8 @@ exports.generateHashController = async (req, res) => {
       surl: surl, // Success callback URL
       furl: furl, // Failure callback URL
       hash: hash,
+      udf1: udf1,
+      address1: address1,
       service_provider: "",
       // disableRetry: "true",
     };

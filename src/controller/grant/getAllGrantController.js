@@ -101,9 +101,15 @@ FROM
   grants g
   LEFT JOIN grant_moc ON g.grant_id = grant_moc.grant_id 
   LEFT JOIN grant_theme ON g.grant_id = grant_theme.grant_id 
-  LEFT JOIN trasaction_detail td ON g.grant_id = td.grant_id AND td.artist_id = ${artist_id}
-  LEFT JOIN submission_details sd ON g.grant_id = sd.grant_id AND sd.artist_id = ${artist_id}
-  LEFT JOIN submission_admin_review sar ON sd.id = sar.artwork_id
+  LEFT JOIN trasaction_detail td 
+    ON g.grant_id = td.grant_id 
+   AND td.artist_id = ${artist_id} 
+   AND td.trasaction_status = 'SUCCESS'
+  LEFT JOIN submission_details sd 
+    ON g.grant_id = sd.grant_id 
+   AND sd.artist_id = ${artist_id}
+  LEFT JOIN submission_admin_review sar 
+    ON sd.id = sar.artwork_id
 GROUP BY 
   g.grant_id, 
   g.grant_uid, 
@@ -116,12 +122,12 @@ GROUP BY
   g.for_each_amount,
   g.nominee_price, 
   g.grand_amount, 
-  g.submission_end_date, 
-  g.application_fees, 
-  g.created_at, 
   g.updated_at,
   g.min_height,
   g.min_width,
+  g.submission_end_date, 
+  g.application_fees, 
+  g.created_at, 
   g.max_height,
   g.max_width,
   sar.status,
@@ -129,7 +135,7 @@ GROUP BY
   td.trasaction_status,
   sd.id
 ORDER BY 
-  g.grant_id DESC
+  g.grant_id DESC;
 `;
 
   if (isAll == undefined) {
@@ -137,7 +143,7 @@ ORDER BY
     query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
   }
 
-  // console.log("query get all", query);
+  console.log("query get all", query);
 
   try {
     pool.query(query, async (err, result) => {

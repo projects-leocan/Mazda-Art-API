@@ -87,7 +87,7 @@ exports.submitGrantController = async (req, res) => {
           statusCode: 500,
         });
       } else {
-        const transactionQuery = `SELECT * FROM trasaction_detail WHERE artist_id = ${artist_id} AND grant_id = ${grant_id}`;
+        const transactionQuery = `SELECT * FROM trasaction_detail WHERE artist_id = ${artist_id} AND grant_id = ${grant_id} AND trasaction_status = 'SUCCESS'`;
 
         const transactionResult = await pool.query(transactionQuery);
         // console.log('transactionResult: ', transactionResult);
@@ -199,6 +199,7 @@ exports.submitGrantController = async (req, res) => {
             });
           }
         } else {
+          console.log("error", error);
           res.status(500).send({
             success: false,
             message: "Please add payment for this Grant first.",
