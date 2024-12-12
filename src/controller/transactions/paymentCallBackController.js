@@ -69,6 +69,7 @@ exports.paymentCallBackController = async (req, res) => {
         const query = `SELECT
             td.*,
             g.grant_uid,
+            g.submission_end_date,
             a.fname,
             a.lname,
             a.email
@@ -112,17 +113,18 @@ exports.paymentCallBackController = async (req, res) => {
           sendEmail(transaction_detail?.rows[0]?.email, "3", {
             name: `${transaction_detail?.rows[0]?.fname} ${transaction_detail?.rows[0]?.lname}`,
             grant_id: transaction_detail?.rows[0]?.grant_uid,
-            transaction_id: transaction_detail?.rows[0]?.trasaction_id,
+            submission_end_date:
+              transaction_detail?.rows[0]?.submission_end_date,
           });
           // return res.status(200).json({
           //   success: true,
           //   message: "Payment was successful.",
           //   data: payuResponse,
           // });
-
           return res.redirect(
             "https://mazdaartfoundation.org/grantsAndScholarship"
           );
+          // return res.redirect("http://localhost:4000/grantsAndScholarship");
         } else {
           // console.log("Payment failed:", payuResponse);
           // return res.status(400).json({
@@ -133,6 +135,9 @@ exports.paymentCallBackController = async (req, res) => {
           return res.redirect(
             `https://mazdaartfoundation.org/payment?id=${productinfo}`
           );
+          // return res.redirect(
+          //   `http://localhost:4000/payment?id=${productinfo}`
+          // );
         }
       }
     });

@@ -213,7 +213,10 @@ exports.addArtistWithImageController = (req, res) => {
 
         await client.query("COMMIT");
 
-        sendEmail(email, "1", { name: `${fname} ${lname}` });
+        sendEmail(email, "1", {
+          name: `${fname} ${lname}`,
+          mobile_number: `${mobile_number}`,
+        });
 
         res.status(200).send({
           success: true,
