@@ -6,7 +6,6 @@ const { artistGrantSubmissionFilesPath } = require("../../constants/filePaths");
 const {
   getGrantSubmittedDetails,
 } = require("../artSubmission/getSubmitGrantDetail");
-const { sendEmail } = require("../../constants/sendEmail");
 const {
   getFileURLPreFixPath,
 } = require("../../constants/getFileURLPreFixPath");
@@ -43,30 +42,18 @@ exports.updateGrantStatusController = async (req, res) => {
       statusCode: 500,
     });
   } else {
-    // let juryFindQuery = `SELECT * FROM jury WHERE id=${jury_id}`;
-    // let juryFindQuery = `SELECT jury_id FROM submission_details WHERE jury_id=${jury_id}`;
     let juryFindQuery = `SELECT jury_id FROM submission_review_details WHERE jury_id=${jury_id} AND artwork_id=${submission_id}`;
 
     const juryFindResult = await pool.query(juryFindQuery);
-    // const juryFind = juryFindQuery.rows[0]
-    // console.log("jury", juryFindResult);
+
     let query;
     if (juryFindResult?.rows.length > 0) {
-      // query = `UPDATE submission_details SET status=${status}, jury_id=${jury_id}, star_assigned=${starts}, assign_date=CURRENT_TIMESTAMP`;
-      // if (comment != undefined && comment !== "") {
-      //   query += `, comment='${comment}'`;
-      // }
-      // query += ` WHERE artwork_id = ${submission_id} and jury_id=${jury_id}`;
-
       query = `UPDATE submission_review_details SET status=${status}, star_assigned=${reviewStar}`;
       if (comment != undefined) {
         query += `, comment='${comment}'`;
       }
       query += ` WHERE artwork_id = ${submission_id} and jury_id=${jury_id}`;
     } else {
-      // query = `INSERT INTO public.submission_details(
-      //   artist_id, transaction_id, grant_id, art_file, art_title, height, width, art_description, submited_time, submission_updated_count, updated_at, status, jury_id, assign_date, comment, star_assigned, artwork_id)
-      //   VALUES (${artist_id}, ${transaction_id}, ${grant_id}, '${art_file}', '${art_title}', '${height}', '${width}', '${art_description}', CURRENT_TIMESTAMP, '${submission_updated_count}', CURRENT_TIMESTAMP, ${status}, ${jury_id}, '${assign_date}', '${comment}', ${starts}, ${submission_id});`;
       query = `INSERT INTO public.submission_review_details(
         artwork_id, jury_id, status, comment, star_assigned)
         VALUES (${submission_id}, ${jury_id}, ${status}, '${comment}', '${reviewStar}');`;
@@ -84,18 +71,8 @@ exports.updateGrantStatusController = async (req, res) => {
       } else {
         if (status === "3") {
           // decline mail
-          // sendEmail(
-          //   "Grant request decline",
-          //   `Your grant request has been decline.`,
-          //   artist_email
-          // );
         } else if (status === "4") {
           //accept mail
-          // sendEmail(
-          //   "Grant request accepted",
-          //   `Your grant request has been accepted.`,
-          //   artist_email
-          // );
         }
         const detailQuery = `SELECT * FROM submission_details WHERE artwork_id = ${submission_id}`;
         pool.query(detailQuery, (err, result) => {
@@ -111,15 +88,6 @@ exports.updateGrantStatusController = async (req, res) => {
           } else {
             // const prePath = getFileURLPreFixPath(req);
 
-            // const finalResponse = {
-            //   ...result.rows[0],
-            //   art_file:
-            //     prePath +
-            //     artistGrantSubmissionFilesPath +
-            //     result.rows[0].art_file,
-            // };
-            // delete finalResponse.artist_id;
-            // delete finalResponse.transaction_id;
             return res.status(200).send({
               success: true,
               statusCode: 200,

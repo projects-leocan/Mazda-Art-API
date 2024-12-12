@@ -94,7 +94,7 @@ ORDER BY g.grant_id DESC`
     WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL AND sar.status = 1 THEN 4
     WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL AND sar.status = 4 THEN 5
     WHEN td.artist_id IS NOT NULL AND sd.id IS NOT NULL THEN 3
-    WHEN td.artist_id IS NOT NULL AND td.trasaction_status = 'success' THEN 2
+    WHEN td.artist_id IS NOT NULL AND td.trasaction_status = 'SUCCESS' THEN 2
     ELSE 1
   END AS artist_grant_status
 FROM 

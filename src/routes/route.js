@@ -219,8 +219,6 @@ const {
   getArtistProfileCommentsController,
 } = require("../controller/artistControllers/getArtistProfileCommentsController");
 
-// Shweta Changes
-
 const {
   updateEnquiryController,
 } = require("../controller/enquiryControllers/updateEnquiryController");
@@ -245,18 +243,14 @@ const {
 const {
   getGrantJuryMappingDetailsController,
 } = require("../controller/grantMapping/getGrantJuryMappingDetailsController");
-const {
-  demoController,
-} = require("../controller/demoControllers/demoController");
+
 const {
   getAllArtistDemoController,
 } = require("../controller/demoControllers/getAllArtistDemoController");
 const {
   getGrantWiseSubmitArtStatisticsController,
 } = require("../controller/statisticsControllers/getGrantWiseSubmitArtStatisticsController");
-// const {
-//   addArtistKycController,
-// } = require("../controller/artistControllers/addArtistKycController");
+
 const {
   getArtistKycDocumentController,
 } = require("../controller/artistControllers/getArtistKycDocument");
@@ -269,9 +263,7 @@ const {
 const {
   getSubmitArtworkStatusController,
 } = require("../controller/artSubmission/getSubmitArtworkStatusController");
-// const {
-//   addArtistWithImageController,
-// } = require("../controller/artistControllers/addArtistWithImageController");
+
 const {
   updateArtistWithImageController,
 } = require("../controller/artistControllers/updateArtistWithImageController");
@@ -288,12 +280,6 @@ const {
   getAdminRoleByIdController,
 } = require("../controller/adminControllers/getAdminRoleByIdController");
 
-const {
-  createOrderController,
-} = require("../controller/paymentControllers/createOrderController");
-const {
-  verifyPaymentController,
-} = require("../controller/paymentControllers/verifyPaymentController");
 const {
   sendOtpController,
   verifyOtpController,
@@ -716,18 +702,6 @@ module.exports = (app) => {
   router.post("/send-otp", sendOtpController);
   router.post("/verify-otp", verifyOtpController);
 
-  // Demo artist image upload
-
-  // router.post(
-  //   "/createUserWithImage",
-  //   validateAccessToken,
-  //   addArtistWithImageController
-  // );
-
-  router.post("/createOrder", createOrderController);
-  router.post("/verifyPayment", verifyPaymentController);
-
-  router.get("/demo", demoController);
   router.get("/getAllArtistDemo", getAllArtistDemoController);
 
   router.get("/finalAggregateRatings", finalAggregateRatingsController);

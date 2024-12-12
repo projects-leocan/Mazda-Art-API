@@ -91,16 +91,6 @@ require("dotenv").config();
 
 // Set up multer for file storage
 const storage = multer.diskStorage({
-  //   destination: (req, file, cb) => {
-  //     if (file.fieldname === "profile_pic") {
-  //       cb(null, "src/files/user_profile/");
-  //     } else if (file.fieldname === "user_portfolio") {
-  //       cb(null, "src/files/user_portfolio/");
-  //     }
-  //   },
-  //   filename: (req, file, cb) => {
-  //     cb(null, Date.now() + path.extname(file.originalname));
-  //   },
   destination: (req, file, cb) => {
     if (file.fieldname === "profile_pic") {
       cb(null, "src/files/artist_profile/");
@@ -119,8 +109,6 @@ const upload = multer({ storage }).fields([
 ]);
 
 exports.addArtistWithImageController = (req, res) => {
-  const sgMail = require("@sendgrid/mail");
-
   upload(req, res, async (err) => {
     if (err) {
       // console.log("err", err);
@@ -173,12 +161,6 @@ exports.addArtistWithImageController = (req, res) => {
         `;
 
         // console.log("query", query);
-
-        // const values = [
-        //     fname, lname, dob, gender, email, mobile_number, address1, address2,
-        //     city, state, pincode, social_media_profile_link, hashedPassword,
-        //     is_kyc_verified, profilePic, createdAt, updatedAt
-        // ];
 
         const result = await client.query(query);
         const artistId = result.rows[0].artist_id;

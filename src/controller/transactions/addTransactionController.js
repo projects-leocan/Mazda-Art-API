@@ -7,7 +7,6 @@ const {
 } = require("./getTransactionDetailsController");
 const { getTransactionDetails } = require("./getTransactionDetails");
 const { v4: uuidv4 } = require("uuid");
-const sgMail = require("@sendgrid/mail");
 require("dotenv").config();
 
 exports.addTransactionController = async (req, res) => {
@@ -62,7 +61,6 @@ exports.addTransactionController = async (req, res) => {
 
         const API_KEY = process.env.SENDGRID_API_KEY;
 
-        sgMail.setApiKey(API_KEY);
         const message = {
           to: transaction_detail?.rows[0]?.email,
           from: {
@@ -88,15 +86,6 @@ exports.addTransactionController = async (req, res) => {
             transaction_id: transaction_detail?.rows[0]?.trasaction_id,
           },
         };
-
-        sgMail
-          .send(message)
-          .then(() => {
-            console.log("Email sent");
-          })
-          .catch((error) => {
-            console.error("Error sending email:", error);
-          });
       }
     });
   } catch (error) {

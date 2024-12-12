@@ -84,30 +84,6 @@ exports.paymentCallBackController = async (req, res) => {
 
         const API_KEY = process.env.SENDGRID_API_KEY;
 
-        // sgMail.setApiKey(API_KEY);
-        // const message = {
-        //   to: transaction_detail?.rows[0]?.email,
-        //   from: {
-        //     name: process.env.SENDGRID_EMAIL_NAME,
-        //     email: process.env.FROM_EMAIL,
-        //   },
-        //   templateId: "d-e9afaa56d98149908a661a31c6eeb5e8",
-        //   dynamicTemplateData: {
-        //     name: `${transaction_detail?.rows[0]?.fname} ${transaction_detail?.rows[0]?.lname}`,
-        //     grant_id: transaction_detail?.rows[0]?.grant_uid,
-        //     transaction_id: transaction_detail?.rows[0]?.trasaction_id,
-        //   },
-        // };
-
-        // sgMail
-        //   .send(message)
-        //   .then(() => {
-        //     console.log("Email sent");
-        //   })
-        //   .catch((error) => {
-        //     console.error("Error sending email:", error);
-        //   });
-
         // Send response after all operations are complete
         if (status === "success") {
           // console.log("Payment success:", payuResponse);
@@ -136,6 +112,7 @@ exports.paymentCallBackController = async (req, res) => {
           //   message: "Payment failed.",
           //   data: payuResponse,
           // });
+
           return res.redirect(
             `https://mazdaartfoundation.org/payment?id=${productinfo}&status=failed`
           );
@@ -145,13 +122,6 @@ exports.paymentCallBackController = async (req, res) => {
         }
       }
     });
-
-    // Remove the following redirect as it can cause the headers sent error
-    // res.redirect(
-    //   status === "Success"
-    //     ? `localhost:4000/payment?id=${id}`
-    //     : "localhost:4000/grantsAndScholarship"
-    // );
   } catch (error) {
     // console.error("Error handling payment callback:", error);
     return res

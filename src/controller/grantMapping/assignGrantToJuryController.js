@@ -103,7 +103,6 @@ const {
   partialAssignment,
 } = require("../../constants/messages");
 const _ = require("lodash");
-const { sendEmail } = require("../../constants/sendEmail");
 
 exports.assignGrantToJuryController = async (req, res) => {
   const { jurys, grant_id, admin_id } = req.body;
@@ -184,11 +183,6 @@ exports.assignGrantToJuryController = async (req, res) => {
     // Send email notifications
     const emailIds = notAssignedJuries.map((e) => e.email);
     if (emailIds.length > 0) {
-      // sendEmail(
-      //   "Grant assigned to you",
-      //   "You have been assigned a new grant.",
-      //   emailIds
-      // );
     }
 
     res.status(200).send({

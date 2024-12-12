@@ -7,7 +7,6 @@ const { fileUpload } = require("../../utils/fileUpload");
 const formidable = require("formidable");
 const { getGrantSubmittedDetails } = require("./getSubmitGrantDetail");
 const { query } = require("express");
-const sgMail = require("@sendgrid/mail");
 const multer = require("multer");
 require("dotenv").config();
 const path = require("path");
@@ -52,13 +51,6 @@ exports.submitGrantController = async (req, res) => {
       // console.log("req body", fields);
       // console.log("req body files", files);
 
-      // if (Object.keys(fields).length === 0) {
-      //   res.status(500).send({
-      //     success: false,
-      //     message: "Pass data in body",
-      //     statusCode: 500,
-      //   });
-      // }
       const client = await pool.connect();
 
       const submitGrantValidationQuery = `SELECT * FROM grants WHERE grant_id = ${grant_id}`;
@@ -76,9 +68,6 @@ exports.submitGrantController = async (req, res) => {
       submitGrantValidationResult.rows[0].submission_end_date = getUTCdate(
         submitGrantValidationResult.rows[0].submission_end_date
       );
-      // console.log(`date: ${JSON.stringify(date)}`);
-      // console.log(`submission_end_date: ${JSON.stringify(submitGrantValidationResult.rows[0].submission_end_date)}`);
-      // console.log(`con: ${submitGrantValidationResult.rows[0].submission_end_date < date}`);
 
       if (
         submitGrantValidationResult.rowCount === 0 ||
@@ -92,12 +81,6 @@ exports.submitGrantController = async (req, res) => {
       } else if (
         submitGrantValidationResult.rows[0].submission_end_date < date
       ) {
-        // console.log(
-        //   `con: ${
-        //     submitGrantValidationResult.rows[0].submission_end_date < date
-        //   }`
-        // );
-        // console.log("Grant Submission date is passed.");
         res.status(500).send({
           success: false,
           message: "Grant Submission date is passed.",
@@ -132,21 +115,6 @@ exports.submitGrantController = async (req, res) => {
               : [];
 
             let artImageUploadError;
-            // if (artFile != undefined) {
-            // const artImagePath = artFile[0].filepath;
-            // const filename =
-            //   artist_id +
-            //   "_" +
-            //   grant_id +
-            //   "_" +
-            //   Date.now() +
-            //   `.${art_file_extension}`;
-            // const artFolderPath = artistGrantSubmissionFilesPath + filename;
-            // try {
-            //   fileUpload(artImagePath, artFolderPath);
-            // } catch (err) {
-            //   artImageUploadError = err;
-            // }
 
             const description = art_description.replace(/'/g, "''");
 
@@ -158,8 +126,6 @@ exports.submitGrantController = async (req, res) => {
             pool.query(query, async (err, result) => {
               // console.log(`insert error: ${err}`);
               if (err) {
-                // console.log(`insert error: ${err}`);
-                // console.log(`insert result: ${result}`);
                 res.status(500).send({
                   success: false,
                   message: somethingWentWrong,
@@ -167,13 +133,7 @@ exports.submitGrantController = async (req, res) => {
                 });
               } else {
                 const submissionId = result.rows[0].id;
-                // console.log(`submit req: ${JSON.stringify(req)}`)
-                // await getGrantSubmittedDetails(
-                //   submissionId,
-                //   "Grant submitted Successfully.",
-                //   res,
-                //   req
-                // );
+
                 if (!lodash.isEmpty(mocs)) {
                   // Parse the JSON string into an array of objects
 
@@ -224,53 +184,13 @@ exports.submitGrantController = async (req, res) => {
                   artistInfoQuery
                 );
 
-                // const API_KEY = process.env.SENDGRID_API_KEY;
-
-                // sgMail.setApiKey(API_KEY);
-                // const message = {
-                //   to: artistInfoQueryExecute?.rows[0]?.email,
-                //   from: {
-                //     name: process.env.SENDGRID_EMAIL_NAME,
-                //     email: process.env.FROM_EMAIL,
-                //   },
-
-                //   templateId: process.env.ARTWORK_SUBMIT_TEMPLATE_ID,
-                //   dynamicTemplateData: {
-                //     grant_id: grantUidQueryExecute?.rows[0]?.grant_uid,
-                //     name: `${artistInfoQueryExecute?.rows[0]?.fname} ${artistInfoQueryExecute?.rows[0]?.lname}`,
-                //   },
-                // };
-
-                // sgMail
-                //   .send(message)
-                //   .then(() => {
-                //     console.log("Email sent");
-                //   })
-                //   .catch((error) => {
-                //     console.error("Error sending email:", error);
-                //   });
-
                 sendEmail(artistInfoQueryExecute?.rows[0]?.email, "2", {
                   grant_id: grantUidQueryExecute?.rows[0]?.grant_uid,
                   name: `${artistInfoQueryExecute?.rows[0]?.fname} ${artistInfoQueryExecute?.rows[0]?.lname}`,
                 });
               }
             });
-            // }
-            // else {
-            //   res.status(500).send({
-            //     success: false,
-            //     message: "Please add art file.",
-            //     statusCode: 500,
-            //   });
-            // }
           } else {
-            // await getGrantSubmittedDetails(
-            //   grantAlreadySubmittedResult.rows[0].id,
-            //   "Grant already submitted.",
-            //   res,
-            //   req
-            // );
             // console.log("error", err);
             res.status(500).send({
               success: false,

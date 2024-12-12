@@ -1,4 +1,3 @@
-const { sendEmail } = require("../../constants/sendEmail");
 const pool = require("../../config/db");
 const lodash = require("lodash");
 const { somethingWentWrong } = require("../../constants/messages");
@@ -37,18 +36,8 @@ exports.updateContactUsController = async (req, res) => {
       } else {
         if (status === "2") {
           // decline mail
-          // sendEmail(
-          //   "Contact Us resolved",
-          //   `Your message request has been resolved.`,
-          //   email
-          // );
         } else if (status === "3") {
           //accept mail
-          // sendEmail(
-          //   "Contact Us decline",
-          //   `Your message request has been decline.`,
-          //   email
-          // );
         }
         const detailQuery = `SELECT * FROM contact_us WHERE id = ${id}`;
         pool.query(detailQuery, (err, result) => {

@@ -3,11 +3,9 @@ const pool = require("../../config/db");
 const lodash = require("lodash");
 const { somethingWentWrong } = require("../../constants/messages");
 const { artistGrantSubmissionFilesPath } = require("../../constants/filePaths");
-// const { sendEmail } = require("../../constants/sendEmail");
 const {
   getFileURLPreFixPath,
 } = require("../../constants/getFileURLPreFixPath");
-const sgMail = require("@sendgrid/mail");
 const { sendEmail } = require("../emailControllers/sendEmailController");
 require("dotenv").config();
 
@@ -51,18 +49,8 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
     } else {
       if (status === "3") {
         // decline mail
-        // sendEmail(
-        //   "Grant request decline",
-        //   `Your grant request has been decline.`,
-        //   artist_email
-        // );
       } else if (status === "4") {
         //accept mail
-        // sendEmail(
-        //   "Grant request accepted",
-        //   `Your grant request has been accepted.`,
-        //   artist_email
-        // );
       }
       const detailQuery = `SELECT * FROM submission_details WHERE artwork_id = ${submission_id}`;
       pool.query(detailQuery, async (err, result) => {
@@ -91,7 +79,6 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
 
           // const API_KEY = process.env.SENDGRID_API_KEY;
 
-          // sgMail.setApiKey(API_KEY);
           const artwork_status = `${
             status === "1"
               ? "Submitted"
@@ -116,17 +103,7 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
               : `Your artwork which is ${art_title} is currently under review by our team. We appreciate your patience during this process and will notify you as soon as we have an update regarding its progress.`
           } `;
 
-          // sgMail
-          //   .send(message)
-          //   .then(() => {
-          //     console.log("Email sent");
-          //   })
-          //   .catch((error) => {
-          //     console.error("Error sending email:", error);
-          //   });
-
           sendEmail(artistNameQueryExecute?.rows[0]?.email, "4", {
-            // status: artwork_status,
             name: `${artistNameQueryExecute?.rows[0]?.fname} ${artistNameQueryExecute?.rows[0]?.lname}`,
             info: info,
           });
@@ -135,7 +112,6 @@ exports.updateAdminArtworkStatusController = async (req, res) => {
             success: true,
             statusCode: 200,
             message: "Grant Status Updated Successfully",
-            // data: finalResponse,
           });
         }
       });

@@ -7,7 +7,7 @@ const apiKey = SibApiV3Sdk.ApiClient.instance.authentications["api-key"];
 apiKey.apiKey = process.env.BREVO_API_KEY; // Replace with your actual API key
 
 async function sendEmail(toEmail, templateId, params) {
-  console.log("send email", toEmail);
+  // console.log("send email", toEmail);
   const email = {
     sender: { email: "info@mazdaartfoundation.org", name: "Mazda Art" },
     to: [{ email: toEmail, name: params?.name }],
