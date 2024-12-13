@@ -143,7 +143,7 @@ ORDER BY
     query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
   }
 
-  console.log("query get all", query);
+  // console.log("query get all", query);
 
   try {
     pool.query(query, async (err, result) => {

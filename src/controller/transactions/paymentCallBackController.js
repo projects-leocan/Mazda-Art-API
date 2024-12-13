@@ -25,6 +25,7 @@ exports.paymentCallBackController = async (req, res) => {
       status,
       hash,
       udf1,
+      udf2,
     } = payuResponse; // PayU sends these fields in the response
 
     // console.log("req", req);
@@ -34,7 +35,7 @@ exports.paymentCallBackController = async (req, res) => {
     // console.log("payuresponse", payuResponse);
 
     // Construct the hash string for validation
-    const hashString = `${MERCHANT_SALT}|${status}||||||||||${udf1}|${email}|${firstname}|${productinfo}|${amount}|${txnid}|${MERCHANT_KEY}`;
+    const hashString = `${MERCHANT_SALT}|${status}|||||||||${udf2}|${udf1}|${email}|${firstname}|${productinfo}|${amount}|${txnid}|${MERCHANT_KEY}`;
     const generatedHash = crypto
       .createHash("sha512")
       .update(hashString)
@@ -100,12 +101,8 @@ exports.paymentCallBackController = async (req, res) => {
           //   message: "Payment was successful.",
           //   data: payuResponse,
           // });
-          return res.redirect(
-            "https://mazdaartfoundation.org/grantsAndScholarship?status=success"
-          );
-          // return res.redirect(
-          //   "http://localhost:4000/grantsAndScholarship?status=success"
-          // );
+
+          return res.redirect(`${udf2}/grantsAndScholarship?status=success`);
         } else {
           // console.log("Payment failed:", payuResponse);
           // return res.status(400).json({
@@ -115,11 +112,8 @@ exports.paymentCallBackController = async (req, res) => {
           // });
 
           return res.redirect(
-            `https://mazdaartfoundation.org/payment?id=${productinfo}&status=failed`
+            `${udf2}/payment?id=${productinfo}&status=failed`
           );
-          // return res.redirect(
-          //   `http://localhost:4000/payment?id=${productinfo}&status=failed`
-          // );
         }
       }
     });
