@@ -149,7 +149,13 @@ exports.addArtistWithImageController = (req, res) => {
       try {
         await client.query("BEGIN");
         const kyc = is_kyc_verified === undefined ? 0 : is_kyc_verified;
-        const query = `
+
+        const mobile_number_query = `SELECT mobile_number FROM artist WHERE mobile_number = '${mobile_number}'`;
+
+        const result = await client.query(mobile_number_query);
+
+        if (lodash.isEmpty(result?.rows)) {
+          const query = `
           INSERT INTO artist (
             fname, lname, dob, gender, email, mobile_number, address1, address2,
             city, state, pincode, social_media_profile_link, password,
@@ -160,51 +166,58 @@ exports.addArtistWithImageController = (req, res) => {
           RETURNING artist_id
         `;
 
-        // console.log("query", query);
+          // console.log("query", query);
 
-        const result = await client.query(query);
-        const artistId = result.rows[0].artist_id;
+          const result = await client.query(query);
+          const artistId = result.rows[0].artist_id;
 
-        if (!lodash.isEmpty(mocs)) {
-          // Parse the JSON string into an array of objects
+          if (!lodash.isEmpty(mocs)) {
+            // Parse the JSON string into an array of objects
 
-          const mocsArray = JSON.parse(mocs);
+            const mocsArray = JSON.parse(mocs);
 
-          // Construct the values string for the INSERT query
-          let values = mocsArray
-            .map((e) => `(${artistId}, ${e.id})`)
-            .join(", ");
-          // Construct the INSERT query
-          let mocInsertQuery = `INSERT INTO artist_moc(artist_id, moc_id) VALUES ${values}`;
+            // Construct the values string for the INSERT query
+            let values = mocsArray
+              .map((e) => `(${artistId}, ${e.id})`)
+              .join(", ");
+            // Construct the INSERT query
+            let mocInsertQuery = `INSERT INTO artist_moc(artist_id, moc_id) VALUES ${values}`;
 
-          // Execute the INSERT query
-          const mocInsertResult = await pool.query(mocInsertQuery);
-        }
+            // Execute the INSERT query
+            const mocInsertResult = await pool.query(mocInsertQuery);
+          }
 
-        if (artistPortfolio.length > 0) {
-          const portfolioQuery = `
+          if (artistPortfolio.length > 0) {
+            const portfolioQuery = `
             INSERT INTO artist_portfolio (artist_id, artist_portfolio)
             VALUES ${artistPortfolio
               .map((_, i) => `($1, $${i + 2})`)
               .join(", ")}
           `;
-          const portfolioValues = [artistId, ...artistPortfolio];
+            const portfolioValues = [artistId, ...artistPortfolio];
 
-          await client.query(portfolioQuery, portfolioValues);
+            await client.query(portfolioQuery, portfolioValues);
+          }
+
+          await client.query("COMMIT");
+
+          sendEmail(email, "1", {
+            name: `${fname} ${lname}`,
+            mobile_number: `${mobile_number}`,
+          });
+
+          res.status(200).send({
+            success: true,
+            message: "Artist added successfully",
+            artistId,
+          });
+        } else {
+          res.status(500).send({
+            success: false,
+            message: `${mobile_number} is already exists.`,
+            statusCode: 500,
+          });
         }
-
-        await client.query("COMMIT");
-
-        sendEmail(email, "1", {
-          name: `${fname} ${lname}`,
-          mobile_number: `${mobile_number}`,
-        });
-
-        res.status(200).send({
-          success: true,
-          message: "Artist added successfully",
-          artistId,
-        });
       } catch (error) {
         await client.query("ROLLBACK");
         console.error("rollback", error);
