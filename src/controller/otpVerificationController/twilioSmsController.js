@@ -72,7 +72,7 @@ exports.verifyOtpController = async (req, res) => {
     const query = `SELECT * FROM artist WHERE mobile_number = '${phoneNumber}'`;
     pool.query(query, async (error, result) => {
       if (error) {
-        console.log("verify error", error);
+        // console.log("verify error", error);
         return res.status(500).send({
           success: false,
           message: somethingWentWrong,
@@ -88,53 +88,56 @@ exports.verifyOtpController = async (req, res) => {
         }
 
         // Use Twilio's verification service to check the OTP
-        // const verifiedResponse = await client.verify.v2
-        //   .services(twilioServiceId)
-        //   .verificationChecks.create({
-        //     to: `+91${phoneNumber}`,
-        //     code: otp,
-        //   });
-        // if (verifiedResponse.status === "approved") {
-        //   // OTP is verified successfully
-        //   delete result.rows[0].password;
-        //   delete result.rows[0].updated_at;
-        //   delete result.rows[0].is_kyc_verified;
+        const verifiedResponse = await client.verify.v2
+          .services(twilioServiceId)
+          .verificationChecks.create({
+            to: `+91${phoneNumber}`,
+            code: otp,
+          });
+        if (verifiedResponse.status === "approved") {
+          // OTP is verified successfully
+          delete result.rows[0].password;
+          delete result.rows[0].updated_at;
+          delete result.rows[0].is_kyc_verified;
 
-        //   res.status(200).json({
-        //     success: true,
-        //     message: "OTP verified successfully!",
-        //     data: result.rows[0],
-        //   });
-        // } else {
-        //   // OTP verification failed
-        //   res.status(401).json({
-        //     success: false,
-        //     message: "Invalid OTP. Please try again.",
-        //   });
-        // }
-
-        if (otp === "123456") {
-          delete result?.rows[0]?.password;
-          delete result?.rows[0]?.updated_at;
-          delete result?.rows[0]?.is_kyc_verified;
           res.status(200).json({
             success: true,
-            message: "OTP Verified Successfully!",
-            // sid: message.sid,
-            data: result?.rows[0],
             message: "OTP verified successfully!",
             data: result.rows[0],
           });
         } else {
-          res.status(500).json({
+          // OTP verification failed
+          res.status(401).json({
             success: false,
-            // OTP verification failed
-
             message: "Invalid OTP. Please try again.",
-            // sid: message.sid,
-            data: result?.rows[0],
           });
         }
+
+        // For Testing
+
+        // if (otp === "123456") {
+        //   delete result?.rows[0]?.password;
+        //   delete result?.rows[0]?.updated_at;
+        //   delete result?.rows[0]?.is_kyc_verified;
+        //   res.status(200).json({
+        //     success: true,
+        //     message: "OTP Verified Successfully!",
+        //     // sid: message.sid,
+        //     data: result?.rows[0],
+        //     message: "OTP verified successfully!",
+        //     data: result.rows[0],
+        //   });
+        // }
+        // else {
+        //   res.status(500).json({
+        //     success: false,
+        //     // OTP verification failed
+
+        //     message: "Invalid OTP. Please try again.",
+        //     // sid: message.sid,
+        //     data: result?.rows[0],
+        //   });
+        // }
       }
     });
   } catch (error) {
