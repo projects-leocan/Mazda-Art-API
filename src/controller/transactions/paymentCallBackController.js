@@ -102,7 +102,7 @@ exports.paymentCallBackController = async (req, res) => {
           //   data: payuResponse,
           // });
 
-          return res.redirect(`${udf2}/grantsAndScholarship`);
+          return res.redirect(`${udf2}/paymentSuccess`);
         } else {
           // console.log("Payment failed:", payuResponse);
           // return res.status(400).json({
