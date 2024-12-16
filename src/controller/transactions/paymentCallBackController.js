@@ -90,12 +90,21 @@ exports.paymentCallBackController = async (req, res) => {
         if (status === "success") {
           // console.log("Payment success:", payuResponse);
 
+          const submissionEndDate = new Date(
+            transaction_detail?.rows[0]?.submission_end_date
+          );
+          const formattedSubmissionEndDate = `${String(
+            submissionEndDate.getDate()
+          ).padStart(2, "0")}/${String(
+            submissionEndDate.getMonth() + 1
+          ).padStart(2, "0")}/${submissionEndDate.getFullYear()}`;
+
           sendEmail(transaction_detail?.rows[0]?.email, "3", {
             name: `${transaction_detail?.rows[0]?.fname} ${transaction_detail?.rows[0]?.lname}`,
             grant_id: transaction_detail?.rows[0]?.grant_uid,
-            submission_end_date:
-              transaction_detail?.rows[0]?.submission_end_date,
+            submission_end_date: formattedSubmissionEndDate,
           });
+
           // return res.status(200).json({
           //   success: true,
           //   message: "Payment was successful.",
