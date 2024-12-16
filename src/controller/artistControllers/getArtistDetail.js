@@ -251,7 +251,6 @@ exports.getArtistDetails = async (artist_id, message, res, req) => {
       if (artistData.profile_pic) {
         artistData.profile_pic = `${prePath}${artistProfileImagePath}${artistData.profile_pic}`;
       }
-      // console.log("artst data", artistData);
       const [mocs, grants, comments, transactions] = await Promise.all([
         !lodash.isEmpty(artistData.artist_moc) &&
         artistData.artist_moc[0] != null
@@ -349,11 +348,20 @@ const getGrantsData = async (artist_id, req) => {
         const grantData = await pool.query(
           `SELECT grant_uid FROM grants WHERE grant_id=${e.grant_id}`
         );
+        const mocDataQuery = `SELECT aam.moc_id, moc.medium_of_choice 
+FROM artist_artwork_moc aam
+JOIN medium_of_choice moc ON aam.moc_id = moc.id
+WHERE aam.artwork_id = ${e.artwork_id}`;
+
+        const mocData = await pool.query(mocDataQuery);
         // Check if grantData has rows and assign grant_uid
         if (!lodash.isEmpty(grantData.rows)) {
           e.grant_uid = grantData.rows[0].grant_uid; // Append the grant_uid to the current row
         }
 
+        if (!lodash.isEmpty(mocData.rows)) {
+          e.moc = mocData.rows;
+        }
         // Modify the art_file path and delete unnecessary properties
         delete e.transaction_id;
         delete e.jury_id;
