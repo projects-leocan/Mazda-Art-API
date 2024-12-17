@@ -2,6 +2,7 @@ const twilio = require("twilio");
 const twilioConfig = require("../../config/twilioConfig");
 const pool = require("../../config/db");
 const { somethingWentWrong } = require("../../constants/messages");
+const { sendOtp } = require("./sendOtp");
 require("dotenv").config();
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -11,58 +12,92 @@ const twilioServiceId = process.env.TWILIO_SERVICE_SID;
 
 const client = twilio(accountSid, authToken);
 
+// For test
+
+// exports.sendOtpController = async (req, res) => {
+//   const { phoneNumber } = req.body;
+//   console.log("req body", req.body);
+
+//   // client.verify.v2
+//   //   .services(twilioServiceId)
+//   //   .verifications.create({
+//   //     to: `+91${phoneNumber}`,
+//   //     channel: "sms",
+//   //   })
+//   //   .then((message) => {
+//   const query = `SELECT * FROM artist WHERE mobile_number = '${phoneNumber}'`;
+
+//   pool.query(query, async (error, result) => {
+//     if (error) {
+//       console.log("error", error);
+//       return res.status(500).send({
+//         success: false,
+//         message: somethingWentWrong,
+//         statusCode: 500,
+//       });
+//     } else {
+//       if (result.rows.length === 0) {
+//         res.status(404).send({
+//           success: false,
+//           message: "No artist found with this number.",
+//           statusCode: 404,
+//         });
+//       } else {
+//         try {
+//           const finalData = result?.rows?.map((res) => {
+//             delete res?.password;
+//             delete res?.updated_at;
+//             delete res?.is_kyc_verified;
+//           });
+
+//           delete result?.rows[0]?.password;
+//           delete result?.rows[0]?.updated_at;
+//           delete result?.rows[0]?.is_kyc_verified;
+//           res.status(200).json({
+//             success: true,
+//             message: "OTP sent successfully!",
+//             // sid: message.sid,
+//             data: result?.rows[0],
+//           });
+//         } catch (error) {
+//           if (error.status === 429) {
+//             res.status(500).send({
+//               success: false,
+//               message:
+//                 "Max check attempts reached. Please check after some time.",
+//             });
+//           } else {
+//             console.log("error", error);
+//             res.status(500).send({
+//               success: false,
+//               message: "Something went wrong!",
+//               statusCode: 500,
+//             });
+//           }
+//         }
+//       }
+//     }
+//   });
+
+//   // sendOtp(phoneNumber, res, req);
+
+//   // })
+//   // .catch((error) => {
+//   //   // console.log("error while sending otp", error);
+//   //   res.status(500).json({
+//   //     success: false,
+//   //     message: "Failed to send OTP.",
+//   //     error: error.message,
+//   //   });
+//   // });
+// };
+
+// live
+
 exports.sendOtpController = async (req, res) => {
   const { phoneNumber } = req.body;
 
-  // First, check if the artist exists in the database
-  const query = `SELECT * FROM artist WHERE mobile_number = '${phoneNumber}'`;
-
-  pool.query(query, async (error, result) => {
-    if (error) {
-      // console.log("error", error);
-      return res.status(500).send({
-        success: false,
-        message: somethingWentWrong,
-        statusCode: 500,
-      });
-    } else {
-      if (result.rows.length === 0) {
-        return res.status(404).send({
-          success: false,
-          message: "NO ARTIST FOUND WITH THIS NUMBER",
-          statusCode: 404,
-        });
-      } else {
-        // Artist found, now send the OTP
-        client.verify.v2
-          .services(twilioServiceId)
-          .verifications.create({
-            to: `+91${phoneNumber}`,
-            channel: "sms",
-          })
-          .then((message) => {
-            // Remove sensitive data before sending the response
-            delete result.rows[0].password;
-            delete result.rows[0].updated_at;
-            delete result.rows[0].is_kyc_verified;
-
-            res.status(200).json({
-              success: true,
-              message: "OTP sent successfully!",
-              data: result.rows[0],
-            });
-          })
-          .catch((error) => {
-            console.log("error while sending otp", error);
-            res.status(500).json({
-              success: false,
-              message: "Failed to send OTP.",
-              error: error.message,
-            });
-          });
-      }
-    }
-  });
+  sendOtp(phoneNumber, res, req, "afterlogin");
 };
 
 exports.verifyOtpController = async (req, res) => {
@@ -127,8 +162,7 @@ exports.verifyOtpController = async (req, res) => {
         //     message: "OTP verified successfully!",
         //     data: result.rows[0],
         //   });
-        // }
-        // else {
+        // } else {
         //   res.status(500).json({
         //     success: false,
         //     // OTP verification failed
@@ -149,7 +183,4 @@ exports.verifyOtpController = async (req, res) => {
     });
   }
 };
-
-function generateOTP() {
-  return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
-}
+  

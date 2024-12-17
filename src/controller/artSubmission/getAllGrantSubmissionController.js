@@ -103,8 +103,6 @@ ORDER BY
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
 
-    console.log("get all scrubbing queyr------------", query);
-
     pool.query(query, async (err, result) => {
       // console.log("err: ", err);
       // console.log("result: ", result.rows);

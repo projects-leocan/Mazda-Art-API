@@ -127,16 +127,27 @@ exports.updateGrantController = async (req, res) => {
     query += `, grand_amount='${grand_amount}'`;
   }
 
+  if (theme_id !== undefined) {
+    const theme_replace = theme_id?.replace(/\n/g, "\\n");
+    query += `, theme_id='${theme_replace}'`;
+  }
+
   if (eligibilityCriteria !== undefined) {
-    query += `, eligibility_criteria='${eligibility_criteria}'`;
+    const eligibility_criteria_replace = eligibilityCriteria.replace(
+      /\n/g,
+      "\\n"
+    );
+    query += `, eligibility_criteria='${eligibility_criteria_replace}'`;
   }
 
   if (juryRules !== undefined) {
-    query += `, jury_rules='${jury_rules}'`;
+    const jury_rules_replace = juryRules.replace(/\n/g, "\\n");
+    query += `, jury_rules='${jury_rules_replace}'`;
   }
 
   if (juryCriteria !== undefined) {
-    query += `, jury_criteria='${jury_criteria}'`;
+    const jury_criteria_replace = juryCriteria.replace(/\n/g, "\\n");
+    query += `, jury_criteria='${jury_criteria_replace}'`;
   }
 
   if (is_flat_pyramid != undefined) {
@@ -162,24 +173,24 @@ exports.updateGrantController = async (req, res) => {
     }
   }
 
-  if (is_theme_update !== undefined) {
-    let deleteQuery = `DELETE FROM grant_theme WHERE grant_id = ${grant_id}`;
-    const deleteResult = await pool.query(deleteQuery);
+  // if (is_theme_update !== undefined) {
+  //   let deleteQuery = `DELETE FROM grant_theme WHERE grant_id = ${grant_id}`;
+  //   const deleteResult = await pool.query(deleteQuery);
 
-    if (!lodash.isEmpty(theme_id)) {
-      // Parse the JSON string into an array of objects
+  //   if (!lodash.isEmpty(theme_id)) {
+  //     // Parse the JSON string into an array of objects
 
-      const mocsArray = theme_id;
+  //     const mocsArray = theme_id;
 
-      // Construct the values string for the INSERT query
-      let values = mocsArray.map((e) => `(${grant_id}, ${e.value})`).join(", ");
-      // Construct the INSERT query
-      let mocInsertQuery = `INSERT INTO grant_theme(grant_id, theme_id) VALUES ${values}`;
+  //     // Construct the values string for the INSERT query
+  //     let values = mocsArray.map((e) => `(${grant_id}, ${e.value})`).join(", ");
+  //     // Construct the INSERT query
+  //     let mocInsertQuery = `INSERT INTO grant_theme(grant_id, theme_id) VALUES ${values}`;
 
-      // Execute the INSERT query
-      const mocInsertResult = await pool.query(mocInsertQuery);
-    }
-  }
+  //     // Execute the INSERT query
+  //     const mocInsertResult = await pool.query(mocInsertQuery);
+  //   }
+  // }
   if (is_submission_update !== undefined) {
     let deleteQuery = `DELETE FROM total_artwork_submission WHERE grant_id = ${grant_id}`;
     const deleteResult = await pool.query(deleteQuery);
@@ -193,7 +204,7 @@ exports.updateGrantController = async (req, res) => {
         )
         .join(", ");
       let insertQuery = `INSERT INTO total_artwork_submission(grant_id, no_of_submission, application_fee) VALUES ${values}`;
-      console.log("insertQuery", insertQuery);
+      // console.log("insertQuery", insertQuery);
 
       const mocInsertResult = await pool.query(insertQuery);
     }
@@ -223,7 +234,7 @@ exports.updateGrantController = async (req, res) => {
       // console.log(`err update Grant: ${err}`);
       // console.log(`result: ${JSON.stringify(result)}`);
       if (err) {
-        // console.log(`err: ${err}`);
+        console.log(`err: ${err}`);
         res.status(500).send({
           success: false,
           message: "Something went wrong",
@@ -231,9 +242,11 @@ exports.updateGrantController = async (req, res) => {
         });
       } else {
         // await pool.query(`SET TIME ZONE 'UTC'`);
-        const newQuery = `SELECT g.*, m.medium_of_choice, t.theme from grants as g, medium_of_choice as m, theme as t where g."category_MOD" = m.id AND g.theme_id = t.id AND g.grant_id = ${grant_id}`;
+        const newQuery = `SELECT g.*, m.medium_of_choice from grants as g, medium_of_choice as m where g."category_MOD" = m.id AND g.grant_id = ${grant_id}`;
         pool.query(newQuery, async (newErr, newResult) => {
           if (newErr) {
+            console.log(`newErr: ${newErr}`);
+
             res.status(500).send({
               success: false,
               message: "Something went wrong",
@@ -261,7 +274,7 @@ exports.updateGrantController = async (req, res) => {
       }
     });
   } catch (error) {
-    // console.log(`error: ${error}`);
+    console.log(`error: ${error}`);
     return res.status(500).send({
       success: false,
       message: somethingWentWrong,

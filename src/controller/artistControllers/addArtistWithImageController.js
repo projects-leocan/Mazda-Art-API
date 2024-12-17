@@ -1,85 +1,3 @@
-// const pool = require("../../config/db");
-// const multer = require("multer");
-// const path = require("path");
-// const { passwordHashing } = require("../../constants/passwordHashing");
-// const { somethingWentWrong } = require("../../constants/messages");
-
-// // Set up multer for file storage
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     if (file.fieldname === "profile_pic") {
-//       cb(null, "src/files/artist_profile/");
-//     } else if (file.fieldname === "artist_portfolio") {
-//       cb(null, "src/files/artist_portfolio/");
-//     }
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + path.extname(file.originalname));
-//   }
-// });
-
-// const upload = multer({ storage }).fields([
-//   { name: "profile_pic", maxCount: 1 },
-//   { name: "artist_portfolio", maxCount: 10 }
-// ]);
-
-// exports.addArtistWithImageController = (req, res) => {
-//   upload(req, res, async (err) => {
-//     if (err) {
-//       return res.status(400).send({ error: err.message });
-//     }
-
-//     const {
-//       fname,
-//       lname,
-//       dob,
-//       gender,
-//       email,
-//       mobile_number,
-//       address1,
-//       address2,
-//       city,
-//       state,
-//       pincode,
-//       social_media_profile_link,
-//       password,
-//       is_kyc_verified
-//     } = req.body;
-
-//     try {
-//       const hashedPassword = await passwordHashing(password);
-//       const createdAt = new Date();
-//       const updatedAt = new Date();
-//       const profilePic = req.files.profile_pic ? req.files.profile_pic[0].filename : null;
-//       const artistPortfolio = req.files.artist_portfolio ? req.files.artist_portfolio.map(file => file.filename) : [];
-
-//       const query = `
-//         INSERT INTO artist (
-//           fname, lname, dob, gender, email, mobile_number, address1, address2,
-//           city, state, pincode, social_media_profile_link, password,
-//           is_kyc_verified, profile_pic, artist_portfolio, created_at, updated_at
-//         ) VALUES (${fname}, ${lname}, ${dob}, ${gender}, ${email}, ${mobile_number}, ${address1}, ${address2},
-//         ${city}, ${state}, ${pincode}, ${social_media_profile_link}, ${hashedPassword},
-//         ${is_kyc_verified}, ${profilePic}, ${JSON.stringify(artistPortfolio)}, ${createdAt}, ${updatedAt})
-//         RETURNING artist_id
-//       `;
-//       const values = [
-//         fname, lname, dob, gender, email, mobile_number, address1, address2,
-//         city, state, pincode, social_media_profile_link, hashedPassword,
-//         is_kyc_verified, profilePic, JSON.stringify(artistPortfolio), createdAt, updatedAt
-//       ];
-
-//       console.log("query", query)
-
-//       const result = await pool.query(query);
-//       res.status(200).send({ success: true, message: "Artist added successfully", artistId: result.rows[0].artist_id });
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).send({ success: false, message: somethingWentWrong });
-//     }
-//   });
-// };
-
 const pool = require("../../config/db");
 const multer = require("multer");
 const path = require("path");
@@ -87,6 +5,8 @@ const { passwordHashing } = require("../../constants/passwordHashing");
 const { somethingWentWrong } = require("../../constants/messages");
 var lodash = require("lodash");
 const { sendEmail } = require("../emailControllers/sendEmailController");
+
+const { sendOtp } = require("../otpVerificationController/sendOtp");
 require("dotenv").config();
 
 // Set up multer for file storage
@@ -161,7 +81,7 @@ exports.addArtistWithImageController = (req, res) => {
             city, state, pincode, social_media_profile_link, password,
             is_kyc_verified, profile_pic, created_at, updated_at
           ) VALUES ('${fname}', '${lname}', '${dob}', '${gender}', '${email}', ${mobile_number}, '${address1}', '${address2}',
-           '${city}', '${state}', ${pincode}, '${social_media_profile_link}', '${hashedPassword}',
+           '${city}', '${state}', ${pincode}, '${social_media_profile_link}', '',
            '${kyc}', '${profilePic}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
           RETURNING artist_id
         `;
@@ -206,11 +126,13 @@ exports.addArtistWithImageController = (req, res) => {
             mobile_number: `${mobile_number}`,
           });
 
-          res.status(200).send({
-            success: true,
-            message: "Artist added successfully",
-            artistId,
-          });
+          await sendOtp(mobile_number, res, req, "registration"); // Assuming sendOtpController takes mobile_number as an argument
+
+          // res.status(200).send({
+          //   success: true,
+          //   message: "Artist added successfully",
+          //   artistId,
+          // });
         } else {
           res.status(500).send({
             success: false,
@@ -234,7 +156,7 @@ exports.addArtistWithImageController = (req, res) => {
         client.release();
       }
     } catch (error) {
-      console.error("catch", error);
+      // console.error("catch", error);
       res.status(500).send({ success: false, message: somethingWentWrong });
     }
   });
