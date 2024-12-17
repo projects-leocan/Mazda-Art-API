@@ -128,28 +128,25 @@ exports.updateGrantController = async (req, res) => {
   }
 
   if (theme_id !== undefined) {
-    const theme_replace = theme_id?.replace(/\+/g, "").replace(/\n/g, "\\n");
+    const theme_replace = theme_id?.replace(/\n/g, "\\n");
     query += `, theme_id='${theme_replace}'`;
   }
 
   if (eligibilityCriteria !== undefined) {
-    const eligibility_criteria_replace = eligibilityCriteria
-      ?.replace(/\+/g, "")
-      .replace(/\n/g, "\\n");
+    const eligibility_criteria_replace = eligibilityCriteria.replace(
+      /\n/g,
+      "\\n"
+    );
     query += `, eligibility_criteria='${eligibility_criteria_replace}'`;
   }
 
   if (juryRules !== undefined) {
-    const jury_rules_replace = juryRules
-      ?.replace(/\+/g, "")
-      .replace(/\n/g, "\\n");
+    const jury_rules_replace = juryRules.replace(/\n/g, "\\n");
     query += `, jury_rules='${jury_rules_replace}'`;
   }
 
   if (juryCriteria !== undefined) {
-    const jury_criteria_replace = juryCriteria
-      ?.replace(/\+/g, "")
-      .replace(/\n/g, "\\n");
+    const jury_criteria_replace = juryCriteria.replace(/\n/g, "\\n");
     query += `, jury_criteria='${jury_criteria_replace}'`;
   }
 
