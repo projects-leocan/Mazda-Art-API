@@ -44,7 +44,7 @@ exports.getAllTransactionsController = async (req, res) => {
     let query = `SELECT`;
 
     if (status === "undefined" || status === "isAll") {
-      console.log("status inside", status);
+      // console.log("status inside", status);
       query += ` (SELECT COUNT(*) FROM trasaction_detail) AS total_count,`;
     } else {
       query += ` (SELECT COUNT(*) FROM trasaction_detail WHERE trasaction_status = ${
@@ -61,7 +61,7 @@ exports.getAllTransactionsController = async (req, res) => {
     a.mobile_number,
     a.dob, 
     a.gender,
-    (SELECT sd.submited_time 
+    (SELECT Max(sd.submited_time) 
      FROM submission_details sd 
      WHERE sd.transaction_id::bigint = td.id) AS submission_date_time`;
 
@@ -89,7 +89,7 @@ JOIN
       query += ` LIMIT ${record_per_page} OFFSET ${offset}`;
     }
 
-    console.log("query", query);
+    // console.log("query", query);
 
     pool.query(query, async (err, result) => {
       if (err) {
