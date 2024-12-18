@@ -49,6 +49,10 @@ require("./src/routes/route")(app);
 // Handling Errors
 app.use((err, req, res, next) => {
   // console.log(err);
+  if (req.protocol !== "https") {
+    return res.redirect(301, `https://${req.headers.host}${req.url}`);
+  }
+  next();
   err.statusCode = err.statusCode || 500;
   err.message = err.message || "Internal Server Error";
   res.status(err.statusCode).json({
