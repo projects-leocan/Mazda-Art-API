@@ -1,22 +1,22 @@
 const express = require("express");
 const cors = require("cors");
-const https = require("https");
-const fs = require("fs");
+// const https = require("https");
+// const fs = require("fs");
 
 const app = express();
 const port = 8080;
 // const port = 8081;
 
-const privateKey = fs.readFileSync(
-  "/etc/letsencrypt/live/mazdaartfoundation.org/privkey.pem",
-  "utf8"
-);
-const certificate = fs.readFileSync(
-  "/etc/letsencrypt/live/mazdaartfoundation.org/fullchain.pem",
-  "utf8"
-);
+// const privateKey = fs.readFileSync(
+//   "/etc/letsencrypt/live/mazdaartfoundation.org/privkey.pem",
+//   "utf8"
+// );
+// const certificate = fs.readFileSync(
+//   "/etc/letsencrypt/live/mazdaartfoundation.org/fullchain.pem",
+//   "utf8"
+// );
 
-const credentials = { key: privateKey, cert: certificate };
+// const credentials = { key: privateKey, cert: certificate };
 
 var corsOptions = {
   origin: [
@@ -49,6 +49,10 @@ require("./src/routes/route")(app);
 // Handling Errors
 app.use((err, req, res, next) => {
   // console.log(err);
+  if (req.protocol !== "https") {
+    return res.redirect(301, `https://${req.headers.host}${req.url}`);
+  }
+  next();
   err.statusCode = err.statusCode || 500;
   err.message = err.message || "Internal Server Error";
   res.status(err.statusCode).json({
@@ -56,12 +60,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-// app.listen(port, () => {
-//   console.log(`hello Server is running on port ${port}.`);
-// });
+app.listen(port, () => {
+  console.log(`hello Server is running on port ${port}.`);
+});
 
 // Uncomment this for SSL enable
 
-https.createServer(credentials, app).listen(port, () => {
-  console.log(`Secure server is running on https://localhost:${port}`);
-});
+// https.createServer(credentials, app).listen(port, () => {
+//   console.log(`Secure server is running on https://localhost:${port}`);
+// });

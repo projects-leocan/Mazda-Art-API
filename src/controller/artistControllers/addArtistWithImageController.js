@@ -1,7 +1,6 @@
 const pool = require("../../config/db");
 const multer = require("multer");
 const path = require("path");
-const { passwordHashing } = require("../../constants/passwordHashing");
 const { somethingWentWrong } = require("../../constants/messages");
 var lodash = require("lodash");
 const { sendEmail } = require("../emailControllers/sendEmailController");
@@ -54,7 +53,7 @@ exports.addArtistWithImageController = (req, res) => {
     } = req.body;
 
     try {
-      const hashedPassword = await passwordHashing(password);
+      // const hashedPassword = await passwordHashing(password);
       const createdAt = new Date().toISOString().slice(0, 10);
       const updatedAt = new Date().toISOString().slice(0, 10);
       const profilePic = req.files.profile_pic
@@ -65,7 +64,7 @@ exports.addArtistWithImageController = (req, res) => {
         : [];
 
       const client = await pool.connect();
-
+      // console.log("req body", req.fields);
       try {
         await client.query("BEGIN");
         const kyc = is_kyc_verified === undefined ? 0 : is_kyc_verified;
