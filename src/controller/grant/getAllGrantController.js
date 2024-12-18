@@ -175,15 +175,17 @@ ORDER BY
           const currentDate = new Date();
           const submissionEndDate = new Date(res.submission_end_date);
 
-          if (admin_id === undefined || admin_id === "undefined") {
-            if (
-              ((artist_id === undefined || artist_id === "undefined") &&
-                submissionEndDate < currentDate) ||
-              (submissionEndDate < currentDate && res.artist_grant_status === 1)
-            ) {
-              return null; // filter out the grant
-            }
-          }
+          // Uncomment this if closed submission grant should not display
+
+          // if (admin_id === undefined || admin_id === "undefined") {
+          //   if (
+          //     ((artist_id === undefined || artist_id === "undefined") &&
+          //       submissionEndDate < currentDate) ||
+          //     (submissionEndDate < currentDate && res.artist_grant_status === 1)
+          //   ) {
+          //     return null; // filter out the grant
+          //   }
+          // }
 
           return {
             ...res,
